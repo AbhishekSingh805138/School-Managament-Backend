@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import env from '../config/env';
 import { UserRole } from '../types/user';
+import { query } from '../database/connection';
+import { asyncHandler, AppError } from '../middleware/errorHandler';
 
 // Extend Request interface to include user
 declare global {
@@ -17,62 +19,45 @@ declare global {
 }
 
 // JWT authentication middleware
-export const authenticate = (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+
+  if (!token) {
+    throw new AppError('Access token is required', 401);
+  }
+
   try {
-    const authHeader = req.headers.authorization;
+    const decoded = jwt.verify(token, env.JWT_SECRET) as { id: string };
+    const user = await query('SELECT * FROM users WHERE id = $1 AND is_active = true', [decoded.id]);
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({
-        success: false,
-        message: 'Access token is required',
-      });
-      return;
+    if (user.rows.length === 0) {
+      throw new AppError('User not found or inactive', 401);
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-
-    const decoded = jwt.verify(token, env.JWT_SECRET) as {
-      id: string;
-      email: string;
-      role: UserRole;
-    };
-
-    req.user = decoded;
+    req.user = user.rows[0];
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid or expired token',
-      });
-      return;
+      throw new AppError('Invalid token', 401);
     }
-
-    next(error);
+    throw error;
   }
-};
+});
 
 // Role-based authorization middleware
 export const authorize = (...roles: UserRole[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      res.status(401).json({
-        success: false,
-        message: 'Authentication required',
-      });
-      return;
+      throw new AppError('Authentication required', 401);
     }
 
-    if (!roles.includes(req.user.role)) {
-      res.status(403).json({
-        success: false,
-        message: 'Insufficient permissions',
-      });
-      return;
+    if (roles.length > 0 && !roles.includes(req.user.role)) {
+      throw new AppError('Insufficient permissions', 403);
     }
 
     next();
-  };
+  });
 };
 
 // Optional authentication middleware (doesn't fail if no token)

@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUser = exports.getUserById = exports.getUsers = void 0;
 const connection_1 = require("../database/connection");
 const errorHandler_1 = require("../middleware/errorHandler");
+const pagination_1 = require("../utils/pagination");
 exports.getUsers = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Get users request received');
-    const { page, limit, sortBy = 'created_at', sortOrder } = req.query;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset, sortBy, sortOrder } = (0, pagination_1.getPaginationParams)(req, 'created_at');
     const countResult = await (0, connection_1.query)('SELECT COUNT(*) FROM users WHERE is_active = true');
     const total = parseInt(countResult.rows[0].count);
     const result = await (0, connection_1.query)(`SELECT id, first_name, last_name, email, role, phone, date_of_birth, address, is_active, created_at, updated_at
@@ -41,6 +41,7 @@ exports.getUsers = (0, errorHandler_1.asyncHandler)(async (req, res) => {
 exports.getUserById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Get user by ID request received');
     const { id } = req.params;
+    console.log("Looking for user with ID:", req.params.id);
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     const isUUID = uuidRegex.test(id);
     let result;
@@ -50,6 +51,7 @@ exports.getUserById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     else {
         result = await (0, connection_1.query)('SELECT id, first_name, last_name, email, role, phone, date_of_birth, address, is_active, created_at, updated_at FROM users WHERE alt_id = $1 OR id::text = $1', [id]);
     }
+    console.log("Query result:", result.rows);
     if (result.rows.length === 0) {
         throw new errorHandler_1.AppError('User not found', 404);
     }

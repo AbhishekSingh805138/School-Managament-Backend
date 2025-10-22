@@ -8,8 +8,13 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 // Import routes
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
-// import studentRoutes from './routes/students';
-// import classRoutes from './routes/classes';
+import academicYearRoutes from './routes/academicYears';
+import semesterRoutes from './routes/semesters';
+import subjectRoutes from './routes/subjects';
+import classRoutes from './routes/classes';
+import studentRoutes from './routes/students';
+import parentRoutes from './routes/parents';
+// import teacherRoutes from './routes/teachers';
 
 const app = express();
 
@@ -54,8 +59,13 @@ app.post('/test', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
-// app.use('/api/v1/students', studentRoutes);
-// app.use('/api/v1/classes', classRoutes);
+app.use('/api/v1/academic-years', academicYearRoutes);
+app.use('/api/v1/semesters', semesterRoutes);
+app.use('/api/v1/subjects', subjectRoutes);
+app.use('/api/v1/classes', classRoutes);
+app.use('/api/v1/students', studentRoutes);
+app.use('/api/v1/parents', parentRoutes);
+// app.use('/api/v1/teachers', teacherRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {
@@ -65,8 +75,17 @@ app.get('/api/v1', (req, res) => {
     endpoints: {
       auth: '/api/v1/auth',
       users: '/api/v1/users',
-      students: '/api/v1/students',
+      academicYears: '/api/v1/academic-years',
+      semesters: '/api/v1/semesters',
+      subjects: '/api/v1/subjects',
       classes: '/api/v1/classes',
+      students: '/api/v1/students',
+      parents: '/api/v1/parents',
+      teachers: '/api/v1/teachers',
+      attendance: '/api/v1/attendance',
+      fees: '/api/v1/fees',
+      grades: '/api/v1/grades',
+      reports: '/api/v1/reports',
     },
   });
 });

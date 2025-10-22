@@ -6,51 +6,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.optionalAuth = exports.authorize = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = __importDefault(require("../config/env"));
-const authenticate = (req, res, next) => {
+const connection_1 = require("../database/connection");
+const errorHandler_1 = require("../middleware/errorHandler");
+exports.authenticate = (0, errorHandler_1.asyncHandler)(async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    if (!token) {
+        throw new errorHandler_1.AppError('Access token is required', 401);
+    }
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            res.status(401).json({
-                success: false,
-                message: 'Access token is required',
-            });
-            return;
-        }
-        const token = authHeader.substring(7);
         const decoded = jsonwebtoken_1.default.verify(token, env_1.default.JWT_SECRET);
-        req.user = decoded;
+        const user = await (0, connection_1.query)('SELECT * FROM users WHERE id = $1 AND is_active = true', [decoded.id]);
+        if (user.rows.length === 0) {
+            throw new errorHandler_1.AppError('User not found or inactive', 401);
+        }
+        req.user = user.rows[0];
         next();
     }
     catch (error) {
         if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
-            res.status(401).json({
-                success: false,
-                message: 'Invalid or expired token',
-            });
-            return;
+            throw new errorHandler_1.AppError('Invalid token', 401);
         }
-        next(error);
+        throw error;
     }
-};
-exports.authenticate = authenticate;
+});
 const authorize = (...roles) => {
-    return (req, res, next) => {
+    return (0, errorHandler_1.asyncHandler)(async (req, res, next) => {
         if (!req.user) {
-            res.status(401).json({
-                success: false,
-                message: 'Authentication required',
-            });
-            return;
+            throw new errorHandler_1.AppError('Authentication required', 401);
         }
-        if (!roles.includes(req.user.role)) {
-            res.status(403).json({
-                success: false,
-                message: 'Insufficient permissions',
-            });
-            return;
+        if (roles.length > 0 && !roles.includes(req.user.role)) {
+            throw new errorHandler_1.AppError('Insufficient permissions', 403);
         }
         next();
-    };
+    });
 };
 exports.authorize = authorize;
 const optionalAuth = (req, _res, next) => {

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserResponseSchema = exports.ChangePasswordSchema = exports.LoginSchema = exports.UpdateUserSchema = exports.CreateUserSchema = exports.UserRoleSchema = void 0;
 const zod_1 = require("zod");
 const common_1 = require("./common");
-exports.UserRoleSchema = zod_1.z.enum(['admin', 'teacher', 'student', 'parent']);
+exports.UserRoleSchema = zod_1.z.enum(['admin', 'teacher', 'student', 'parent', 'staff']);
 exports.CreateUserSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(2, 'First name must be at least 2 characters'),
     lastName: zod_1.z.string().min(2, 'Last name must be at least 2 characters'),

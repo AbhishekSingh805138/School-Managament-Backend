@@ -3,13 +3,12 @@ import { query } from '../database/connection';
 import { AppError, asyncHandler } from '../middleware/errorHandler';
 import { UpdateUser } from '../types/user';
 import { Pagination } from '../types/common';
+import { getPaginationParams } from '../utils/pagination';
 
 // Get all users with pagination
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
   console.log('Get users request received');
-  const { page, limit, sortBy = 'created_at', sortOrder }: Pagination = req.query as any;
-  
-  const offset = (page - 1) * limit;
+  const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'created_at');
 
   // Get total count
   const countResult = await query('SELECT COUNT(*) FROM users WHERE is_active = true');

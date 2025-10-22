@@ -11,6 +11,12 @@ const env_1 = __importDefault(require("./config/env"));
 const errorHandler_1 = require("./middleware/errorHandler");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
+const academicYears_1 = __importDefault(require("./routes/academicYears"));
+const semesters_1 = __importDefault(require("./routes/semesters"));
+const subjects_1 = __importDefault(require("./routes/subjects"));
+const classes_1 = __importDefault(require("./routes/classes"));
+const students_1 = __importDefault(require("./routes/students"));
+const parents_1 = __importDefault(require("./routes/parents"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -40,6 +46,12 @@ app.post('/test', (req, res) => {
 });
 app.use('/api/v1/auth', auth_1.default);
 app.use('/api/v1/users', users_1.default);
+app.use('/api/v1/academic-years', academicYears_1.default);
+app.use('/api/v1/semesters', semesters_1.default);
+app.use('/api/v1/subjects', subjects_1.default);
+app.use('/api/v1/classes', classes_1.default);
+app.use('/api/v1/students', students_1.default);
+app.use('/api/v1/parents', parents_1.default);
 app.get('/api/v1', (req, res) => {
     res.json({
         success: true,
@@ -47,8 +59,17 @@ app.get('/api/v1', (req, res) => {
         endpoints: {
             auth: '/api/v1/auth',
             users: '/api/v1/users',
-            students: '/api/v1/students',
+            academicYears: '/api/v1/academic-years',
+            semesters: '/api/v1/semesters',
+            subjects: '/api/v1/subjects',
             classes: '/api/v1/classes',
+            students: '/api/v1/students',
+            parents: '/api/v1/parents',
+            teachers: '/api/v1/teachers',
+            attendance: '/api/v1/attendance',
+            fees: '/api/v1/fees',
+            grades: '/api/v1/grades',
+            reports: '/api/v1/reports',
         },
     });
 });

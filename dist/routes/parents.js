@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const parentController_1 = require("../controllers/parentController");
+const validation_1 = require("../middleware/validation");
+const auth_1 = require("../middleware/auth");
+const parent_1 = require("../types/parent");
+const common_1 = require("../types/common");
+const zod_1 = require("zod");
+const router = (0, express_1.Router)();
+router.use(auth_1.authenticate);
+router.post('/', (0, auth_1.authorize)('admin'), (0, validation_1.validateBody)(parent_1.CreateParentSchema), parentController_1.createParent);
+router.get('/', (0, auth_1.authorize)('admin', 'teacher'), (0, validation_1.validateQuery)(parent_1.ParentQuerySchema), parentController_1.getParents);
+router.get('/dashboard', (0, auth_1.authorize)('parent'), parentController_1.getParentDashboard);
+router.get('/:id', (0, auth_1.authorize)('admin', 'teacher'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), parentController_1.getParentById);
+router.put('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, validation_1.validateBody)(parent_1.UpdateParentSchema), parentController_1.updateParent);
+router.post('/link-student', (0, auth_1.authorize)('admin'), (0, validation_1.validateBody)(parent_1.CreateStudentParentSchema), parentController_1.linkParentToStudent);
+router.put('/relationships/:relationshipId', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ relationshipId: common_1.IdSchema })), (0, validation_1.validateBody)(parent_1.UpdateStudentParentSchema), parentController_1.updateParentStudentRelationship);
+router.delete('/relationships/:relationshipId', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ relationshipId: common_1.IdSchema })), parentController_1.removeParentStudentRelationship);
+exports.default = router;
+//# sourceMappingURL=parents.js.map

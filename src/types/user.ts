@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { IdSchema, EmailSchema, PhoneSchema, DateSchema } from './common';
 
 // User role enum
-export const UserRoleSchema = z.enum(['admin', 'teacher', 'student', 'parent']);
+export const UserRoleSchema = z.enum(['admin', 'teacher', 'student', 'parent', 'staff']);
 
 // User schemas
 export const CreateUserSchema = z.object({
