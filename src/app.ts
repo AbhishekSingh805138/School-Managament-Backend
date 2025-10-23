@@ -14,7 +14,7 @@ import subjectRoutes from './routes/subjects';
 import classRoutes from './routes/classes';
 import studentRoutes from './routes/students';
 import parentRoutes from './routes/parents';
-// import teacherRoutes from './routes/teachers';
+import teacherRoutes from './routes/teachers';
 
 const app = express();
 
@@ -65,7 +65,7 @@ app.use('/api/v1/subjects', subjectRoutes);
 app.use('/api/v1/classes', classRoutes);
 app.use('/api/v1/students', studentRoutes);
 app.use('/api/v1/parents', parentRoutes);
-// app.use('/api/v1/teachers', teacherRoutes);
+app.use('/api/v1/teachers', teacherRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {

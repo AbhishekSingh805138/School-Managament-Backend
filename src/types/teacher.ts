@@ -99,6 +99,39 @@ export const TeacherWorkloadSchema = z.object({
   totalSubjects: z.number(),
   totalStudents: z.number(),
   weeklyHours: z.number().optional(),
+  workloadIntensity: z.number().optional(),
+  workloadStatus: z.enum(['light', 'normal', 'high', 'overloaded']).optional(),
+});
+
+// Assignment conflict check schema
+export const AssignmentConflictCheckSchema = z.object({
+  teacherId: IdSchema,
+  classId: IdSchema,
+  subjectId: IdSchema,
+});
+
+// Teacher suggestion schema
+export const TeacherSuggestionSchema = z.object({
+  teacher: z.object({
+    id: IdSchema,
+    employeeId: z.string(),
+    name: z.string(),
+    isMainTeacher: z.boolean(),
+  }),
+  suitabilityScore: z.number(),
+  recommendation: z.enum(['excellent', 'good', 'caution', 'not_recommended']),
+  currentWorkload: z.object({
+    assignments: z.number(),
+    hours: z.number(),
+    sameGradeAssignments: z.number(),
+  }),
+  projectedWorkload: z.object({
+    assignments: z.number(),
+    hours: z.number(),
+    utilizationPercentage: z.number(),
+  }),
+  conflicts: z.array(z.string()),
+  canAssign: z.boolean(),
 });
 
 // Types
@@ -111,3 +144,5 @@ export type TeacherSubjectResponse = z.infer<typeof TeacherSubjectResponseSchema
 
 export type TeacherAssignment = z.infer<typeof TeacherAssignmentSchema>;
 export type TeacherWorkload = z.infer<typeof TeacherWorkloadSchema>;
+export type AssignmentConflictCheck = z.infer<typeof AssignmentConflictCheckSchema>;
+export type TeacherSuggestion = z.infer<typeof TeacherSuggestionSchema>;

@@ -444,8 +444,8 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     altId: string | null;
     overallGrade: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F" | null;
     overallPercentage: number | null;
-    remarks: string | null;
     totalStudents: number | null;
+    remarks: string | null;
     generatedAt: string;
     semesterId: string;
     rankInClass: number | null;
@@ -489,8 +489,8 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     altId: string | null;
     overallGrade: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F" | null;
     overallPercentage: number | null;
-    remarks: string | null;
     totalStudents: number | null;
+    remarks: string | null;
     generatedAt: string;
     semesterId: string;
     rankInClass: number | null;
@@ -620,10 +620,10 @@ export declare const StudentGradeSummarySchema: z.ZodObject<{
     studentId: string;
     overallGrade: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F";
     averagePercentage: number;
+    totalSubjects: number;
     totalStudents: number;
     semesterId: string;
     rankInClass: number | null;
-    totalSubjects: number;
     subjectGrades: {
         subjectId: string;
         subjectName: string;
@@ -641,10 +641,10 @@ export declare const StudentGradeSummarySchema: z.ZodObject<{
     studentId: string;
     overallGrade: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F";
     averagePercentage: number;
+    totalSubjects: number;
     totalStudents: number;
     semesterId: string;
     rankInClass: number | null;
-    totalSubjects: number;
     subjectGrades: {
         subjectId: string;
         subjectName: string;

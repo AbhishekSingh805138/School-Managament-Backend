@@ -253,18 +253,127 @@ export declare const TeacherWorkloadSchema: z.ZodObject<{
     totalSubjects: z.ZodNumber;
     totalStudents: z.ZodNumber;
     weeklyHours: z.ZodOptional<z.ZodNumber>;
+    workloadIntensity: z.ZodOptional<z.ZodNumber>;
+    workloadStatus: z.ZodOptional<z.ZodEnum<["light", "normal", "high", "overloaded"]>>;
 }, "strip", z.ZodTypeAny, {
     teacherId: string;
-    totalStudents: number;
-    totalSubjects: number;
     totalClasses: number;
+    totalSubjects: number;
+    totalStudents: number;
     weeklyHours?: number | undefined;
+    workloadIntensity?: number | undefined;
+    workloadStatus?: "light" | "normal" | "high" | "overloaded" | undefined;
 }, {
     teacherId: string;
-    totalStudents: number;
-    totalSubjects: number;
     totalClasses: number;
+    totalSubjects: number;
+    totalStudents: number;
     weeklyHours?: number | undefined;
+    workloadIntensity?: number | undefined;
+    workloadStatus?: "light" | "normal" | "high" | "overloaded" | undefined;
+}>;
+export declare const AssignmentConflictCheckSchema: z.ZodObject<{
+    teacherId: z.ZodEffects<z.ZodString, string, string>;
+    classId: z.ZodEffects<z.ZodString, string, string>;
+    subjectId: z.ZodEffects<z.ZodString, string, string>;
+}, "strip", z.ZodTypeAny, {
+    classId: string;
+    subjectId: string;
+    teacherId: string;
+}, {
+    classId: string;
+    subjectId: string;
+    teacherId: string;
+}>;
+export declare const TeacherSuggestionSchema: z.ZodObject<{
+    teacher: z.ZodObject<{
+        id: z.ZodEffects<z.ZodString, string, string>;
+        employeeId: z.ZodString;
+        name: z.ZodString;
+        isMainTeacher: z.ZodBoolean;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        name: string;
+        employeeId: string;
+        isMainTeacher: boolean;
+    }, {
+        id: string;
+        name: string;
+        employeeId: string;
+        isMainTeacher: boolean;
+    }>;
+    suitabilityScore: z.ZodNumber;
+    recommendation: z.ZodEnum<["excellent", "good", "caution", "not_recommended"]>;
+    currentWorkload: z.ZodObject<{
+        assignments: z.ZodNumber;
+        hours: z.ZodNumber;
+        sameGradeAssignments: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        hours: number;
+        assignments: number;
+        sameGradeAssignments: number;
+    }, {
+        hours: number;
+        assignments: number;
+        sameGradeAssignments: number;
+    }>;
+    projectedWorkload: z.ZodObject<{
+        assignments: z.ZodNumber;
+        hours: z.ZodNumber;
+        utilizationPercentage: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        hours: number;
+        assignments: number;
+        utilizationPercentage: number;
+    }, {
+        hours: number;
+        assignments: number;
+        utilizationPercentage: number;
+    }>;
+    conflicts: z.ZodArray<z.ZodString, "many">;
+    canAssign: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    teacher: {
+        id: string;
+        name: string;
+        employeeId: string;
+        isMainTeacher: boolean;
+    };
+    suitabilityScore: number;
+    recommendation: "excellent" | "good" | "caution" | "not_recommended";
+    currentWorkload: {
+        hours: number;
+        assignments: number;
+        sameGradeAssignments: number;
+    };
+    projectedWorkload: {
+        hours: number;
+        assignments: number;
+        utilizationPercentage: number;
+    };
+    conflicts: string[];
+    canAssign: boolean;
+}, {
+    teacher: {
+        id: string;
+        name: string;
+        employeeId: string;
+        isMainTeacher: boolean;
+    };
+    suitabilityScore: number;
+    recommendation: "excellent" | "good" | "caution" | "not_recommended";
+    currentWorkload: {
+        hours: number;
+        assignments: number;
+        sameGradeAssignments: number;
+    };
+    projectedWorkload: {
+        hours: number;
+        assignments: number;
+        utilizationPercentage: number;
+    };
+    conflicts: string[];
+    canAssign: boolean;
 }>;
 export type CreateTeacher = z.infer<typeof CreateTeacherSchema>;
 export type UpdateTeacher = z.infer<typeof UpdateTeacherSchema>;
@@ -273,4 +382,6 @@ export type CreateTeacherSubject = z.infer<typeof CreateTeacherSubjectSchema>;
 export type TeacherSubjectResponse = z.infer<typeof TeacherSubjectResponseSchema>;
 export type TeacherAssignment = z.infer<typeof TeacherAssignmentSchema>;
 export type TeacherWorkload = z.infer<typeof TeacherWorkloadSchema>;
+export type AssignmentConflictCheck = z.infer<typeof AssignmentConflictCheckSchema>;
+export type TeacherSuggestion = z.infer<typeof TeacherSuggestionSchema>;
 //# sourceMappingURL=teacher.d.ts.map

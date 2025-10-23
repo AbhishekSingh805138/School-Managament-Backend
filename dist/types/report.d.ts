@@ -579,15 +579,15 @@ export declare const DashboardReportSchema: z.ZodObject<{
         currentSemester: z.ZodString;
     }, "strip", z.ZodTypeAny, {
         currentSemester: string;
-        totalStudents: number;
         totalClasses: number;
+        totalStudents: number;
         totalStaff: number;
         totalTeachers: number;
         activeAcademicYear: string;
     }, {
         currentSemester: string;
-        totalStudents: number;
         totalClasses: number;
+        totalStudents: number;
         totalStaff: number;
         totalTeachers: number;
         activeAcademicYear: string;
@@ -734,8 +734,8 @@ export declare const DashboardReportSchema: z.ZodObject<{
     };
     overview: {
         currentSemester: string;
-        totalStudents: number;
         totalClasses: number;
+        totalStudents: number;
         totalStaff: number;
         totalTeachers: number;
         activeAcademicYear: string;
@@ -778,8 +778,8 @@ export declare const DashboardReportSchema: z.ZodObject<{
     };
     overview: {
         currentSemester: string;
-        totalStudents: number;
         totalClasses: number;
+        totalStudents: number;
         totalStaff: number;
         totalTeachers: number;
         activeAcademicYear: string;

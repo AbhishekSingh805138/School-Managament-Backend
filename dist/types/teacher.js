@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TeacherWorkloadSchema = exports.TeacherAssignmentSchema = exports.TeacherSubjectResponseSchema = exports.CreateTeacherSubjectSchema = exports.TeacherResponseSchema = exports.UpdateTeacherSchema = exports.CreateTeacherSchema = void 0;
+exports.TeacherSuggestionSchema = exports.AssignmentConflictCheckSchema = exports.TeacherWorkloadSchema = exports.TeacherAssignmentSchema = exports.TeacherSubjectResponseSchema = exports.CreateTeacherSubjectSchema = exports.TeacherResponseSchema = exports.UpdateTeacherSchema = exports.CreateTeacherSchema = void 0;
 const zod_1 = require("zod");
 const common_1 = require("./common");
 exports.CreateTeacherSchema = zod_1.z.object({
@@ -83,5 +83,34 @@ exports.TeacherWorkloadSchema = zod_1.z.object({
     totalSubjects: zod_1.z.number(),
     totalStudents: zod_1.z.number(),
     weeklyHours: zod_1.z.number().optional(),
+    workloadIntensity: zod_1.z.number().optional(),
+    workloadStatus: zod_1.z.enum(['light', 'normal', 'high', 'overloaded']).optional(),
+});
+exports.AssignmentConflictCheckSchema = zod_1.z.object({
+    teacherId: common_1.IdSchema,
+    classId: common_1.IdSchema,
+    subjectId: common_1.IdSchema,
+});
+exports.TeacherSuggestionSchema = zod_1.z.object({
+    teacher: zod_1.z.object({
+        id: common_1.IdSchema,
+        employeeId: zod_1.z.string(),
+        name: zod_1.z.string(),
+        isMainTeacher: zod_1.z.boolean(),
+    }),
+    suitabilityScore: zod_1.z.number(),
+    recommendation: zod_1.z.enum(['excellent', 'good', 'caution', 'not_recommended']),
+    currentWorkload: zod_1.z.object({
+        assignments: zod_1.z.number(),
+        hours: zod_1.z.number(),
+        sameGradeAssignments: zod_1.z.number(),
+    }),
+    projectedWorkload: zod_1.z.object({
+        assignments: zod_1.z.number(),
+        hours: zod_1.z.number(),
+        utilizationPercentage: zod_1.z.number(),
+    }),
+    conflicts: zod_1.z.array(zod_1.z.string()),
+    canAssign: zod_1.z.boolean(),
 });
 //# sourceMappingURL=teacher.js.map

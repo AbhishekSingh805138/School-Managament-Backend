@@ -17,6 +17,7 @@ const subjects_1 = __importDefault(require("./routes/subjects"));
 const classes_1 = __importDefault(require("./routes/classes"));
 const students_1 = __importDefault(require("./routes/students"));
 const parents_1 = __importDefault(require("./routes/parents"));
+const teachers_1 = __importDefault(require("./routes/teachers"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -52,6 +53,7 @@ app.use('/api/v1/subjects', subjects_1.default);
 app.use('/api/v1/classes', classes_1.default);
 app.use('/api/v1/students', students_1.default);
 app.use('/api/v1/parents', parents_1.default);
+app.use('/api/v1/teachers', teachers_1.default);
 app.get('/api/v1', (req, res) => {
     res.json({
         success: true,
