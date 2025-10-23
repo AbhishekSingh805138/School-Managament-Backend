@@ -67,32 +67,32 @@ export declare const CreateGradeSchema: z.ZodEffects<z.ZodObject<{
     subjectId: string;
     marksObtained: number;
     totalMarks: number;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     remarks?: string | undefined;
 }, {
     studentId: string;
     subjectId: string;
     marksObtained: number;
     totalMarks: number;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     remarks?: string | undefined;
 }>, {
     studentId: string;
     subjectId: string;
     marksObtained: number;
     totalMarks: number;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     remarks?: string | undefined;
 }, {
     studentId: string;
     subjectId: string;
     marksObtained: number;
     totalMarks: number;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     remarks?: string | undefined;
 }>;
 export declare const UpdateGradeSchema: z.ZodEffects<z.ZodObject<{
@@ -218,8 +218,8 @@ export declare const GradeResponseSchema: z.ZodObject<{
     marksObtained: number;
     totalMarks: number;
     remarks: string | null;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     recordedBy: string;
     student?: {
         studentId: string;
@@ -258,8 +258,8 @@ export declare const GradeResponseSchema: z.ZodObject<{
     marksObtained: number;
     totalMarks: number;
     remarks: string | null;
-    assessmentTypeId: string;
     semesterId: string;
+    assessmentTypeId: string;
     recordedBy: string;
     student?: {
         studentId: string;
@@ -448,8 +448,8 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     remarks: string | null;
     generatedAt: string;
     semesterId: string;
-    rankInClass: number | null;
     generatedBy: string;
+    rankInClass: number | null;
     student?: {
         studentId: string;
         class: {
@@ -493,8 +493,8 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     remarks: string | null;
     generatedAt: string;
     semesterId: string;
-    rankInClass: number | null;
     generatedBy: string;
+    rankInClass: number | null;
     student?: {
         studentId: string;
         class: {
@@ -545,8 +545,8 @@ export declare const GradeQuerySchema: z.ZodObject<{
     studentId?: string | undefined;
     subjectId?: string | undefined;
     gradeLetter?: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F" | undefined;
-    assessmentTypeId?: string | undefined;
     semesterId?: string | undefined;
+    assessmentTypeId?: string | undefined;
     minPercentage?: number | undefined;
     maxPercentage?: number | undefined;
 }, {
@@ -556,8 +556,8 @@ export declare const GradeQuerySchema: z.ZodObject<{
     studentId?: string | undefined;
     subjectId?: string | undefined;
     gradeLetter?: "D" | "A+" | "A" | "B+" | "B" | "C+" | "C" | "F" | undefined;
-    assessmentTypeId?: string | undefined;
     semesterId?: string | undefined;
+    assessmentTypeId?: string | undefined;
     minPercentage?: number | undefined;
     maxPercentage?: number | undefined;
 }>;
@@ -757,8 +757,8 @@ export declare const GradeReportQuerySchema: z.ZodObject<{
     groupBy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["student", "subject", "class"]>>>;
     format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "pdf"]>>>;
 }, "strip", z.ZodTypeAny, {
-    groupBy: "student" | "class" | "subject";
     format: "json" | "csv" | "pdf";
+    groupBy: "student" | "class" | "subject";
     semesterId: string;
     classId?: string | undefined;
     subjectId?: string | undefined;
@@ -767,8 +767,8 @@ export declare const GradeReportQuerySchema: z.ZodObject<{
     semesterId: string;
     classId?: string | undefined;
     subjectId?: string | undefined;
-    groupBy?: "student" | "class" | "subject" | undefined;
     format?: "json" | "csv" | "pdf" | undefined;
+    groupBy?: "student" | "class" | "subject" | undefined;
     assessmentTypeId?: string | undefined;
 }>;
 export declare const GradeReportItemSchema: z.ZodObject<{

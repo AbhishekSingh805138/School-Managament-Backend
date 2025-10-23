@@ -200,16 +200,16 @@ export declare const DepartmentSummarySchema: z.ZodObject<{
         count: number;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
-    department: string;
     totalStaff: number;
+    department: string;
     activeStaff: number;
     positions: {
         position: string;
         count: number;
     }[];
 }, {
-    department: string;
     totalStaff: number;
+    department: string;
     activeStaff: number;
     positions: {
         position: string;
@@ -235,16 +235,16 @@ export declare const StaffSummarySchema: z.ZodObject<{
             count: number;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
-        department: string;
         totalStaff: number;
+        department: string;
         activeStaff: number;
         positions: {
             position: string;
             count: number;
         }[];
     }, {
-        department: string;
         totalStaff: number;
+        department: string;
         activeStaff: number;
         positions: {
             position: string;
@@ -275,8 +275,8 @@ export declare const StaffSummarySchema: z.ZodObject<{
     activeStaff: number;
     inactiveStaff: number;
     departmentBreakdown: {
-        department: string;
         totalStaff: number;
+        department: string;
         activeStaff: number;
         positions: {
             position: string;
@@ -295,8 +295,8 @@ export declare const StaffSummarySchema: z.ZodObject<{
     activeStaff: number;
     inactiveStaff: number;
     departmentBreakdown: {
-        department: string;
         totalStaff: number;
+        department: string;
         activeStaff: number;
         positions: {
             position: string;
@@ -320,8 +320,8 @@ export declare const StaffReportQuerySchema: z.ZodObject<{
     groupBy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["department", "position", "joiningYear"]>>>;
     format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "pdf"]>>>;
 }, "strip", z.ZodTypeAny, {
-    groupBy: "department" | "position" | "joiningYear";
     format: "json" | "csv" | "pdf";
+    groupBy: "department" | "position" | "joiningYear";
     isActive?: boolean | undefined;
     department?: string | undefined;
     position?: string | undefined;
@@ -329,8 +329,8 @@ export declare const StaffReportQuerySchema: z.ZodObject<{
     joiningDateTo?: string | undefined;
 }, {
     isActive?: boolean | undefined;
-    groupBy?: "department" | "position" | "joiningYear" | undefined;
     format?: "json" | "csv" | "pdf" | undefined;
+    groupBy?: "department" | "position" | "joiningYear" | undefined;
     department?: string | undefined;
     position?: string | undefined;
     joiningDateFrom?: string | undefined;

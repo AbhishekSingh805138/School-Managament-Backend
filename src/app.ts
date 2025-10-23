@@ -15,6 +15,8 @@ import classRoutes from './routes/classes';
 import studentRoutes from './routes/students';
 import parentRoutes from './routes/parents';
 import teacherRoutes from './routes/teachers';
+import attendanceRoutes from './routes/attendance';
+import attendanceReportRoutes from './routes/attendanceReports';
 
 const app = express();
 
@@ -66,6 +68,8 @@ app.use('/api/v1/classes', classRoutes);
 app.use('/api/v1/students', studentRoutes);
 app.use('/api/v1/parents', parentRoutes);
 app.use('/api/v1/teachers', teacherRoutes);
+app.use('/api/v1/attendance', attendanceRoutes);
+app.use('/api/v1/attendance-reports', attendanceReportRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {
@@ -83,6 +87,7 @@ app.get('/api/v1', (req, res) => {
       parents: '/api/v1/parents',
       teachers: '/api/v1/teachers',
       attendance: '/api/v1/attendance',
+      attendanceReports: '/api/v1/attendance-reports',
       fees: '/api/v1/fees',
       grades: '/api/v1/grades',
       reports: '/api/v1/reports',

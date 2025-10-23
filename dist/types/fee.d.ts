@@ -243,16 +243,16 @@ export declare const CreatePaymentSchema: z.ZodObject<{
     remarks: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     amount: number;
-    studentFeeId: string;
     paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    studentFeeId: string;
     paymentDate?: string | undefined;
     receiptNumber?: string | undefined;
     remarks?: string | undefined;
     transactionId?: string | undefined;
 }, {
     amount: number;
-    studentFeeId: string;
     paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    studentFeeId: string;
     paymentDate?: string | undefined;
     receiptNumber?: string | undefined;
     remarks?: string | undefined;
@@ -346,8 +346,8 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     paymentDate: string;
     receiptNumber: string;
     remarks: string | null;
-    studentFeeId: string;
     paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    studentFeeId: string;
     transactionId: string | null;
     processedBy: string;
     studentFee?: {
@@ -375,8 +375,8 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     paymentDate: string;
     receiptNumber: string;
     remarks: string | null;
-    studentFeeId: string;
     paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    studentFeeId: string;
     transactionId: string | null;
     processedBy: string;
     studentFee?: {
@@ -495,19 +495,19 @@ export declare const ClassFeeSummarySchema: z.ZodObject<{
     className: string;
     totalFees: number;
     totalStudents: number;
+    collectionPercentage: number;
     totalPaid: number;
     totalPending: number;
     totalOverdue: number;
-    collectionPercentage: number;
 }, {
     classId: string;
     className: string;
     totalFees: number;
     totalStudents: number;
+    collectionPercentage: number;
     totalPaid: number;
     totalPending: number;
     totalOverdue: number;
-    collectionPercentage: number;
 }>;
 export declare const FeeReportQuerySchema: z.ZodObject<{
     classId: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
@@ -520,8 +520,8 @@ export declare const FeeReportQuerySchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     startDate: string;
     endDate: string;
-    groupBy: "date" | "student" | "class" | "category";
     format: "json" | "csv" | "pdf";
+    groupBy: "date" | "student" | "class" | "category";
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
     feeCategoryId?: string | undefined;
@@ -530,9 +530,9 @@ export declare const FeeReportQuerySchema: z.ZodObject<{
     endDate: string;
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
-    feeCategoryId?: string | undefined;
-    groupBy?: "date" | "student" | "class" | "category" | undefined;
     format?: "json" | "csv" | "pdf" | undefined;
+    groupBy?: "date" | "student" | "class" | "category" | undefined;
+    feeCategoryId?: string | undefined;
 }>;
 export declare const FeeReportItemSchema: z.ZodObject<{
     studentId: z.ZodEffects<z.ZodString, string, string>;
@@ -615,16 +615,16 @@ export declare const FeeReportSchema: z.ZodObject<{
         collectionPercentage: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
         totalStudents: number;
+        collectionPercentage: number;
         totalAmount: number;
         totalPaid: number;
         totalPending: number;
-        collectionPercentage: number;
     }, {
         totalStudents: number;
+        collectionPercentage: number;
         totalAmount: number;
         totalPaid: number;
         totalPending: number;
-        collectionPercentage: number;
     }>;
 }, "strip", z.ZodTypeAny, {
     data: {
@@ -645,10 +645,10 @@ export declare const FeeReportSchema: z.ZodObject<{
     generatedAt: string;
     summary: {
         totalStudents: number;
+        collectionPercentage: number;
         totalAmount: number;
         totalPaid: number;
         totalPending: number;
-        collectionPercentage: number;
     };
 }, {
     data: {
@@ -669,10 +669,10 @@ export declare const FeeReportSchema: z.ZodObject<{
     generatedAt: string;
     summary: {
         totalStudents: number;
+        collectionPercentage: number;
         totalAmount: number;
         totalPaid: number;
         totalPending: number;
-        collectionPercentage: number;
     };
 }>;
 export type FeeFrequency = z.infer<typeof FeeFrequencySchema>;
