@@ -256,8 +256,8 @@ export declare const AuditLogSchema: z.ZodObject<{
     userAgent: z.ZodOptional<z.ZodString>;
     createdAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    action: string;
     id: string;
+    action: string;
     userId: string;
     createdAt: string;
     entityType: string;
@@ -267,8 +267,8 @@ export declare const AuditLogSchema: z.ZodObject<{
     ipAddress?: string | undefined;
     userAgent?: string | undefined;
 }, {
-    action: string;
     id: string;
+    action: string;
     userId: string;
     createdAt: string;
     entityType: string;

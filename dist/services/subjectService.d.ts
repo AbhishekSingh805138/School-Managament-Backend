@@ -1,0 +1,53 @@
+import { BaseService } from './baseService';
+import { CreateSubject, UpdateSubject } from '../types/academic';
+export declare class SubjectService extends BaseService {
+    createSubject(subjectData: CreateSubject): Promise<{
+        id: any;
+        altId: any;
+        name: any;
+        code: any;
+        description: any;
+        creditHours: any;
+        isActive: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    getSubjects(req: any): Promise<{
+        subjects: any;
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+    }>;
+    getSubjectById(id: string): Promise<{
+        classes: any;
+        teachers: any;
+        id: any;
+        altId: any;
+        name: any;
+        code: any;
+        description: any;
+        creditHours: any;
+        isActive: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    updateSubject(id: string, updateData: UpdateSubject): Promise<{
+        id: any;
+        altId: any;
+        name: any;
+        code: any;
+        description: any;
+        creditHours: any;
+        isActive: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    deleteSubject(id: string): Promise<{
+        success: boolean;
+    }>;
+    private transformSubjectResponse;
+}
+//# sourceMappingURL=subjectService.d.ts.map
