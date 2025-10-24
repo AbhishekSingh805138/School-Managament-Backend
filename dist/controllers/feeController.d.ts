@@ -1,0 +1,13 @@
+import { Request, Response } from 'express';
+export declare const createFeeCategory: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const getFeeCategories: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const getFeeCategoryById: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const updateFeeCategory: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const deleteFeeCategory: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const assignFeesToStudents: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const assignFeesToClass: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const getStudentFees: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const getStudentFeeById: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const updateStudentFee: (req: Request, res: Response, next: import("express").NextFunction) => void;
+export declare const calculateDueDates: (startDate: Date, frequency: string, academicYearEnd: Date) => Date[];
+//# sourceMappingURL=feeController.d.ts.map

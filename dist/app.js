@@ -20,6 +20,9 @@ const parents_1 = __importDefault(require("./routes/parents"));
 const teachers_1 = __importDefault(require("./routes/teachers"));
 const attendance_1 = __importDefault(require("./routes/attendance"));
 const attendanceReports_1 = __importDefault(require("./routes/attendanceReports"));
+const fees_1 = __importDefault(require("./routes/fees"));
+const payments_1 = __importDefault(require("./routes/payments"));
+const feeReports_1 = __importDefault(require("./routes/feeReports"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -58,6 +61,9 @@ app.use('/api/v1/parents', parents_1.default);
 app.use('/api/v1/teachers', teachers_1.default);
 app.use('/api/v1/attendance', attendance_1.default);
 app.use('/api/v1/attendance-reports', attendanceReports_1.default);
+app.use('/api/v1/fees', fees_1.default);
+app.use('/api/v1/payments', payments_1.default);
+app.use('/api/v1/fee-reports', feeReports_1.default);
 app.get('/api/v1', (req, res) => {
     res.json({
         success: true,
@@ -73,7 +79,10 @@ app.get('/api/v1', (req, res) => {
             parents: '/api/v1/parents',
             teachers: '/api/v1/teachers',
             attendance: '/api/v1/attendance',
+            attendanceReports: '/api/v1/attendance-reports',
             fees: '/api/v1/fees',
+            payments: '/api/v1/payments',
+            feeReports: '/api/v1/fee-reports',
             grades: '/api/v1/grades',
             reports: '/api/v1/reports',
         },
