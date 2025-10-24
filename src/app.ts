@@ -20,6 +20,10 @@ import attendanceReportRoutes from './routes/attendanceReports';
 import feeRoutes from './routes/fees';
 import paymentRoutes from './routes/payments';
 import feeReportRoutes from './routes/feeReports';
+import gradeRoutes from './routes/grades';
+import assessmentTypeRoutes from './routes/assessmentTypes';
+import reportCardRoutes from './routes/reportCards';
+import staffRoutes from './routes/staff';
 
 const app = express();
 
@@ -76,6 +80,10 @@ app.use('/api/v1/attendance-reports', attendanceReportRoutes);
 app.use('/api/v1/fees', feeRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/fee-reports', feeReportRoutes);
+app.use('/api/v1/grades', gradeRoutes);
+app.use('/api/v1/assessment-types', assessmentTypeRoutes);
+app.use('/api/v1/report-cards', reportCardRoutes);
+app.use('/api/v1/staff', staffRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {
@@ -98,6 +106,9 @@ app.get('/api/v1', (req, res) => {
       payments: '/api/v1/payments',
       feeReports: '/api/v1/fee-reports',
       grades: '/api/v1/grades',
+      assessmentTypes: '/api/v1/assessment-types',
+      reportCards: '/api/v1/report-cards',
+      staff: '/api/v1/staff',
       reports: '/api/v1/reports',
     },
   });

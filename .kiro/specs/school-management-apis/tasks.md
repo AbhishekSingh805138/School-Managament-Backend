@@ -180,14 +180,21 @@
     - _Requirements: 5.4, 10.3_
 
 - [ ] 8. Academic Performance Management
-  - [ ] 8.1 Implement grading system
+  - [x] 8.1 Implement grading system
+
+
+
+
     - Create grade entry functionality for teachers
     - Implement assessment type management (assignments, exams, projects)
     - Add grade calculation logic with weighted averages
     - Create grade validation and authorization checks
     - _Requirements: 6.1, 6.2, 6.3, 6.5_
 
-  - [ ] 8.2 Implement report card generation
+  - [x] 8.2 Implement report card generation
+
+
+
     - Create semester-wise report card compilation
     - Implement overall grade calculation and ranking
     - Add report card template and PDF generation
@@ -195,7 +202,14 @@
     - _Requirements: 6.4, 10.2_
 
 - [ ] 9. Staff Management System
-  - [ ] 9.1 Implement staff profile management
+  - [-] 9.1 Implement staff profile management
+
+
+
+
+
+
+
     - Create staff registration with role-specific permissions
     - Implement staff role assignment (librarian, accountant, clerk)
     - Add staff employment tracking and status management
