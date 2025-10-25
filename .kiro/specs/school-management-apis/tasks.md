@@ -202,7 +202,7 @@
     - _Requirements: 6.4, 10.2_
 
 - [ ] 9. Staff Management System
-  - [-] 9.1 Implement staff profile management
+  - [x] 9.1 Implement staff profile management
 
 
 

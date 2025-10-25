@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FeeReportService = exports.AttendanceReportService = exports.ParentService = exports.PaymentService = exports.FeeService = exports.AttendanceService = exports.SemesterService = exports.ClassService = exports.SubjectService = exports.StudentService = exports.TeacherService = exports.AcademicYearService = exports.UserService = exports.AuthService = exports.BaseService = void 0;
+exports.FeeReportService = exports.AttendanceReportService = exports.StaffService = exports.ParentService = exports.PaymentService = exports.FeeService = exports.AttendanceService = exports.SemesterService = exports.ClassService = exports.SubjectService = exports.StudentService = exports.TeacherService = exports.AcademicYearService = exports.UserService = exports.AuthService = exports.BaseService = void 0;
 var baseService_1 = require("./baseService");
 Object.defineProperty(exports, "BaseService", { enumerable: true, get: function () { return baseService_1.BaseService; } });
 var authService_1 = require("./authService");
@@ -27,6 +27,8 @@ var paymentService_1 = require("./paymentService");
 Object.defineProperty(exports, "PaymentService", { enumerable: true, get: function () { return paymentService_1.PaymentService; } });
 var parentService_1 = require("./parentService");
 Object.defineProperty(exports, "ParentService", { enumerable: true, get: function () { return parentService_1.ParentService; } });
+var staffService_1 = require("./staffService");
+Object.defineProperty(exports, "StaffService", { enumerable: true, get: function () { return staffService_1.StaffService; } });
 var attendanceReportService_1 = require("./attendanceReportService");
 Object.defineProperty(exports, "AttendanceReportService", { enumerable: true, get: function () { return attendanceReportService_1.AttendanceReportService; } });
 var feeReportService_1 = require("./feeReportService");

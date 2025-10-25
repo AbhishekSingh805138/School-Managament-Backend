@@ -27,6 +27,7 @@ const grades_1 = __importDefault(require("./routes/grades"));
 const assessmentTypes_1 = __importDefault(require("./routes/assessmentTypes"));
 const reportCards_1 = __importDefault(require("./routes/reportCards"));
 const staff_1 = __importDefault(require("./routes/staff"));
+const reportExports_1 = __importDefault(require("./routes/reportExports"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -72,6 +73,7 @@ app.use('/api/v1/grades', grades_1.default);
 app.use('/api/v1/assessment-types', assessmentTypes_1.default);
 app.use('/api/v1/report-cards', reportCards_1.default);
 app.use('/api/v1/staff', staff_1.default);
+app.use('/api/v1/reports', reportExports_1.default);
 app.get('/api/v1', (req, res) => {
     res.json({
         success: true,
@@ -96,6 +98,7 @@ app.get('/api/v1', (req, res) => {
             reportCards: '/api/v1/report-cards',
             staff: '/api/v1/staff',
             reports: '/api/v1/reports',
+            reportExports: '/api/v1/reports',
         },
     });
 });

@@ -24,6 +24,7 @@ import gradeRoutes from './routes/grades';
 import assessmentTypeRoutes from './routes/assessmentTypes';
 import reportCardRoutes from './routes/reportCards';
 import staffRoutes from './routes/staff';
+import reportExportRoutes from './routes/reportExports';
 
 const app = express();
 
@@ -84,6 +85,7 @@ app.use('/api/v1/grades', gradeRoutes);
 app.use('/api/v1/assessment-types', assessmentTypeRoutes);
 app.use('/api/v1/report-cards', reportCardRoutes);
 app.use('/api/v1/staff', staffRoutes);
+app.use('/api/v1/reports', reportExportRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {
@@ -110,6 +112,7 @@ app.get('/api/v1', (req, res) => {
       reportCards: '/api/v1/report-cards',
       staff: '/api/v1/staff',
       reports: '/api/v1/reports',
+      reportExports: '/api/v1/reports',
     },
   });
 });
