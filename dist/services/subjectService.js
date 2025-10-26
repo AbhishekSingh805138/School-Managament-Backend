@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SubjectService = void 0;
+exports.subjectService = exports.SubjectService = void 0;
 const baseService_1 = require("./baseService");
 const errorHandler_1 = require("../middleware/errorHandler");
 const pagination_1 = require("../utils/pagination");
@@ -115,6 +115,85 @@ class SubjectService extends baseService_1.BaseService {
         await this.executeQuery('UPDATE subjects SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [actualSubjectId]);
         return { success: true };
     }
+    async toggleSubjectStatus(id, isActive) {
+        const existingSubject = await this.checkEntityExists('subjects', id, 'alt_id');
+        const actualSubjectId = existingSubject.id;
+        const result = await this.executeQuery('UPDATE subjects SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *', [isActive, actualSubjectId]);
+        return this.transformSubjectResponse(result.rows[0]);
+    }
+    async getSubjectStatistics(id) {
+        const subject = await this.checkEntityExists('subjects', id, 'alt_id');
+        const actualSubjectId = subject.id;
+        const statsQuery = `
+      SELECT 
+        (SELECT COUNT(*) FROM class_subjects WHERE subject_id = $1) as total_classes,
+        (SELECT COUNT(DISTINCT t.id) 
+         FROM teacher_subjects ts 
+         JOIN teachers t ON ts.teacher_id = t.id 
+         WHERE ts.subject_id = $1 AND t.is_active = true) as total_teachers,
+        (SELECT COUNT(DISTINCT s.id) 
+         FROM students s 
+         JOIN classes c ON c.id = s.class_id 
+         JOIN class_subjects cs ON cs.class_id = c.id 
+         WHERE cs.subject_id = $1 AND s.is_active = true) as total_students,
+        (SELECT COUNT(*) FROM grades WHERE subject_id = $1) as total_grades,
+        (SELECT AVG(marks_obtained::float / total_marks * 100) 
+         FROM grades 
+         WHERE subject_id = $1 AND total_marks > 0) as average_percentage
+    `;
+        const statsResult = await this.executeQuery(statsQuery, [actualSubjectId]);
+        const stats = statsResult.rows[0];
+        const gradeDistributionQuery = `
+      SELECT 
+        CASE 
+          WHEN (marks_obtained::float / total_marks * 100) >= 90 THEN 'A+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 80 THEN 'A'
+          WHEN (marks_obtained::float / total_marks * 100) >= 70 THEN 'B+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 60 THEN 'B'
+          WHEN (marks_obtained::float / total_marks * 100) >= 50 THEN 'C+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 40 THEN 'C'
+          ELSE 'F'
+        END as grade,
+        COUNT(*) as count
+      FROM grades 
+      WHERE subject_id = $1 AND total_marks > 0
+      GROUP BY 
+        CASE 
+          WHEN (marks_obtained::float / total_marks * 100) >= 90 THEN 'A+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 80 THEN 'A'
+          WHEN (marks_obtained::float / total_marks * 100) >= 70 THEN 'B+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 60 THEN 'B'
+          WHEN (marks_obtained::float / total_marks * 100) >= 50 THEN 'C+'
+          WHEN (marks_obtained::float / total_marks * 100) >= 40 THEN 'C'
+          ELSE 'F'
+        END
+      ORDER BY 
+        CASE 
+          WHEN (marks_obtained::float / total_marks * 100) >= 90 THEN 1
+          WHEN (marks_obtained::float / total_marks * 100) >= 80 THEN 2
+          WHEN (marks_obtained::float / total_marks * 100) >= 70 THEN 3
+          WHEN (marks_obtained::float / total_marks * 100) >= 60 THEN 4
+          WHEN (marks_obtained::float / total_marks * 100) >= 50 THEN 5
+          WHEN (marks_obtained::float / total_marks * 100) >= 40 THEN 6
+          ELSE 7
+        END
+    `;
+        const gradeDistributionResult = await this.executeQuery(gradeDistributionQuery, [actualSubjectId]);
+        return {
+            subject: this.transformSubjectResponse(subject),
+            stats: {
+                totalClasses: parseInt(stats.total_classes) || 0,
+                totalTeachers: parseInt(stats.total_teachers) || 0,
+                totalStudents: parseInt(stats.total_students) || 0,
+                totalGrades: parseInt(stats.total_grades) || 0,
+                averagePercentage: stats.average_percentage ? parseFloat(stats.average_percentage).toFixed(2) : null
+            },
+            gradeDistribution: gradeDistributionResult.rows.map((row) => ({
+                grade: row.grade,
+                count: parseInt(row.count)
+            }))
+        };
+    }
     transformSubjectResponse(subject) {
         return {
             id: subject.id,
@@ -130,4 +209,5 @@ class SubjectService extends baseService_1.BaseService {
     }
 }
 exports.SubjectService = SubjectService;
+exports.subjectService = new SubjectService();
 //# sourceMappingURL=subjectService.js.map

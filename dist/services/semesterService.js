@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SemesterService = void 0;
+exports.semesterService = exports.SemesterService = void 0;
 const baseService_1 = require("./baseService");
 const errorHandler_1 = require("../middleware/errorHandler");
 const pagination_1 = require("../utils/pagination");
@@ -166,4 +166,5 @@ class SemesterService extends baseService_1.BaseService {
     }
 }
 exports.SemesterService = SemesterService;
+exports.semesterService = new SemesterService();
 //# sourceMappingURL=semesterService.js.map

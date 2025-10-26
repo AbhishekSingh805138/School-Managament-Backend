@@ -48,6 +48,39 @@ export declare class SubjectService extends BaseService {
     deleteSubject(id: string): Promise<{
         success: boolean;
     }>;
+    toggleSubjectStatus(id: string, isActive: boolean): Promise<{
+        id: any;
+        altId: any;
+        name: any;
+        code: any;
+        description: any;
+        creditHours: any;
+        isActive: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    getSubjectStatistics(id: string): Promise<{
+        subject: {
+            id: any;
+            altId: any;
+            name: any;
+            code: any;
+            description: any;
+            creditHours: any;
+            isActive: any;
+            createdAt: any;
+            updatedAt: any;
+        };
+        stats: {
+            totalClasses: number;
+            totalTeachers: number;
+            totalStudents: number;
+            totalGrades: number;
+            averagePercentage: string | null;
+        };
+        gradeDistribution: any;
+    }>;
     private transformSubjectResponse;
 }
+export declare const subjectService: SubjectService;
 //# sourceMappingURL=subjectService.d.ts.map

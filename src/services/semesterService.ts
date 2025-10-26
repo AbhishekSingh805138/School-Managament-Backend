@@ -246,3 +246,5 @@ export class SemesterService extends BaseService {
     };
   }
 }
+export
+ const semesterService = new SemesterService();

@@ -139,5 +139,107 @@ export declare class TeacherService extends BaseService {
         specializations: any;
         teachingAssignments: any;
     }>;
+    removeTeacherFromClass(classId: string): Promise<{
+        success: boolean;
+    }>;
+    assignTeacherToClassSubject(teacherId: string, classId: string, subjectId: string): Promise<{
+        id: any;
+        classId: any;
+        subjectId: any;
+        teacherId: string;
+        createdAt: any;
+        teacher: {
+            name: string;
+        };
+        class: {
+            name: any;
+            grade: any;
+            section: any;
+        };
+        subject: {
+            name: any;
+            code: any;
+        };
+        updatedAt?: undefined;
+    } | {
+        id: any;
+        classId: any;
+        subjectId: any;
+        teacherId: string;
+        updatedAt: any;
+        teacher: {
+            name: string;
+        };
+        class: {
+            name: any;
+            grade: any;
+            section: any;
+        };
+        subject: {
+            name: any;
+            code: any;
+        };
+        createdAt?: undefined;
+    }>;
+    removeTeacherFromClassSubject(classId: string, subjectId: string): Promise<{
+        success: boolean;
+    }>;
+    getAllTeacherAssignments(req: any): Promise<{
+        assignments: any[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+    }>;
+    checkAssignmentConflicts(teacherId: string, classId: string, subjectId: string): Promise<{
+        teacher: {
+            id: string;
+            name: string;
+        };
+        class: {
+            id: string;
+            name: any;
+            grade: any;
+            section: any;
+        };
+        subject: {
+            id: string;
+            name: any;
+            code: any;
+        };
+        conflicts: string[];
+        canAssign: boolean;
+        workloadInfo: {
+            currentAssignments: number;
+            mainClasses: number;
+            sameGradeAssignments: number;
+            hasSpecialization: boolean;
+        };
+        recommendations: string[];
+    }>;
+    getOptimalTeacherSuggestions(classId: string, subjectId: string): Promise<{
+        class: {
+            id: string;
+            name: any;
+            grade: any;
+            section: any;
+        };
+        subject: {
+            id: string;
+            name: any;
+            code: any;
+        };
+        suggestions: any[];
+        summary: {
+            totalTeachers: number;
+            excellentMatches: number;
+            goodMatches: number;
+            cautionMatches: number;
+            availableTeachers: number;
+        };
+    }>;
+    private generateAssignmentRecommendations;
 }
 //# sourceMappingURL=teacherService.d.ts.map

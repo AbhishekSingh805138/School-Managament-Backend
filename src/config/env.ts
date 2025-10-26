@@ -34,6 +34,16 @@ const validateEnv = () => {
     return envSchema.parse(process.env);
   } catch (error) {
     console.error('❌ Invalid environment variables:', error);
+    
+    // In test environment, provide more helpful error info
+    if (process.env.NODE_ENV === 'test') {
+      console.error('Test environment variables:', {
+        NODE_ENV: process.env.NODE_ENV,
+        JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
+        DB_PASSWORD: process.env.DB_PASSWORD ? 'SET' : 'NOT SET'
+      });
+    }
+    
     process.exit(1);
   }
 };

@@ -8,5 +8,9 @@ process.env.DB_PORT = '5432';
 process.env.DB_NAME = 'SMS';
 process.env.DB_USER = 'postgres';
 process.env.DB_PASSWORD = 'Kishan8051';
+process.env.JWT_EXPIRES_IN = '7d';
+process.env.CORS_ORIGIN = 'http://localhost:3000';
+process.env.RATE_LIMIT_WINDOW_MS = '900000';
+process.env.RATE_LIMIT_MAX_REQUESTS = '100';
 globals_1.jest.setTimeout(10000);
 //# sourceMappingURL=setup.js.map

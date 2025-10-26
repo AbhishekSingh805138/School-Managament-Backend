@@ -82,21 +82,52 @@ exports.getTeacherWorkload = (0, errorHandler_1.asyncHandler)(async (req, res) =
     });
 });
 exports.removeTeacherFromClass = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const { classId } = req.params;
+    await teacherService.removeTeacherFromClass(classId);
+    res.json({
+        success: true,
+        message: 'Teacher removed from class successfully',
+    });
 });
 exports.assignTeacherToClassSubject = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const { teacherId, classId, subjectId } = req.body;
+    const assignment = await teacherService.assignTeacherToClassSubject(teacherId, classId, subjectId);
+    res.status(201).json({
+        success: true,
+        message: 'Teacher assigned to class-subject successfully',
+        data: assignment,
+    });
 });
 exports.removeTeacherFromClassSubject = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const { classId, subjectId } = req.params;
+    await teacherService.removeTeacherFromClassSubject(classId, subjectId);
+    res.json({
+        success: true,
+        message: 'Teacher removed from class-subject assignment successfully',
+    });
 });
 exports.getAllTeacherAssignments = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const result = await teacherService.getAllTeacherAssignments(req);
+    res.json({
+        success: true,
+        data: result.assignments,
+        pagination: result.pagination,
+    });
 });
 exports.checkAssignmentConflicts = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const { teacherId, classId, subjectId } = req.body;
+    const conflicts = await teacherService.checkAssignmentConflicts(teacherId, classId, subjectId);
+    res.json({
+        success: true,
+        data: conflicts,
+    });
 });
 exports.getOptimalTeacherSuggestions = (0, errorHandler_1.asyncHandler)(async (req, res) => {
-    res.status(501).json({ success: false, message: 'Not implemented yet' });
+    const { classId, subjectId } = req.params;
+    const suggestions = await teacherService.getOptimalTeacherSuggestions(classId, subjectId);
+    res.json({
+        success: true,
+        data: suggestions,
+    });
 });
 //# sourceMappingURL=teacherController.js.map

@@ -71,4 +71,5 @@ export declare class SemesterService extends BaseService {
     }>;
     private transformSemesterResponse;
 }
+export declare const semesterService: SemesterService;
 //# sourceMappingURL=semesterService.d.ts.map
