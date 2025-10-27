@@ -1,0 +1,65 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+nimport;
+fs;
+from;
+'fs';
+nimport;
+path;
+from;
+'path';
+n;
+n;
+n;
+nexport;
+n;
+timestamp: string;
+n;
+eventType: string;
+n;
+userId ?  : string;
+n;
+userEmail ?  : string;
+n;
+userRole ?  : string;
+n;
+ipAddress: string;
+n;
+userAgent: string;
+n;
+method: string;
+n;
+endpoint: string;
+n;
+statusCode ?  : number;
+n;
+resource ?  : string;
+n;
+resourceId ?  : string;
+n;
+action: string;
+n;
+details ?  : any;
+n;
+success: boolean;
+n;
+duration ?  : number;
+n;
+sessionId ?  : string;
+n;
+requestId ?  : string;
+n;
+n;
+nexport;
+class AuditLogger {
+    constructor() {
+        this.logBuffer = [];
+        this.maxBufferSize = 100;
+        this.logDirectory = 'logs/audit';
+        this.logFile = 'audit.log';
+        n;
+        this.ensureLogDirectory();
+        n;
+    }
+}
+//# sourceMappingURL=auditLogger.js.map

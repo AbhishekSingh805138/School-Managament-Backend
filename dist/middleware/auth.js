@@ -42,6 +42,9 @@ exports.authenticate = (0, errorHandler_1.asyncHandler)(async (req, res, next) =
         next();
     }
     catch (error) {
+        if (error instanceof jsonwebtoken_1.default.TokenExpiredError) {
+            throw new errorHandler_1.AppError('Access token has expired. Please refresh your token.', 401);
+        }
         if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
             throw new errorHandler_1.AppError('Invalid token', 401);
         }

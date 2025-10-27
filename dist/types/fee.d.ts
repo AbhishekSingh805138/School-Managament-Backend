@@ -10,17 +10,17 @@ export declare const CreateFeeCategorySchema: z.ZodObject<{
     isMandatory: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     academicYearId: z.ZodEffects<z.ZodString, string, string>;
 }, "strip", z.ZodTypeAny, {
-    academicYearId: string;
     name: string;
+    academicYearId: string;
     amount: number;
-    frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+    frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     isMandatory: boolean;
     description?: string | undefined;
 }, {
-    academicYearId: string;
     name: string;
+    academicYearId: string;
     amount: number;
-    frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+    frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     description?: string | undefined;
     isMandatory?: boolean | undefined;
 }>;
@@ -35,13 +35,13 @@ export declare const UpdateFeeCategorySchema: z.ZodObject<Omit<{
     name?: string | undefined;
     description?: string | undefined;
     amount?: number | undefined;
-    frequency?: "monthly" | "quarterly" | "semester" | "annual" | "one-time" | undefined;
+    frequency?: "semester" | "monthly" | "quarterly" | "annual" | "one-time" | undefined;
     isMandatory?: boolean | undefined;
 }, {
     name?: string | undefined;
     description?: string | undefined;
     amount?: number | undefined;
-    frequency?: "monthly" | "quarterly" | "semester" | "annual" | "one-time" | undefined;
+    frequency?: "semester" | "monthly" | "quarterly" | "annual" | "one-time" | undefined;
     isMandatory?: boolean | undefined;
 }>;
 export declare const FeeCategoryResponseSchema: z.ZodObject<{
@@ -61,47 +61,47 @@ export declare const FeeCategoryResponseSchema: z.ZodObject<{
         startDate: z.ZodString;
         endDate: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string | null;
+    academicYearId: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    academicYearId: string;
-    name: string;
     altId: string | null;
-    description: string | null;
     amount: number;
-    frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+    frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     isMandatory: boolean;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     } | undefined;
 }, {
+    name: string;
+    description: string | null;
+    academicYearId: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    academicYearId: string;
-    name: string;
     altId: string | null;
-    description: string | null;
     amount: number;
-    frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+    frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     isMandatory: boolean;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     } | undefined;
 }>;
 export declare const CreateStudentFeeSchema: z.ZodObject<{
@@ -164,27 +164,27 @@ export declare const StudentFeeResponseSchema: z.ZodObject<{
             lastName: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }>>;
     feeCategory: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
         frequency: z.ZodEnum<["monthly", "quarterly", "semester", "annual", "one-time"]>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+        frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     }, {
         name: string;
-        frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+        frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "pending" | "overdue" | "partial" | "paid" | "waived";
@@ -199,15 +199,15 @@ export declare const StudentFeeResponseSchema: z.ZodObject<{
     discountAmount: number;
     totalAmount: number;
     student?: {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     } | undefined;
     feeCategory?: {
         name: string;
-        frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+        frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     } | undefined;
 }, {
     status: "pending" | "overdue" | "partial" | "paid" | "waived";
@@ -222,15 +222,15 @@ export declare const StudentFeeResponseSchema: z.ZodObject<{
     discountAmount: number;
     totalAmount: number;
     student?: {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     } | undefined;
     feeCategory?: {
         name: string;
-        frequency: "monthly" | "quarterly" | "semester" | "annual" | "one-time";
+        frequency: "semester" | "monthly" | "quarterly" | "annual" | "one-time";
     } | undefined;
 }>;
 export declare const CreatePaymentSchema: z.ZodObject<{
@@ -285,17 +285,17 @@ export declare const PaymentResponseSchema: z.ZodObject<{
                 lastName: string;
             }>;
         }, "strip", z.ZodTypeAny, {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         }, {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         }>;
         feeCategory: z.ZodObject<{
             name: z.ZodString;
@@ -306,22 +306,22 @@ export declare const PaymentResponseSchema: z.ZodObject<{
         }>;
     }, "strip", z.ZodTypeAny, {
         student: {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         };
         feeCategory: {
             name: string;
         };
     }, {
         student: {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         };
         feeCategory: {
             name: string;
@@ -352,11 +352,11 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     processedBy: string;
     studentFee?: {
         student: {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         };
         feeCategory: {
             name: string;
@@ -381,11 +381,11 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     processedBy: string;
     studentFee?: {
         student: {
-            studentId: string;
             user: {
                 firstName: string;
                 lastName: string;
             };
+            studentId: string;
         };
         feeCategory: {
             name: string;
@@ -438,8 +438,8 @@ export declare const FeeQuerySchema: z.ZodObject<{
     page: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
     limit: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
@@ -448,10 +448,10 @@ export declare const FeeQuerySchema: z.ZodObject<{
     feeCategoryId?: string | undefined;
 }, {
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
-    page?: string | undefined;
-    limit?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
+    limit?: string | undefined;
+    page?: string | undefined;
     classId?: string | undefined;
     studentId?: string | undefined;
     feeCategoryId?: string | undefined;
@@ -521,7 +521,7 @@ export declare const FeeReportQuerySchema: z.ZodObject<{
     startDate: string;
     endDate: string;
     format: "json" | "csv" | "pdf";
-    groupBy: "date" | "student" | "class" | "category";
+    groupBy: "date" | "class" | "student" | "category";
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
     feeCategoryId?: string | undefined;
@@ -531,7 +531,7 @@ export declare const FeeReportQuerySchema: z.ZodObject<{
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
     format?: "json" | "csv" | "pdf" | undefined;
-    groupBy?: "date" | "student" | "class" | "category" | undefined;
+    groupBy?: "date" | "class" | "student" | "category" | undefined;
     feeCategoryId?: string | undefined;
 }>;
 export declare const FeeReportItemSchema: z.ZodObject<{
@@ -627,6 +627,8 @@ export declare const FeeReportSchema: z.ZodObject<{
         totalPending: number;
     }>;
 }, "strip", z.ZodTypeAny, {
+    startDate: string;
+    endDate: string;
     data: {
         status: "pending" | "overdue" | "partial" | "paid" | "waived";
         studentId: string;
@@ -639,8 +641,6 @@ export declare const FeeReportSchema: z.ZodObject<{
         lastPaymentDate: string | null;
         feeCategoryName: string;
     }[];
-    startDate: string;
-    endDate: string;
     reportType: string;
     generatedAt: string;
     summary: {
@@ -651,6 +651,8 @@ export declare const FeeReportSchema: z.ZodObject<{
         totalPending: number;
     };
 }, {
+    startDate: string;
+    endDate: string;
     data: {
         status: "pending" | "overdue" | "partial" | "paid" | "waived";
         studentId: string;
@@ -663,8 +665,6 @@ export declare const FeeReportSchema: z.ZodObject<{
         lastPaymentDate: string | null;
         feeCategoryName: string;
     }[];
-    startDate: string;
-    endDate: string;
     reportType: string;
     generatedAt: string;
     summary: {

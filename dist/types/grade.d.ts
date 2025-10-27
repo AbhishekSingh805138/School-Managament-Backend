@@ -36,22 +36,22 @@ export declare const AssessmentTypeResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string | null;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    name: string;
     altId: string | null;
-    description: string | null;
     weightage: number;
 }, {
+    name: string;
+    description: string | null;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    name: string;
     altId: string | null;
-    description: string | null;
     weightage: number;
 }>;
 export declare const CreateGradeSchema: z.ZodEffects<z.ZodObject<{
@@ -144,17 +144,17 @@ export declare const GradeResponseSchema: z.ZodObject<{
             lastName: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }>>;
     subject: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
@@ -186,15 +186,15 @@ export declare const GradeResponseSchema: z.ZodObject<{
             name: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        name: string;
         academicYear: {
             name: string;
         };
+        name: string;
     }, {
-        name: string;
         academicYear: {
             name: string;
         };
+        name: string;
     }>>;
     recordedByUser: z.ZodOptional<z.ZodObject<{
         firstName: z.ZodString;
@@ -221,26 +221,26 @@ export declare const GradeResponseSchema: z.ZodObject<{
     semesterId: string;
     assessmentTypeId: string;
     recordedBy: string;
-    student?: {
-        studentId: string;
-        user: {
-            firstName: string;
-            lastName: string;
+    semester?: {
+        academicYear: {
+            name: string;
         };
+        name: string;
     } | undefined;
     subject?: {
         code: string;
         name: string;
     } | undefined;
+    student?: {
+        user: {
+            firstName: string;
+            lastName: string;
+        };
+        studentId: string;
+    } | undefined;
     assessmentType?: {
         name: string;
         weightage: number;
-    } | undefined;
-    semester?: {
-        name: string;
-        academicYear: {
-            name: string;
-        };
     } | undefined;
     recordedByUser?: {
         firstName: string;
@@ -261,26 +261,26 @@ export declare const GradeResponseSchema: z.ZodObject<{
     semesterId: string;
     assessmentTypeId: string;
     recordedBy: string;
-    student?: {
-        studentId: string;
-        user: {
-            firstName: string;
-            lastName: string;
+    semester?: {
+        academicYear: {
+            name: string;
         };
+        name: string;
     } | undefined;
     subject?: {
         code: string;
         name: string;
     } | undefined;
+    student?: {
+        user: {
+            firstName: string;
+            lastName: string;
+        };
+        studentId: string;
+    } | undefined;
     assessmentType?: {
         name: string;
         weightage: number;
-    } | undefined;
-    semester?: {
-        name: string;
-        academicYear: {
-            name: string;
-        };
     } | undefined;
     recordedByUser?: {
         firstName: string;
@@ -347,27 +347,27 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
             section: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     }, {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     }>>;
     semester: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
@@ -379,15 +379,15 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
             name: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        name: string;
         academicYear: {
             name: string;
         };
+        name: string;
     }, {
-        name: string;
         academicYear: {
             name: string;
         };
+        name: string;
     }>>;
     grades: z.ZodOptional<z.ZodArray<z.ZodObject<{
         subject: z.ZodObject<{
@@ -450,17 +450,23 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     semesterId: string;
     generatedBy: string;
     rankInClass: number | null;
+    semester?: {
+        academicYear: {
+            name: string;
+        };
+        name: string;
+    } | undefined;
     student?: {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     } | undefined;
     grades?: {
         subject: {
@@ -475,12 +481,6 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
         marksObtained: number;
         totalMarks: number;
     }[] | undefined;
-    semester?: {
-        name: string;
-        academicYear: {
-            name: string;
-        };
-    } | undefined;
 }, {
     id: string;
     createdAt: string;
@@ -495,17 +495,23 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
     semesterId: string;
     generatedBy: string;
     rankInClass: number | null;
+    semester?: {
+        academicYear: {
+            name: string;
+        };
+        name: string;
+    } | undefined;
     student?: {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     } | undefined;
     grades?: {
         subject: {
@@ -520,12 +526,6 @@ export declare const ReportCardResponseSchema: z.ZodObject<{
         marksObtained: number;
         totalMarks: number;
     }[] | undefined;
-    semester?: {
-        name: string;
-        academicYear: {
-            name: string;
-        };
-    } | undefined;
 }>;
 export declare const GradeQuerySchema: z.ZodObject<{
     studentId: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
@@ -539,8 +539,8 @@ export declare const GradeQuerySchema: z.ZodObject<{
     page: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
     limit: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     classId?: string | undefined;
     studentId?: string | undefined;
     subjectId?: string | undefined;
@@ -550,8 +550,8 @@ export declare const GradeQuerySchema: z.ZodObject<{
     minPercentage?: number | undefined;
     maxPercentage?: number | undefined;
 }, {
-    page?: string | undefined;
     limit?: string | undefined;
+    page?: string | undefined;
     classId?: string | undefined;
     studentId?: string | undefined;
     subjectId?: string | undefined;
@@ -758,7 +758,7 @@ export declare const GradeReportQuerySchema: z.ZodObject<{
     format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "pdf"]>>>;
 }, "strip", z.ZodTypeAny, {
     format: "json" | "csv" | "pdf";
-    groupBy: "student" | "class" | "subject";
+    groupBy: "subject" | "class" | "student";
     semesterId: string;
     classId?: string | undefined;
     subjectId?: string | undefined;
@@ -768,7 +768,7 @@ export declare const GradeReportQuerySchema: z.ZodObject<{
     classId?: string | undefined;
     subjectId?: string | undefined;
     format?: "json" | "csv" | "pdf" | undefined;
-    groupBy?: "student" | "class" | "subject" | undefined;
+    groupBy?: "subject" | "class" | "student" | undefined;
     assessmentTypeId?: string | undefined;
 }>;
 export declare const GradeReportItemSchema: z.ZodObject<{

@@ -45,8 +45,6 @@ export const authenticate = asyncHandler(async (req: Request, res: Response, nex
       throw new AppError('Invalid token payload: missing user ID', 401);
     }
 
-
-
     // In test environment, allow mock users for testing (fake IDs like 'admin-1', 'teacher-1')
     if (env.NODE_ENV === 'test' && userId.match(/^[a-z]+-\d+$/)) {
       // This is likely a test token with fake ID like 'admin-1', 'teacher-1', etc.
@@ -77,12 +75,11 @@ export const authenticate = asyncHandler(async (req: Request, res: Response, nex
       role: userData.role,
     };
     
-
-    
     next();
   } catch (error) {
-
-    
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new AppError('Access token has expired. Please refresh your token.', 401);
+    }
     if (error instanceof jwt.JsonWebTokenError) {
       throw new AppError('Invalid token', 401);
     }

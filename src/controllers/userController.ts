@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../middleware/errorHandler';
 import { UserService } from '../services/userService';
+// import { auditData } from '../middleware/auditLogger';
 
 const userService = new UserService();
 
@@ -22,12 +23,21 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   console.log("Looking for user with ID:", req.params.id);
   
-  const user = await userService.getUserById(id);
+  try {
+    const user = await userService.getUserById(id);
+    
+    // Audit sensitive user data access
+    // auditData.access(req, 'users', id, true);
 
-  res.json({
-    success: true,
-    data: user,
-  });
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    // Audit failed access attempt
+    // auditData.access(req, 'users', id, false);
+    throw error;
+  }
 });
 
 // Update user (supports both UUID and regular IDs)

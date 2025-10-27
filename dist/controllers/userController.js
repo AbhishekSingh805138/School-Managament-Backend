@@ -17,11 +17,16 @@ exports.getUserById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Get user by ID request received');
     const { id } = req.params;
     console.log("Looking for user with ID:", req.params.id);
-    const user = await userService.getUserById(id);
-    res.json({
-        success: true,
-        data: user,
-    });
+    try {
+        const user = await userService.getUserById(id);
+        res.json({
+            success: true,
+            data: user,
+        });
+    }
+    catch (error) {
+        throw error;
+    }
 });
 exports.updateUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Update user request received');

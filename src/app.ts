@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import env from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { sanitizeInputs, addSecurityHeaders, validateContentType } from './middleware/sanitization';
+import { generalRateLimit, rateLimitLogger, speedLimiter } from './middleware/rateLimiting';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -25,11 +27,20 @@ import assessmentTypeRoutes from './routes/assessmentTypes';
 import reportCardRoutes from './routes/reportCards';
 import staffRoutes from './routes/staff';
 import reportExportRoutes from './routes/reportExports';
+// import auditRoutes from './routes/audit';
 
 const app = express();
 
 // Security middleware
 app.use(helmet());
+
+// Rate limiting (must be early in the middleware stack)
+app.use(rateLimitLogger);
+app.use(generalRateLimit);
+app.use(speedLimiter);
+
+// Additional security headers for XSS protection
+app.use(addSecurityHeaders);
 
 // CORS configuration
 app.use(cors({
@@ -43,6 +54,12 @@ app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Content type validation
+app.use(validateContentType);
+
+// Input sanitization middleware (must be after body parsing)
+app.use(sanitizeInputs);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -86,6 +103,7 @@ app.use('/api/v1/assessment-types', assessmentTypeRoutes);
 app.use('/api/v1/report-cards', reportCardRoutes);
 app.use('/api/v1/staff', staffRoutes);
 app.use('/api/v1/reports', reportExportRoutes);
+// app.use('/api/v1/audit', auditRoutes);
 
 // API documentation endpoint
 app.get('/api/v1', (req, res) => {

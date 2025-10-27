@@ -9,21 +9,21 @@ export declare const CreateClassSchema: z.ZodObject<{
     room: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    academicYearId: string;
     name: string;
-    teacherId: string;
+    academicYearId: string;
     grade: string;
     section: string;
     capacity: number;
+    teacherId: string;
     description?: string | undefined;
     room?: string | undefined;
 }, {
-    academicYearId: string;
     name: string;
-    teacherId: string;
+    academicYearId: string;
     grade: string;
     section: string;
     capacity: number;
+    teacherId: string;
     description?: string | undefined;
     room?: string | undefined;
 }>;
@@ -37,23 +37,23 @@ export declare const UpdateClassSchema: z.ZodObject<{
     room: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     description: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, "strip", z.ZodTypeAny, {
-    academicYearId?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
-    teacherId?: string | undefined;
+    academicYearId?: string | undefined;
     grade?: string | undefined;
     section?: string | undefined;
     capacity?: number | undefined;
     room?: string | undefined;
+    teacherId?: string | undefined;
 }, {
-    academicYearId?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
-    teacherId?: string | undefined;
+    academicYearId?: string | undefined;
     grade?: string | undefined;
     section?: string | undefined;
     capacity?: number | undefined;
     room?: string | undefined;
+    teacherId?: string | undefined;
 }>;
 export declare const ClassResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -74,74 +74,74 @@ export declare const ClassResponseSchema: z.ZodObject<{
         lastName: z.ZodString;
         email: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        email: string;
         firstName: string;
         lastName: string;
-        email: string;
     }, {
+        email: string;
         firstName: string;
         lastName: string;
-        email: string;
     }>>;
     academicYear: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
         startDate: z.ZodString;
         endDate: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    createdAt: string;
-    isActive: boolean;
-    updatedAt: string;
-    academicYearId: string;
     name: string;
     description: string | null;
-    teacherId: string;
+    academicYearId: string;
     grade: string;
     section: string;
     capacity: number;
     room: string | null;
+    teacherId: string;
+    id: string;
+    createdAt: string;
+    isActive: boolean;
+    updatedAt: string;
     currentEnrollment: number;
-    teacher?: {
-        firstName: string;
-        lastName: string;
-        email: string;
-    } | undefined;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
+    } | undefined;
+    teacher?: {
+        email: string;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }, {
-    id: string;
-    createdAt: string;
-    isActive: boolean;
-    updatedAt: string;
-    academicYearId: string;
     name: string;
     description: string | null;
-    teacherId: string;
+    academicYearId: string;
     grade: string;
     section: string;
     capacity: number;
     room: string | null;
+    teacherId: string;
+    id: string;
+    createdAt: string;
+    isActive: boolean;
+    updatedAt: string;
     currentEnrollment: number;
-    teacher?: {
-        firstName: string;
-        lastName: string;
-        email: string;
-    } | undefined;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
+    } | undefined;
+    teacher?: {
+        email: string;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }>;
 export declare const EnrollStudentSchema: z.ZodObject<{
@@ -218,17 +218,17 @@ export declare const ClassTeacherAssignmentSchema: z.ZodObject<{
     subjects: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     isClassTeacher: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     teacherId: string;
     subjects?: string[] | undefined;
     subjectsCount?: number | undefined;
     isClassTeacher?: boolean | undefined;
 }, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     teacherId: string;
     subjects?: string[] | undefined;
     subjectsCount?: number | undefined;
@@ -247,37 +247,37 @@ export declare const ClassEnrollmentHistorySchema: z.ZodObject<{
         startDate: z.ZodString;
         endDate: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    startDate: string;
-    endDate: string | null;
-    studentId: string;
     academicYear: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     };
+    startDate: string;
+    endDate: string | null;
+    id: string;
+    studentId: string;
     studentNumber: string;
     studentName: string;
     isCurrentlyEnrolled: boolean;
 }, {
-    id: string;
-    startDate: string;
-    endDate: string | null;
-    studentId: string;
     academicYear: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     };
+    startDate: string;
+    endDate: string | null;
+    id: string;
+    studentId: string;
     studentNumber: string;
     studentName: string;
     isCurrentlyEnrolled: boolean;

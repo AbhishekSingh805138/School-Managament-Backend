@@ -121,42 +121,42 @@ export class StaffService extends BaseService {
 
     // Add role-based authorization
     if (userRole === 'staff' && userId) {
-      whereClause += ` AND u.id = ${sqlParams.length + 1}`;
+      whereClause += ` AND u.id = $${sqlParams.length + 1}`;
       sqlParams.push(userId);
     }
 
     // Add optional filters
     if (queryParams.department) {
-      whereClause += ` AND s.department = ${sqlParams.length + 1}`;
+      whereClause += ` AND s.department = $${sqlParams.length + 1}`;
       sqlParams.push(queryParams.department);
     }
 
     if (queryParams.position) {
-      whereClause += ` AND s.position = ${sqlParams.length + 1}`;
+      whereClause += ` AND s.position = $${sqlParams.length + 1}`;
       sqlParams.push(queryParams.position);
     }
 
     if (queryParams.isActive !== undefined) {
-      whereClause = whereClause.replace('s.is_active = true', `s.is_active = ${sqlParams.length + 1}`);
+      whereClause = whereClause.replace('s.is_active = true', `s.is_active = $${sqlParams.length + 1}`);
       sqlParams.push(queryParams.isActive);
     }
 
     if (queryParams.joiningDateFrom) {
-      whereClause += ` AND s.joining_date >= ${sqlParams.length + 1}`;
+      whereClause += ` AND s.joining_date >= $${sqlParams.length + 1}`;
       sqlParams.push(queryParams.joiningDateFrom);
     }
 
     if (queryParams.joiningDateTo) {
-      whereClause += ` AND s.joining_date <= ${sqlParams.length + 1}`;
+      whereClause += ` AND s.joining_date <= $${sqlParams.length + 1}`;
       sqlParams.push(queryParams.joiningDateTo);
     }
 
     if (queryParams.search) {
       whereClause += ` AND (
-        u.first_name ILIKE ${sqlParams.length + 1} OR 
-        u.last_name ILIKE ${sqlParams.length + 1} OR 
-        u.email ILIKE ${sqlParams.length + 1} OR 
-        s.employee_id ILIKE ${sqlParams.length + 1}
+        u.first_name ILIKE $${sqlParams.length + 1} OR 
+        u.last_name ILIKE $${sqlParams.length + 1} OR 
+        u.email ILIKE $${sqlParams.length + 1} OR 
+        s.employee_id ILIKE $${sqlParams.length + 1}
       )`;
       sqlParams.push(`%${queryParams.search}%`);
     }

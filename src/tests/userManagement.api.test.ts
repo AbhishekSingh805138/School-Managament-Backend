@@ -7,7 +7,13 @@ describe('User Management API Tests', () => {
   
   // Helper function to generate test tokens
   const generateToken = (payload: any) => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+    // Ensure the payload has the correct format for auth middleware
+    const tokenPayload = {
+      id: payload.userId || payload.id,
+      email: payload.email,
+      role: payload.role
+    };
+    return jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
   };
 
   const adminToken = generateToken({ userId: 'admin-1', role: 'admin', email: 'admin@school.com' });

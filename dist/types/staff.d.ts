@@ -14,12 +14,12 @@ export declare const CreateStaffSchema: z.ZodObject<{
     salary: z.ZodOptional<z.ZodNumber>;
     responsibilities: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
-    password: string;
     employeeId: string;
     joiningDate: string;
+    password: string;
     department: string;
     position: string;
     phone?: string | undefined;
@@ -28,12 +28,12 @@ export declare const CreateStaffSchema: z.ZodObject<{
     salary?: number | undefined;
     responsibilities?: string | undefined;
 }, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
-    password: string;
     employeeId: string;
     joiningDate: string;
+    password: string;
     department: string;
     position: string;
     phone?: string | undefined;
@@ -53,9 +53,9 @@ export declare const UpdateStaffSchema: z.ZodObject<{
     salary: z.ZodOptional<z.ZodNumber>;
     responsibilities: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     salary?: number | undefined;
@@ -63,9 +63,9 @@ export declare const UpdateStaffSchema: z.ZodObject<{
     position?: string | undefined;
     responsibilities?: string | undefined;
 }, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     salary?: number | undefined;
@@ -94,59 +94,59 @@ export declare const StaffResponseSchema: z.ZodObject<{
         dateOfBirth: z.ZodNullable<z.ZodString>;
         address: z.ZodNullable<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    employeeId: string;
+    joiningDate: string;
+    salary: number | null;
     id: string;
     userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
     altId: string | null;
-    employeeId: string;
-    joiningDate: string;
-    salary: number | null;
     department: string;
     position: string;
     responsibilities: string | null;
     user?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     } | undefined;
 }, {
+    employeeId: string;
+    joiningDate: string;
+    salary: number | null;
     id: string;
     userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
     altId: string | null;
-    employeeId: string;
-    joiningDate: string;
-    salary: number | null;
     department: string;
     position: string;
     responsibilities: string | null;
     user?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     } | undefined;
@@ -163,8 +163,8 @@ export declare const StaffQuerySchema: z.ZodObject<{
     sortBy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["firstName", "lastName", "employeeId", "department", "position", "joiningDate"]>>>;
     sortOrder: z.ZodDefault<z.ZodOptional<z.ZodEnum<["asc", "desc"]>>>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     sortBy: "firstName" | "lastName" | "employeeId" | "joiningDate" | "department" | "position";
     sortOrder: "asc" | "desc";
     isActive?: boolean | undefined;
@@ -174,8 +174,8 @@ export declare const StaffQuerySchema: z.ZodObject<{
     joiningDateFrom?: string | undefined;
     joiningDateTo?: string | undefined;
 }, {
-    page?: string | undefined;
     limit?: string | undefined;
+    page?: string | undefined;
     sortBy?: "firstName" | "lastName" | "employeeId" | "joiningDate" | "department" | "position" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     isActive?: boolean | undefined;
@@ -348,21 +348,21 @@ export declare const StaffReportItemSchema: z.ZodObject<{
     isActive: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
     email: string;
-    isActive: boolean;
     name: string;
     employeeId: string;
     joiningDate: string;
     salary: number | null;
+    isActive: boolean;
     department: string;
     position: string;
     staffId: string;
 }, {
     email: string;
-    isActive: boolean;
     name: string;
     employeeId: string;
     joiningDate: string;
     salary: number | null;
+    isActive: boolean;
     department: string;
     position: string;
     staffId: string;
@@ -395,21 +395,21 @@ export declare const StaffReportSchema: z.ZodObject<{
         isActive: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
         email: string;
-        isActive: boolean;
         name: string;
         employeeId: string;
         joiningDate: string;
         salary: number | null;
+        isActive: boolean;
         department: string;
         position: string;
         staffId: string;
     }, {
         email: string;
-        isActive: boolean;
         name: string;
         employeeId: string;
         joiningDate: string;
         salary: number | null;
+        isActive: boolean;
         department: string;
         position: string;
         staffId: string;
@@ -433,11 +433,11 @@ export declare const StaffReportSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     data: {
         email: string;
-        isActive: boolean;
         name: string;
         employeeId: string;
         joiningDate: string;
         salary: number | null;
+        isActive: boolean;
         department: string;
         position: string;
         staffId: string;
@@ -458,11 +458,11 @@ export declare const StaffReportSchema: z.ZodObject<{
 }, {
     data: {
         email: string;
-        isActive: boolean;
         name: string;
         employeeId: string;
         joiningDate: string;
         salary: number | null;
+        isActive: boolean;
         department: string;
         position: string;
         staffId: string;

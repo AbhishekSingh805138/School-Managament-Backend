@@ -5,24 +5,24 @@ export declare const CreateAcademicYearSchema: z.ZodEffects<z.ZodObject<{
     endDate: z.ZodEffects<z.ZodString, string, string>;
     isActive: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    startDate: string;
+    endDate: string;
     isActive: boolean;
-    startDate: string;
-    endDate: string;
-    name: string;
 }, {
+    name: string;
     startDate: string;
     endDate: string;
-    name: string;
     isActive?: boolean | undefined;
 }>, {
+    name: string;
+    startDate: string;
+    endDate: string;
     isActive: boolean;
-    startDate: string;
-    endDate: string;
-    name: string;
 }, {
+    name: string;
     startDate: string;
     endDate: string;
-    name: string;
     isActive?: boolean | undefined;
 }>;
 export declare const UpdateAcademicYearSchema: z.ZodEffects<z.ZodObject<{
@@ -31,25 +31,25 @@ export declare const UpdateAcademicYearSchema: z.ZodEffects<z.ZodObject<{
     endDate: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
     isActive: z.ZodOptional<z.ZodDefault<z.ZodOptional<z.ZodBoolean>>>;
 }, "strip", z.ZodTypeAny, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }>, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }>;
 export declare const AcademicYearResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -61,22 +61,22 @@ export declare const AcademicYearResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    startDate: string;
+    endDate: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    startDate: string;
-    endDate: string;
-    name: string;
     altId: string | null;
 }, {
+    name: string;
+    startDate: string;
+    endDate: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    startDate: string;
-    endDate: string;
-    name: string;
     altId: string | null;
 }>;
 export declare const CreateSemesterSchema: z.ZodEffects<z.ZodObject<{
@@ -86,55 +86,55 @@ export declare const CreateSemesterSchema: z.ZodEffects<z.ZodObject<{
     endDate: z.ZodEffects<z.ZodString, string, string>;
     isActive: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    startDate: string;
+    endDate: string;
+    academicYearId: string;
     isActive: boolean;
-    startDate: string;
-    endDate: string;
-    academicYearId: string;
-    name: string;
 }, {
+    name: string;
     startDate: string;
     endDate: string;
     academicYearId: string;
-    name: string;
     isActive?: boolean | undefined;
 }>, {
+    name: string;
+    startDate: string;
+    endDate: string;
+    academicYearId: string;
     isActive: boolean;
-    startDate: string;
-    endDate: string;
-    academicYearId: string;
-    name: string;
 }, {
+    name: string;
     startDate: string;
     endDate: string;
     academicYearId: string;
-    name: string;
     isActive?: boolean | undefined;
 }>;
 export declare const UpdateSemesterSchema: z.ZodEffects<z.ZodObject<{
-    isActive: z.ZodOptional<z.ZodDefault<z.ZodOptional<z.ZodBoolean>>>;
+    name: z.ZodOptional<z.ZodString>;
     startDate: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
     endDate: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
-    name: z.ZodOptional<z.ZodString>;
+    isActive: z.ZodOptional<z.ZodDefault<z.ZodOptional<z.ZodBoolean>>>;
 }, "strip", z.ZodTypeAny, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }>, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }, {
-    isActive?: boolean | undefined;
+    name?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    name?: string | undefined;
+    isActive?: boolean | undefined;
 }>;
 export declare const SemesterResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -151,43 +151,43 @@ export declare const SemesterResponseSchema: z.ZodObject<{
         startDate: z.ZodString;
         endDate: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }, {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    name: string;
+    startDate: string;
+    endDate: string;
+    academicYearId: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    startDate: string;
-    endDate: string;
-    academicYearId: string;
-    name: string;
     altId: string | null;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     } | undefined;
 }, {
+    name: string;
+    startDate: string;
+    endDate: string;
+    academicYearId: string;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    startDate: string;
-    endDate: string;
-    academicYearId: string;
-    name: string;
     altId: string | null;
     academicYear?: {
+        name: string;
         startDate: string;
         endDate: string;
-        name: string;
     } | undefined;
 }>;
 export declare const CreateSubjectSchema: z.ZodObject<{
@@ -197,14 +197,14 @@ export declare const CreateSubjectSchema: z.ZodObject<{
     creditHours: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
 }, "strip", z.ZodTypeAny, {
     code: string;
-    creditHours: number;
     name: string;
+    creditHours: number;
     description?: string | undefined;
 }, {
     code: string;
     name: string;
-    creditHours?: number | undefined;
     description?: string | undefined;
+    creditHours?: number | undefined;
 }>;
 export declare const UpdateSubjectSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -213,14 +213,14 @@ export declare const UpdateSubjectSchema: z.ZodObject<{
     creditHours: z.ZodOptional<z.ZodDefault<z.ZodOptional<z.ZodNumber>>>;
 }, "strip", z.ZodTypeAny, {
     code?: string | undefined;
-    creditHours?: number | undefined;
     name?: string | undefined;
     description?: string | undefined;
+    creditHours?: number | undefined;
 }, {
     code?: string | undefined;
-    creditHours?: number | undefined;
     name?: string | undefined;
     description?: string | undefined;
+    creditHours?: number | undefined;
 }>;
 export declare const SubjectResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -234,37 +234,37 @@ export declare const SubjectResponseSchema: z.ZodObject<{
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     code: string;
+    name: string;
+    description: string | null;
+    creditHours: number;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    creditHours: number;
-    name: string;
     altId: string | null;
-    description: string | null;
 }, {
     code: string;
+    name: string;
+    description: string | null;
+    creditHours: number;
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
-    creditHours: number;
-    name: string;
     altId: string | null;
-    description: string | null;
 }>;
 export declare const CreateClassSubjectSchema: z.ZodObject<{
     classId: z.ZodEffects<z.ZodString, string, string>;
     subjectId: z.ZodEffects<z.ZodString, string, string>;
     teacherId: z.ZodEffects<z.ZodString, string, string>;
 }, "strip", z.ZodTypeAny, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }>;
 export declare const ClassSubjectResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -301,55 +301,55 @@ export declare const ClassSubjectResponseSchema: z.ZodObject<{
         lastName: z.ZodString;
         email: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        email: string;
         firstName: string;
         lastName: string;
-        email: string;
     }, {
+        email: string;
         firstName: string;
         lastName: string;
-        email: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    teacherId: string;
     id: string;
     createdAt: string;
     updatedAt: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
-    teacher?: {
-        firstName: string;
-        lastName: string;
-        email: string;
+    subject?: {
+        code: string;
+        name: string;
     } | undefined;
     class?: {
         name: string;
         grade: string;
         section: string;
     } | undefined;
-    subject?: {
-        code: string;
-        name: string;
+    teacher?: {
+        email: string;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }, {
+    teacherId: string;
     id: string;
     createdAt: string;
     updatedAt: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
-    teacher?: {
-        firstName: string;
-        lastName: string;
-        email: string;
+    subject?: {
+        code: string;
+        name: string;
     } | undefined;
     class?: {
         name: string;
         grade: string;
         section: string;
     } | undefined;
-    subject?: {
-        code: string;
-        name: string;
+    teacher?: {
+        email: string;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }>;
 export type CreateAcademicYear = z.infer<typeof CreateAcademicYearSchema>;

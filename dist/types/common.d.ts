@@ -6,13 +6,13 @@ export declare const PaginationSchema: z.ZodObject<{
     sortBy: z.ZodOptional<z.ZodString>;
     sortOrder: z.ZodDefault<z.ZodOptional<z.ZodEnum<["asc", "desc"]>>>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     sortOrder: "asc" | "desc";
     sortBy?: string | undefined;
 }, {
-    page?: string | undefined;
     limit?: string | undefined;
+    page?: string | undefined;
     sortBy?: string | undefined;
     sortOrder?: "asc" | "desc" | undefined;
 }>;
@@ -57,13 +57,13 @@ export declare const PaginatedResponseSchema: z.ZodObject<{
         total: z.ZodNumber;
         totalPages: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        page: number;
         limit: number;
+        page: number;
         total: number;
         totalPages: number;
     }, {
-        page: number;
         limit: number;
+        page: number;
         total: number;
         totalPages: number;
     }>;
@@ -71,16 +71,16 @@ export declare const PaginatedResponseSchema: z.ZodObject<{
     success: boolean;
     data: any[];
     pagination: {
-        page: number;
         limit: number;
+        page: number;
         total: number;
         totalPages: number;
     };
 }, {
     data: any[];
     pagination: {
-        page: number;
         limit: number;
+        page: number;
         total: number;
         totalPages: number;
     };
@@ -170,21 +170,21 @@ export declare const FileResponseSchema: z.ZodObject<{
     uploadedBy: z.ZodEffects<z.ZodString, string, string>;
     uploadedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    url: string;
     id: string;
     mimetype: string;
     size: number;
     filename: string;
     originalName: string;
-    url: string;
     uploadedBy: string;
     uploadedAt: string;
 }, {
+    url: string;
     id: string;
     mimetype: string;
     size: number;
     filename: string;
     originalName: string;
-    url: string;
     uploadedBy: string;
     uploadedAt: string;
 }>;
@@ -197,16 +197,16 @@ export declare const SearchQuerySchema: z.ZodObject<{
     sortBy: z.ZodOptional<z.ZodString>;
     sortOrder: z.ZodDefault<z.ZodOptional<z.ZodEnum<["asc", "desc"]>>>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     sortOrder: "asc" | "desc";
     sortBy?: string | undefined;
     q?: string | undefined;
     fields?: string[] | undefined;
     filters?: Record<string, any> | undefined;
 }, {
-    page?: string | undefined;
     limit?: string | undefined;
+    page?: string | undefined;
     sortBy?: string | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     q?: string | undefined;
@@ -262,10 +262,10 @@ export declare const AuditLogSchema: z.ZodObject<{
     createdAt: string;
     entityType: string;
     entityId: string;
-    changes?: Record<string, any> | undefined;
-    metadata?: Record<string, any> | undefined;
     ipAddress?: string | undefined;
     userAgent?: string | undefined;
+    changes?: Record<string, any> | undefined;
+    metadata?: Record<string, any> | undefined;
 }, {
     id: string;
     action: string;
@@ -273,10 +273,10 @@ export declare const AuditLogSchema: z.ZodObject<{
     createdAt: string;
     entityType: string;
     entityId: string;
-    changes?: Record<string, any> | undefined;
-    metadata?: Record<string, any> | undefined;
     ipAddress?: string | undefined;
     userAgent?: string | undefined;
+    changes?: Record<string, any> | undefined;
+    metadata?: Record<string, any> | undefined;
 }>;
 export type Id = z.infer<typeof IdSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;

@@ -58,17 +58,17 @@ export declare const AttendanceResponseSchema: z.ZodObject<{
             lastName: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }, {
-        studentId: string;
         user: {
             firstName: string;
             lastName: string;
         };
+        studentId: string;
     }>>;
     class: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
@@ -116,21 +116,21 @@ export declare const AttendanceResponseSchema: z.ZodObject<{
     remarks: string | null;
     markedBy: string;
     markedAt: string;
-    student?: {
-        studentId: string;
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+    subject?: {
+        code: string;
+        name: string;
     } | undefined;
     class?: {
         name: string;
         grade: string;
         section: string;
     } | undefined;
-    subject?: {
-        code: string;
-        name: string;
+    student?: {
+        user: {
+            firstName: string;
+            lastName: string;
+        };
+        studentId: string;
     } | undefined;
     markedByUser?: {
         firstName: string;
@@ -149,21 +149,21 @@ export declare const AttendanceResponseSchema: z.ZodObject<{
     remarks: string | null;
     markedBy: string;
     markedAt: string;
-    student?: {
-        studentId: string;
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+    subject?: {
+        code: string;
+        name: string;
     } | undefined;
     class?: {
         name: string;
         grade: string;
         section: string;
     } | undefined;
-    subject?: {
-        code: string;
-        name: string;
+    student?: {
+        user: {
+            firstName: string;
+            lastName: string;
+        };
+        studentId: string;
     } | undefined;
     markedByUser?: {
         firstName: string;
@@ -229,8 +229,8 @@ export declare const AttendanceQuerySchema: z.ZodObject<{
     page: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
     limit: z.ZodEffects<z.ZodDefault<z.ZodOptional<z.ZodString>>, number, string | undefined>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     status?: "present" | "absent" | "late" | "excused" | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
@@ -239,10 +239,10 @@ export declare const AttendanceQuerySchema: z.ZodObject<{
     subjectId?: string | undefined;
 }, {
     status?: "present" | "absent" | "late" | "excused" | undefined;
-    page?: string | undefined;
-    limit?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
+    limit?: string | undefined;
+    page?: string | undefined;
     classId?: string | undefined;
     studentId?: string | undefined;
     subjectId?: string | undefined;
@@ -387,6 +387,8 @@ export declare const AttendanceReportSchema: z.ZodObject<{
         averageAttendance: number;
     }>;
 }, "strip", z.ZodTypeAny, {
+    startDate: string;
+    endDate: string;
     data: {
         studentId: string;
         studentName: string;
@@ -398,8 +400,6 @@ export declare const AttendanceReportSchema: z.ZodObject<{
         lateDays: number;
         excusedDays: number;
     }[];
-    startDate: string;
-    endDate: string;
     reportType: string;
     generatedAt: string;
     summary: {
@@ -408,6 +408,8 @@ export declare const AttendanceReportSchema: z.ZodObject<{
         averageAttendance: number;
     };
 }, {
+    startDate: string;
+    endDate: string;
     data: {
         studentId: string;
         studentName: string;
@@ -419,8 +421,6 @@ export declare const AttendanceReportSchema: z.ZodObject<{
         lateDays: number;
         excusedDays: number;
     }[];
-    startDate: string;
-    endDate: string;
     reportType: string;
     generatedAt: string;
     summary: {

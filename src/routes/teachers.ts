@@ -18,6 +18,7 @@ import {
 } from '../controllers/teacherController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { sanitizeTeacher } from '../middleware/sanitization';
 import { 
   CreateTeacherSchema, 
   UpdateTeacherSchema 
@@ -34,6 +35,7 @@ router.use(authenticate);
 router.post(
   '/',
   authorize('admin'),
+  sanitizeTeacher,
   validateBody(CreateTeacherSchema),
   createTeacher
 );
@@ -75,6 +77,7 @@ router.put(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  sanitizeTeacher,
   validateBody(UpdateTeacherSchema),
   updateTeacher
 );

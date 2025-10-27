@@ -1,6 +1,8 @@
 import { BaseService } from './baseService';
 import { CreateUser, Login } from '../types/user';
 export declare class AuthService extends BaseService {
+    private rateLimitService;
+    constructor();
     register(userData: CreateUser): Promise<{
         user: {
             id: any;
@@ -16,6 +18,8 @@ export declare class AuthService extends BaseService {
             updatedAt: any;
         };
         token: string;
+        accessToken: string;
+        refreshToken: string;
     }>;
     login(loginData: Login): Promise<{
         user: {
@@ -26,6 +30,8 @@ export declare class AuthService extends BaseService {
             role: any;
         };
         token: string;
+        accessToken: string;
+        refreshToken: string;
     }>;
     getCurrentUser(userId: string): Promise<{
         id: any;
@@ -39,6 +45,17 @@ export declare class AuthService extends BaseService {
         isActive: any;
         createdAt: any;
         updatedAt: any;
+    }>;
+    private storeRefreshToken;
+    refreshToken(refreshToken: string): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }>;
+    logout(refreshToken: string): Promise<{
+        success: boolean;
+    }>;
+    logoutAll(userId: string): Promise<{
+        success: boolean;
     }>;
     private transformUserResponse;
 }

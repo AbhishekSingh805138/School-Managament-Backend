@@ -9,6 +9,8 @@ const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const env_1 = __importDefault(require("./config/env"));
 const errorHandler_1 = require("./middleware/errorHandler");
+const sanitization_1 = require("./middleware/sanitization");
+const rateLimiting_1 = require("./middleware/rateLimiting");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
 const academicYears_1 = __importDefault(require("./routes/academicYears"));
@@ -30,6 +32,10 @@ const staff_1 = __importDefault(require("./routes/staff"));
 const reportExports_1 = __importDefault(require("./routes/reportExports"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
+app.use(rateLimiting_1.rateLimitLogger);
+app.use(rateLimiting_1.generalRateLimit);
+app.use(rateLimiting_1.speedLimiter);
+app.use(sanitization_1.addSecurityHeaders);
 app.use((0, cors_1.default)({
     origin: env_1.default.CORS_ORIGIN,
     credentials: true,
@@ -37,6 +43,8 @@ app.use((0, cors_1.default)({
 app.use((0, morgan_1.default)(env_1.default.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
+app.use(sanitization_1.validateContentType);
+app.use(sanitization_1.sanitizeInputs);
 app.get('/health', (req, res) => {
     res.json({
         success: true,

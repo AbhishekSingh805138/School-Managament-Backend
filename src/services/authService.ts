@@ -1,9 +1,16 @@
 import { BaseService } from './baseService';
-import { AppError } from '../middleware/errorHandler';
+import { AppError, AuthError } from '../middleware/errorHandler';
 import { CreateUser, Login } from '../types/user';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth';
+import { hashPassword, comparePassword, generateTokens, verifyToken, isTokenExpired } from '../utils/auth';
+import { RateLimitService } from './rateLimitService';
 
 export class AuthService extends BaseService {
+  private rateLimitService: RateLimitService;
+
+  constructor() {
+    super();
+    this.rateLimitService = new RateLimitService();
+  }
   async register(userData: CreateUser) {
     // Check if user already exists
     const existingUser = await this.executeQuery(
@@ -41,16 +48,21 @@ export class AuthService extends BaseService {
 
     const user = result.rows[0];
 
-    // Generate JWT token
-    const token = generateToken({
+    // Generate JWT tokens
+    const tokens = generateTokens({
       id: user.id,
       email: user.email,
       role: user.role,
     });
 
+    // Store refresh token in database
+    await this.storeRefreshToken(user.id, tokens.refreshToken);
+
     return {
       user: this.transformUserResponse(user),
-      token,
+      token: tokens.accessToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     };
   }
 
@@ -78,12 +90,15 @@ export class AuthService extends BaseService {
       throw new AppError('Invalid email or password', 401);
     }
 
-    // Generate JWT token
-    const token = generateToken({
+    // Generate JWT tokens
+    const tokens = generateTokens({
       id: user.id,
       email: user.email,
       role: user.role,
     });
+
+    // Store refresh token in database
+    await this.storeRefreshToken(user.id, tokens.refreshToken);
 
     return {
       user: {
@@ -93,7 +108,9 @@ export class AuthService extends BaseService {
         email: user.email,
         role: user.role,
       },
-      token,
+      token: tokens.accessToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     };
   }
 
@@ -108,6 +125,107 @@ export class AuthService extends BaseService {
     }
 
     return this.transformUserResponse(result.rows[0]);
+  }
+
+  // Store refresh token in database
+  private async storeRefreshToken(userId: string, refreshToken: string) {
+    // First, invalidate any existing refresh tokens for this user
+    await this.executeQuery(
+      'UPDATE refresh_tokens SET is_active = false WHERE user_id = $1',
+      [userId]
+    );
+
+    // Store the new refresh token
+    await this.executeQuery(
+      `INSERT INTO refresh_tokens (user_id, token, expires_at, is_active)
+       VALUES ($1, $2, NOW() + INTERVAL '7 days', true)`,
+      [userId, refreshToken]
+    );
+  }
+
+  // Refresh access token using refresh token
+  async refreshToken(refreshToken: string) {
+    try {
+      // Verify refresh token
+      const decoded = verifyToken(refreshToken) as {
+        id: string;
+        email: string;
+        role: string;
+      };
+
+      // Check if refresh token exists and is active in database
+      const tokenResult = await this.executeQuery(
+        `SELECT rt.id, rt.user_id, u.email, u.role, u.is_active
+         FROM refresh_tokens rt
+         JOIN users u ON rt.user_id = u.id
+         WHERE rt.token = $1 AND rt.is_active = true AND rt.expires_at > NOW()`,
+        [refreshToken]
+      );
+
+      if (tokenResult.rows.length === 0) {
+        throw new AppError('Invalid or expired refresh token', 401);
+      }
+
+      const tokenData = tokenResult.rows[0];
+
+      // Check if user is still active
+      if (!tokenData.is_active) {
+        throw new AppError('User account is deactivated', 401);
+      }
+
+      // Generate new tokens
+      const tokens = generateTokens({
+        id: tokenData.user_id,
+        email: tokenData.email,
+        role: tokenData.role,
+      });
+
+      // Store new refresh token and invalidate old one
+      await this.executeTransaction(async (client) => {
+        // Invalidate old refresh token
+        await client.query(
+          'UPDATE refresh_tokens SET is_active = false WHERE token = $1',
+          [refreshToken]
+        );
+
+        // Store new refresh token
+        await client.query(
+          `INSERT INTO refresh_tokens (user_id, token, expires_at, is_active)
+           VALUES ($1, $2, NOW() + INTERVAL '7 days', true)`,
+          [tokenData.user_id, tokens.refreshToken]
+        );
+      });
+
+      return {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Invalid refresh token', 401);
+    }
+  }
+
+  // Logout - invalidate refresh token
+  async logout(refreshToken: string) {
+    await this.executeQuery(
+      'UPDATE refresh_tokens SET is_active = false WHERE token = $1',
+      [refreshToken]
+    );
+
+    return { success: true };
+  }
+
+  // Logout from all devices - invalidate all refresh tokens for user
+  async logoutAll(userId: string) {
+    await this.executeQuery(
+      'UPDATE refresh_tokens SET is_active = false WHERE user_id = $1',
+      [userId]
+    );
+
+    return { success: true };
   }
 
   private transformUserResponse(user: any) {

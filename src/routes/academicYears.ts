@@ -9,6 +9,8 @@ import {
 } from '../controllers/academicYearController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { sanitizeAcademicYear } from '../middleware/sanitization';
+import { adminRateLimit } from '../middleware/rateLimiting';
 import { 
   CreateAcademicYearSchema, 
   UpdateAcademicYearSchema 
@@ -25,6 +27,8 @@ router.use(authenticate);
 router.post(
   '/',
   authorize('admin'),
+  adminRateLimit,
+  sanitizeAcademicYear,
   validateBody(CreateAcademicYearSchema),
   createAcademicYear
 );
@@ -56,6 +60,7 @@ router.put(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  sanitizeAcademicYear,
   validateBody(UpdateAcademicYearSchema),
   updateAcademicYear
 );

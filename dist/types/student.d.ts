@@ -16,9 +16,9 @@ export declare const CreateStudentSchema: z.ZodObject<{
     emergencyContact: z.ZodString;
     medicalInfo: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     password: string;
     classId: string;
     studentId: string;
@@ -32,9 +32,9 @@ export declare const CreateStudentSchema: z.ZodObject<{
     guardianEmail?: string | undefined;
     medicalInfo?: string | undefined;
 }, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     password: string;
     classId: string;
     studentId: string;
@@ -61,9 +61,9 @@ export declare const UpdateStudentSchema: z.ZodObject<{
     emergencyContact: z.ZodOptional<z.ZodString>;
     medicalInfo: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     classId?: string | undefined;
@@ -73,9 +73,9 @@ export declare const UpdateStudentSchema: z.ZodObject<{
     emergencyContact?: string | undefined;
     medicalInfo?: string | undefined;
 }, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     classId?: string | undefined;
@@ -108,17 +108,17 @@ export declare const StudentResponseSchema: z.ZodObject<{
         dateOfBirth: z.ZodNullable<z.ZodString>;
         address: z.ZodNullable<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }>>;
@@ -182,6 +182,14 @@ export declare const StudentResponseSchema: z.ZodObject<{
     guardianEmail: string | null;
     emergencyContact: string;
     medicalInfo: string | null;
+    user?: {
+        email: string;
+        phone: string | null;
+        firstName: string;
+        lastName: string;
+        dateOfBirth: string | null;
+        address: string | null;
+    } | undefined;
     class?: {
         name: string;
         grade: string;
@@ -189,14 +197,6 @@ export declare const StudentResponseSchema: z.ZodObject<{
         academicYear?: {
             name: string;
         } | undefined;
-    } | undefined;
-    user?: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string | null;
-        dateOfBirth: string | null;
-        address: string | null;
     } | undefined;
     parents?: {
         firstName: string;
@@ -220,6 +220,14 @@ export declare const StudentResponseSchema: z.ZodObject<{
     guardianEmail: string | null;
     emergencyContact: string;
     medicalInfo: string | null;
+    user?: {
+        email: string;
+        phone: string | null;
+        firstName: string;
+        lastName: string;
+        dateOfBirth: string | null;
+        address: string | null;
+    } | undefined;
     class?: {
         name: string;
         grade: string;
@@ -227,14 +235,6 @@ export declare const StudentResponseSchema: z.ZodObject<{
         academicYear?: {
             name: string;
         } | undefined;
-    } | undefined;
-    user?: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string | null;
-        dateOfBirth: string | null;
-        address: string | null;
     } | undefined;
     parents?: {
         firstName: string;
@@ -258,28 +258,28 @@ export declare const StudentQuerySchema: z.ZodObject<{
     sortBy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["firstName", "lastName", "studentId", "enrollmentDate", "className"]>>>;
     sortOrder: z.ZodDefault<z.ZodOptional<z.ZodEnum<["asc", "desc"]>>>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
+    page: number;
     sortBy: "firstName" | "lastName" | "studentId" | "enrollmentDate" | "className";
     sortOrder: "asc" | "desc";
-    isActive?: boolean | undefined;
     academicYearId?: string | undefined;
-    classId?: string | undefined;
     grade?: string | undefined;
     section?: string | undefined;
+    isActive?: boolean | undefined;
+    classId?: string | undefined;
     search?: string | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
 }, {
-    page?: string | undefined;
+    academicYearId?: string | undefined;
+    grade?: string | undefined;
+    section?: string | undefined;
     limit?: string | undefined;
+    page?: string | undefined;
     sortBy?: "firstName" | "lastName" | "studentId" | "enrollmentDate" | "className" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     isActive?: boolean | undefined;
-    academicYearId?: string | undefined;
     classId?: string | undefined;
-    grade?: string | undefined;
-    section?: string | undefined;
     search?: string | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
@@ -314,12 +314,12 @@ export declare const StudentClassHistorySchema: z.ZodObject<{
         name: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     startDate: string;
     endDate: string | null;
     academicYearId: string;
+    id: string;
+    createdAt: string;
+    updatedAt: string;
     classId: string;
     studentId: string;
     academicYear?: {
@@ -331,12 +331,12 @@ export declare const StudentClassHistorySchema: z.ZodObject<{
         section: string;
     } | undefined;
 }, {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     startDate: string;
     endDate: string | null;
     academicYearId: string;
+    id: string;
+    createdAt: string;
+    updatedAt: string;
     classId: string;
     studentId: string;
     academicYear?: {

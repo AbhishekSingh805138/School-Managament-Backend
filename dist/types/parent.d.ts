@@ -8,16 +8,16 @@ export declare const CreateParentSchema: z.ZodObject<{
     phone: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     password: string;
     phone?: string | undefined;
     address?: string | undefined;
 }, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
     password: string;
     phone?: string | undefined;
     address?: string | undefined;
@@ -28,14 +28,14 @@ export declare const UpdateParentSchema: z.ZodObject<{
     phone: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     address?: string | undefined;
 }, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     address?: string | undefined;
 }>;
 export declare const ParentResponseSchema: z.ZodObject<{
@@ -49,23 +49,23 @@ export declare const ParentResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    createdAt: string;
-    firstName: string;
-    lastName: string;
     email: string;
     phone: string | null;
+    firstName: string;
+    lastName: string;
     address: string | null;
+    id: string;
+    createdAt: string;
     isActive: boolean;
     updatedAt: string;
 }, {
-    id: string;
-    createdAt: string;
-    firstName: string;
-    lastName: string;
     email: string;
     phone: string | null;
+    firstName: string;
+    lastName: string;
     address: string | null;
+    id: string;
+    createdAt: string;
     isActive: boolean;
     updatedAt: string;
 }>;
@@ -129,27 +129,27 @@ export declare const StudentParentResponseSchema: z.ZodObject<{
             section: string;
         }>;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     }, {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     }>>;
     parent: z.ZodOptional<z.ZodObject<{
         firstName: z.ZodString;
@@ -157,15 +157,15 @@ export declare const StudentParentResponseSchema: z.ZodObject<{
         email: z.ZodString;
         phone: z.ZodNullable<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
     }, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
     id: string;
@@ -176,22 +176,22 @@ export declare const StudentParentResponseSchema: z.ZodObject<{
     relationshipType: "father" | "mother" | "guardian" | "other";
     isPrimary: boolean;
     student?: {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     } | undefined;
     parent?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }, {
     id: string;
@@ -202,22 +202,22 @@ export declare const StudentParentResponseSchema: z.ZodObject<{
     relationshipType: "father" | "mother" | "guardian" | "other";
     isPrimary: boolean;
     student?: {
-        studentId: string;
+        user: {
+            firstName: string;
+            lastName: string;
+        };
         class: {
             name: string;
             grade: string;
             section: string;
         };
-        user: {
-            firstName: string;
-            lastName: string;
-        };
+        studentId: string;
     } | undefined;
     parent?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
     } | undefined;
 }>;
 export declare const ParentDashboardSchema: z.ZodObject<{
@@ -444,13 +444,13 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
         className: z.ZodString;
         enrollmentDate: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        studentId: string;
         name: string;
+        studentId: string;
         enrollmentDate: string;
         className: string;
     }, {
-        studentId: string;
         name: string;
+        studentId: string;
         enrollmentDate: string;
         className: string;
     }>;
@@ -652,8 +652,8 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
     }>>;
 }, "strip", z.ZodTypeAny, {
     student: {
-        studentId: string;
         name: string;
+        studentId: string;
         enrollmentDate: string;
         className: string;
     };
@@ -705,8 +705,8 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
     } | undefined;
 }, {
     student: {
-        studentId: string;
         name: string;
+        studentId: string;
         enrollmentDate: string;
         className: string;
     };
@@ -766,17 +766,17 @@ export declare const ParentQuerySchema: z.ZodObject<{
     sortBy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["firstName", "lastName", "email", "createdAt"]>>>;
     sortOrder: z.ZodDefault<z.ZodOptional<z.ZodEnum<["asc", "desc"]>>>;
 }, "strip", z.ZodTypeAny, {
-    page: number;
     limit: number;
-    sortBy: "createdAt" | "firstName" | "lastName" | "email";
+    page: number;
+    sortBy: "email" | "firstName" | "lastName" | "createdAt";
     sortOrder: "asc" | "desc";
     relationshipType?: "father" | "mother" | "guardian" | "other" | undefined;
     search?: string | undefined;
     hasChildren?: boolean | undefined;
 }, {
-    page?: string | undefined;
     limit?: string | undefined;
-    sortBy?: "createdAt" | "firstName" | "lastName" | "email" | undefined;
+    page?: string | undefined;
+    sortBy?: "email" | "firstName" | "lastName" | "createdAt" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     relationshipType?: "father" | "mother" | "guardian" | "other" | undefined;
     search?: string | undefined;

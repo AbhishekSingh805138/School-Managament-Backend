@@ -14,13 +14,13 @@ export declare const CreateTeacherSchema: z.ZodObject<{
     joiningDate: z.ZodEffects<z.ZodString, string, string>;
     salary: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
-    password: string;
     employeeId: string;
     experienceYears: number;
     joiningDate: string;
+    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
@@ -28,12 +28,12 @@ export declare const CreateTeacherSchema: z.ZodObject<{
     specialization?: string | undefined;
     salary?: number | undefined;
 }, {
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
-    password: string;
     employeeId: string;
     joiningDate: string;
+    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
@@ -53,9 +53,9 @@ export declare const UpdateTeacherSchema: z.ZodObject<{
     specialization: z.ZodOptional<z.ZodString>;
     salary: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     qualification?: string | undefined;
@@ -63,9 +63,9 @@ export declare const UpdateTeacherSchema: z.ZodObject<{
     specialization?: string | undefined;
     salary?: number | undefined;
 }, {
+    phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
     qualification?: string | undefined;
@@ -94,59 +94,59 @@ export declare const TeacherResponseSchema: z.ZodObject<{
         dateOfBirth: z.ZodNullable<z.ZodString>;
         address: z.ZodNullable<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }, {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    userId: string;
-    createdAt: string;
-    isActive: boolean;
-    updatedAt: string;
-    altId: string | null;
     employeeId: string;
     qualification: string | null;
     experienceYears: number;
     specialization: string | null;
     joiningDate: string;
     salary: number | null;
+    id: string;
+    userId: string;
+    createdAt: string;
+    isActive: boolean;
+    updatedAt: string;
+    altId: string | null;
     user?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     } | undefined;
 }, {
-    id: string;
-    userId: string;
-    createdAt: string;
-    isActive: boolean;
-    updatedAt: string;
-    altId: string | null;
     employeeId: string;
     qualification: string | null;
     experienceYears: number;
     specialization: string | null;
     joiningDate: string;
     salary: number | null;
+    id: string;
+    userId: string;
+    createdAt: string;
+    isActive: boolean;
+    updatedAt: string;
+    altId: string | null;
     user?: {
-        firstName: string;
-        lastName: string;
         email: string;
         phone: string | null;
+        firstName: string;
+        lastName: string;
         dateOfBirth: string | null;
         address: string | null;
     } | undefined;
@@ -155,11 +155,11 @@ export declare const CreateTeacherSubjectSchema: z.ZodObject<{
     teacherId: z.ZodEffects<z.ZodString, string, string>;
     subjectId: z.ZodEffects<z.ZodString, string, string>;
 }, "strip", z.ZodTypeAny, {
-    subjectId: string;
     teacherId: string;
+    subjectId: string;
 }, {
-    subjectId: string;
     teacherId: string;
+    subjectId: string;
 }>;
 export declare const TeacherSubjectResponseSchema: z.ZodObject<{
     id: z.ZodEffects<z.ZodString, string, string>;
@@ -202,36 +202,36 @@ export declare const TeacherSubjectResponseSchema: z.ZodObject<{
         name: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    teacherId: string;
     id: string;
     createdAt: string;
     subjectId: string;
-    teacherId: string;
+    subject?: {
+        code: string;
+        name: string;
+    } | undefined;
     teacher?: {
         user: {
             firstName: string;
             lastName: string;
         };
         employeeId: string;
-    } | undefined;
-    subject?: {
-        code: string;
-        name: string;
     } | undefined;
 }, {
+    teacherId: string;
     id: string;
     createdAt: string;
     subjectId: string;
-    teacherId: string;
+    subject?: {
+        code: string;
+        name: string;
+    } | undefined;
     teacher?: {
         user: {
             firstName: string;
             lastName: string;
         };
         employeeId: string;
-    } | undefined;
-    subject?: {
-        code: string;
-        name: string;
     } | undefined;
 }>;
 export declare const TeacherAssignmentSchema: z.ZodObject<{
@@ -239,13 +239,13 @@ export declare const TeacherAssignmentSchema: z.ZodObject<{
     classId: z.ZodEffects<z.ZodString, string, string>;
     subjectId: z.ZodEffects<z.ZodString, string, string>;
 }, "strip", z.ZodTypeAny, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }>;
 export declare const TeacherWorkloadSchema: z.ZodObject<{
     teacherId: z.ZodEffects<z.ZodString, string, string>;
@@ -277,13 +277,13 @@ export declare const AssignmentConflictCheckSchema: z.ZodObject<{
     classId: z.ZodEffects<z.ZodString, string, string>;
     subjectId: z.ZodEffects<z.ZodString, string, string>;
 }, "strip", z.ZodTypeAny, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }, {
+    teacherId: string;
     classId: string;
     subjectId: string;
-    teacherId: string;
 }>;
 export declare const TeacherSuggestionSchema: z.ZodObject<{
     teacher: z.ZodObject<{
@@ -292,14 +292,14 @@ export declare const TeacherSuggestionSchema: z.ZodObject<{
         name: z.ZodString;
         isMainTeacher: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        id: string;
         name: string;
         employeeId: string;
+        id: string;
         isMainTeacher: boolean;
     }, {
-        id: string;
         name: string;
         employeeId: string;
+        id: string;
         isMainTeacher: boolean;
     }>;
     suitabilityScore: z.ZodNumber;
@@ -334,9 +334,9 @@ export declare const TeacherSuggestionSchema: z.ZodObject<{
     canAssign: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
     teacher: {
-        id: string;
         name: string;
         employeeId: string;
+        id: string;
         isMainTeacher: boolean;
     };
     suitabilityScore: number;
@@ -355,9 +355,9 @@ export declare const TeacherSuggestionSchema: z.ZodObject<{
     canAssign: boolean;
 }, {
     teacher: {
-        id: string;
         name: string;
         employeeId: string;
+        id: string;
         isMainTeacher: boolean;
     };
     suitabilityScore: number;
