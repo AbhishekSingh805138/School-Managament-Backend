@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import env from '../config/env';
-// import { auditSecurity } from './auditLogger';
+import { auditSecurity } from './auditLogger';
 
 // Custom error class
 export class AppError extends Error {
@@ -138,7 +138,7 @@ export const errorHandler = (
     }, req);
     
     // Audit security event
-    // auditSecurity.unauthorizedAccess(req, 'Invalid JWT token');
+    auditSecurity.unauthorizedAccess(req, 'Invalid JWT token');
   } else if (error.name === 'TokenExpiredError') {
     statusCode = 401;
     message = 'Authentication token has expired';
@@ -149,7 +149,7 @@ export const errorHandler = (
     }, req);
     
     // Audit security event
-    // auditSecurity.unauthorizedAccess(req, 'Expired JWT token');
+    auditSecurity.unauthorizedAccess(req, 'Expired JWT token');
   } else if (error.message.includes('duplicate key value')) {
     statusCode = 409;
     message = 'Resource already exists';

@@ -1,16 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getUserById = exports.getUsers = void 0;
+exports.deleteUser = exports.updateUser = exports.getUserById = exports.getUsers = exports.createUser = void 0;
 const errorHandler_1 = require("../middleware/errorHandler");
 const userService_1 = require("../services/userService");
+const auditLogger_1 = require("../middleware/auditLogger");
 const userService = new userService_1.UserService();
+exports.createUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
+    const user = await userService.createUser(req.body);
+    auditLogger_1.auditData.create(req, 'users', user.id, true);
+    res.status(201).json({ success: true, data: user });
+});
 exports.getUsers = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Get users request received');
     const result = await userService.getUsers(req);
     res.json({
         success: true,
-        data: result.users,
-        pagination: result.pagination,
+        data: {
+            users: result.users,
+            pagination: result.pagination,
+        },
     });
 });
 exports.getUserById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
@@ -19,12 +27,16 @@ exports.getUserById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log("Looking for user with ID:", req.params.id);
     try {
         const user = await userService.getUserById(id);
+        auditLogger_1.auditData.access(req, 'users', id, true);
         res.json({
             success: true,
-            data: user,
+            data: {
+                user: user,
+            },
         });
     }
     catch (error) {
+        auditLogger_1.auditData.access(req, 'users', id, false);
         throw error;
     }
 });
@@ -33,16 +45,20 @@ exports.updateUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
     const user = await userService.updateUser(id, updateData);
+    auditLogger_1.auditData.update(req, 'users', id, true, updateData);
     res.json({
         success: true,
         message: 'User updated successfully',
-        data: user,
+        data: {
+            user: user,
+        },
     });
 });
 exports.deleteUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Delete user request received');
     const { id } = req.params;
     await userService.deleteUser(id);
+    auditLogger_1.auditData.delete(req, 'users', id, true);
     res.json({
         success: true,
         message: 'User deleted successfully',

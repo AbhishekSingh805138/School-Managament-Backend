@@ -5,19 +5,25 @@ const sanitization_1 = require("../utils/sanitization");
 const sanitizeInputs = (req, res, next) => {
     try {
         if (req.body && typeof req.body === 'object') {
-            req.body = (0, sanitization_1.sanitizeObject)(req.body);
+            const sanitizedBody = (0, sanitization_1.sanitizeObject)(req.body);
+            Object.keys(req.body).forEach(key => delete req.body[key]);
+            Object.assign(req.body, sanitizedBody);
         }
         if (req.query && typeof req.query === 'object') {
-            req.query = (0, sanitization_1.sanitizeObject)(req.query);
+            const sanitizedQuery = (0, sanitization_1.sanitizeObject)(req.query);
+            Object.keys(req.query).forEach(key => delete req.query[key]);
+            Object.assign(req.query, sanitizedQuery);
         }
         if (req.params && typeof req.params === 'object') {
-            req.params = (0, sanitization_1.sanitizeObject)(req.params);
+            const sanitizedParams = (0, sanitization_1.sanitizeObject)(req.params);
+            Object.keys(req.params).forEach(key => delete req.params[key]);
+            Object.assign(req.params, sanitizedParams);
         }
         next();
     }
     catch (error) {
         console.error('Error in input sanitization middleware:', error);
-        next();
+        res.status(400).json({ success: false, message: 'Invalid input' });
     }
 };
 exports.sanitizeInputs = sanitizeInputs;
@@ -26,19 +32,26 @@ const createEntitySanitizer = (entityType) => {
         try {
             if (req.body && typeof req.body === 'object') {
                 const fieldDefinitions = sanitization_1.FIELD_DEFINITIONS[entityType];
-                req.body = (0, sanitization_1.sanitizeRequestBody)(req.body, fieldDefinitions);
+                const sanitizedBody = (0, sanitization_1.sanitizeRequestBody)(req.body, fieldDefinitions);
+                Object.keys(req.body).forEach(key => delete req.body[key]);
+                Object.assign(req.body, sanitizedBody);
             }
             if (req.query && typeof req.query === 'object') {
-                req.query = (0, sanitization_1.sanitizeObject)(req.query);
+                const sanitizedQuery = (0, sanitization_1.sanitizeObject)(req.query);
+                Object.keys(req.query).forEach(key => delete req.query[key]);
+                Object.assign(req.query, sanitizedQuery);
             }
             if (req.params && typeof req.params === 'object') {
-                req.params = (0, sanitization_1.sanitizeObject)(req.params);
+                const sanitizedParams = (0, sanitization_1.sanitizeObject)(req.params);
+                Object.keys(req.params).forEach(key => delete req.params[key]);
+                Object.assign(req.params, sanitizedParams);
             }
-            next();
+            return next();
         }
         catch (error) {
             console.error(`Error in ${entityType} sanitization middleware:`, error);
-            next();
+            res.status(400).json({ success: false, message: 'Invalid input' });
+            return;
         }
     };
 };

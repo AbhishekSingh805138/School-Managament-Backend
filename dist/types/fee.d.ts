@@ -448,9 +448,9 @@ export declare const FeeQuerySchema: z.ZodObject<{
     feeCategoryId?: string | undefined;
 }, {
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
+    limit?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    limit?: string | undefined;
     page?: string | undefined;
     classId?: string | undefined;
     studentId?: string | undefined;

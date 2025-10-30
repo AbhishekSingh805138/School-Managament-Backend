@@ -118,7 +118,7 @@ export declare const FinancialReportQuerySchema: z.ZodObject<{
     reportType: "financial";
     format: "json" | "csv" | "pdf" | "excel";
     includeInactive: boolean;
-    groupBy: "date" | "class" | "student" | "category" | "method";
+    groupBy: "date" | "method" | "class" | "student" | "category";
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
     feeCategoryId?: string | undefined;
@@ -131,7 +131,7 @@ export declare const FinancialReportQuerySchema: z.ZodObject<{
     classId?: string | undefined;
     format?: "json" | "csv" | "pdf" | "excel" | undefined;
     includeInactive?: boolean | undefined;
-    groupBy?: "date" | "class" | "student" | "category" | "method" | undefined;
+    groupBy?: "date" | "method" | "class" | "student" | "category" | undefined;
     feeCategoryId?: string | undefined;
     paymentMethod?: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi" | undefined;
 }>;
@@ -824,9 +824,9 @@ export declare const ReportQuerySchema: z.ZodObject<{
     generatedBy?: string | undefined;
 }, {
     status?: "pending" | "failed" | "generating" | "completed" | undefined;
+    limit?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    limit?: string | undefined;
     page?: string | undefined;
     sortBy?: "title" | "reportType" | "generatedAt" | undefined;
     sortOrder?: "asc" | "desc" | undefined;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProfile = exports.logoutAll = exports.logout = exports.refreshToken = exports.getCurrentUser = exports.login = exports.register = void 0;
 const errorHandler_1 = require("../middleware/errorHandler");
 const authService_1 = require("../services/authService");
+const auditLogger_1 = require("../middleware/auditLogger");
 const authService = new authService_1.AuthService();
 exports.register = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     console.log('Register request received');
@@ -11,6 +12,10 @@ exports.register = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     const userData = req.body;
     try {
         const result = await authService.register(userData);
+        auditLogger_1.auditAuth.login(req, userData.email, true, {
+            userId: result.user.id,
+            role: result.user.role,
+        });
         res.status(201).json({
             success: true,
             message: 'User registered successfully',
@@ -18,6 +23,7 @@ exports.register = (0, errorHandler_1.asyncHandler)(async (req, res) => {
         });
     }
     catch (error) {
+        auditLogger_1.auditAuth.failedAttempt(req, userData.email, error instanceof Error ? error.message : 'Registration failed');
         throw error;
     }
 });
@@ -26,6 +32,10 @@ exports.login = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     const loginData = req.body;
     try {
         const result = await authService.login(loginData);
+        auditLogger_1.auditAuth.login(req, loginData.email, true, {
+            userId: result.user.id,
+            role: result.user.role,
+        });
         res.json({
             success: true,
             message: 'Login successful',
@@ -33,6 +43,7 @@ exports.login = (0, errorHandler_1.asyncHandler)(async (req, res) => {
         });
     }
     catch (error) {
+        auditLogger_1.auditAuth.failedAttempt(req, loginData.email, error instanceof Error ? error.message : 'Unknown error');
         throw error;
     }
 });

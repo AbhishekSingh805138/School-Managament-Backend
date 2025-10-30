@@ -8,17 +8,17 @@ export declare const CreateParentSchema: z.ZodObject<{
     phone: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
-    password: string;
     phone?: string | undefined;
     address?: string | undefined;
 }, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
-    password: string;
     phone?: string | undefined;
     address?: string | undefined;
 }>;
@@ -428,14 +428,14 @@ export declare const ParentAccessQuerySchema: z.ZodObject<{
     endDate: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     studentId: string;
-    dataType: "attendance" | "grades" | "fees" | "all";
+    dataType: "fees" | "attendance" | "grades" | "all";
     startDate?: string | undefined;
     endDate?: string | undefined;
 }, {
     studentId: string;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    dataType?: "attendance" | "grades" | "fees" | "all" | undefined;
+    dataType?: "fees" | "attendance" | "grades" | "all" | undefined;
 }>;
 export declare const ParentStudentDataSchema: z.ZodObject<{
     student: z.ZodObject<{
@@ -657,6 +657,24 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
         enrollmentDate: string;
         className: string;
     };
+    fees?: {
+        totalFees: number;
+        paidAmount: number;
+        pendingAmount: number;
+        overdueAmount: number;
+        recentPayments: {
+            amount: number;
+            paymentDate: string;
+            receiptNumber: string;
+            feeCategory: string;
+        }[];
+        upcomingDues: {
+            status: "pending" | "overdue" | "partial";
+            amount: number;
+            feeCategory: string;
+            dueDate: string;
+        }[];
+    } | undefined;
     attendance?: {
         percentage: number;
         totalDays: number;
@@ -684,24 +702,6 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
         overallGrade: string | null;
         currentSemester: string;
         overallPercentage: number | null;
-    } | undefined;
-    fees?: {
-        totalFees: number;
-        paidAmount: number;
-        pendingAmount: number;
-        overdueAmount: number;
-        recentPayments: {
-            amount: number;
-            paymentDate: string;
-            receiptNumber: string;
-            feeCategory: string;
-        }[];
-        upcomingDues: {
-            status: "pending" | "overdue" | "partial";
-            amount: number;
-            feeCategory: string;
-            dueDate: string;
-        }[];
     } | undefined;
 }, {
     student: {
@@ -710,6 +710,24 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
         enrollmentDate: string;
         className: string;
     };
+    fees?: {
+        totalFees: number;
+        paidAmount: number;
+        pendingAmount: number;
+        overdueAmount: number;
+        recentPayments: {
+            amount: number;
+            paymentDate: string;
+            receiptNumber: string;
+            feeCategory: string;
+        }[];
+        upcomingDues: {
+            status: "pending" | "overdue" | "partial";
+            amount: number;
+            feeCategory: string;
+            dueDate: string;
+        }[];
+    } | undefined;
     attendance?: {
         percentage: number;
         totalDays: number;
@@ -737,24 +755,6 @@ export declare const ParentStudentDataSchema: z.ZodObject<{
         overallGrade: string | null;
         currentSemester: string;
         overallPercentage: number | null;
-    } | undefined;
-    fees?: {
-        totalFees: number;
-        paidAmount: number;
-        pendingAmount: number;
-        overdueAmount: number;
-        recentPayments: {
-            amount: number;
-            paymentDate: string;
-            receiptNumber: string;
-            feeCategory: string;
-        }[];
-        upcomingDues: {
-            status: "pending" | "overdue" | "partial";
-            amount: number;
-            feeCategory: string;
-            dueDate: string;
-        }[];
     } | undefined;
 }>;
 export declare const ParentQuerySchema: z.ZodObject<{
@@ -770,16 +770,16 @@ export declare const ParentQuerySchema: z.ZodObject<{
     page: number;
     sortBy: "email" | "firstName" | "lastName" | "createdAt";
     sortOrder: "asc" | "desc";
-    relationshipType?: "father" | "mother" | "guardian" | "other" | undefined;
     search?: string | undefined;
+    relationshipType?: "father" | "mother" | "guardian" | "other" | undefined;
     hasChildren?: boolean | undefined;
 }, {
+    search?: string | undefined;
     limit?: string | undefined;
     page?: string | undefined;
     sortBy?: "email" | "firstName" | "lastName" | "createdAt" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     relationshipType?: "father" | "mother" | "guardian" | "other" | undefined;
-    search?: string | undefined;
     hasChildren?: boolean | undefined;
 }>;
 export type RelationshipType = z.infer<typeof RelationshipTypeSchema>;

@@ -16,10 +16,10 @@ export declare const CreateStudentSchema: z.ZodObject<{
     emergencyContact: z.ZodString;
     medicalInfo: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
-    password: string;
     classId: string;
     studentId: string;
     enrollmentDate: string;
@@ -32,10 +32,10 @@ export declare const CreateStudentSchema: z.ZodObject<{
     guardianEmail?: string | undefined;
     medicalInfo?: string | undefined;
 }, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
-    password: string;
     classId: string;
     studentId: string;
     enrollmentDate: string;
@@ -168,8 +168,8 @@ export declare const StudentResponseSchema: z.ZodObject<{
         isPrimary: boolean;
     }>, "many">>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     userId: string;
+    id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
@@ -206,8 +206,8 @@ export declare const StudentResponseSchema: z.ZodObject<{
         isPrimary: boolean;
     }[] | undefined;
 }, {
-    id: string;
     userId: string;
+    id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
@@ -262,25 +262,25 @@ export declare const StudentQuerySchema: z.ZodObject<{
     page: number;
     sortBy: "firstName" | "lastName" | "studentId" | "enrollmentDate" | "className";
     sortOrder: "asc" | "desc";
+    search?: string | undefined;
     academicYearId?: string | undefined;
     grade?: string | undefined;
     section?: string | undefined;
     isActive?: boolean | undefined;
     classId?: string | undefined;
-    search?: string | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
 }, {
+    search?: string | undefined;
+    limit?: string | undefined;
     academicYearId?: string | undefined;
     grade?: string | undefined;
     section?: string | undefined;
-    limit?: string | undefined;
     page?: string | undefined;
     sortBy?: "firstName" | "lastName" | "studentId" | "enrollmentDate" | "className" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     isActive?: boolean | undefined;
     classId?: string | undefined;
-    search?: string | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
 }>;

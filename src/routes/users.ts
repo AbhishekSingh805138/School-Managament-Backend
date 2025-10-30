@@ -1,16 +1,26 @@
 import { Router } from 'express';
-import { getUsers, getUserById, updateUser, deleteUser } from '../controllers/userController';
+import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../controllers/userController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
-import { UpdateUserSchema } from '../types/user';
+import { CreateUserSchema, UpdateUserSchema } from '../types/user';
 import { PaginationSchema } from '../types/common';
 import { IdSchema } from '../types/common';
 import { z } from 'zod';
+import { sanitizeUser } from '../middleware/sanitization';
 
 const router = Router();
 
 // All routes require authentication
 router.use(authenticate);
+
+// Create user (admin only)
+router.post(
+  '/',
+  authorize('admin'),
+  sanitizeUser,
+  validateBody(CreateUserSchema),
+  createUser
+);
 
 // Get all users (admin only)
 router.get(

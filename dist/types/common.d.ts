@@ -40,13 +40,13 @@ export declare const ErrorResponseSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     message: string;
     success: boolean;
-    error?: string | undefined;
     details?: any;
+    error?: string | undefined;
 }, {
     message: string;
-    error?: string | undefined;
     success?: boolean | undefined;
     details?: any;
+    error?: string | undefined;
 }>;
 export declare const PaginatedResponseSchema: z.ZodObject<{
     success: z.ZodDefault<z.ZodBoolean>;
@@ -225,22 +225,22 @@ export declare const NotificationSchema: z.ZodObject<{
     createdAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     message: string;
-    type: "error" | "success" | "info" | "warning";
+    type: "success" | "error" | "info" | "warning";
     id: string;
     title: string;
     isRead: boolean;
     createdAt: string;
-    data?: Record<string, any> | undefined;
     userId?: string | undefined;
+    data?: Record<string, any> | undefined;
     expiresAt?: string | undefined;
 }, {
     message: string;
-    type: "error" | "success" | "info" | "warning";
+    type: "success" | "error" | "info" | "warning";
     id: string;
     title: string;
     createdAt: string;
-    data?: Record<string, any> | undefined;
     userId?: string | undefined;
+    data?: Record<string, any> | undefined;
     isRead?: boolean | undefined;
     expiresAt?: string | undefined;
 }>;
@@ -256,9 +256,9 @@ export declare const AuditLogSchema: z.ZodObject<{
     userAgent: z.ZodOptional<z.ZodString>;
     createdAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     action: string;
     userId: string;
+    id: string;
     createdAt: string;
     entityType: string;
     entityId: string;
@@ -267,9 +267,9 @@ export declare const AuditLogSchema: z.ZodObject<{
     changes?: Record<string, any> | undefined;
     metadata?: Record<string, any> | undefined;
 }, {
-    id: string;
     action: string;
     userId: string;
+    id: string;
     createdAt: string;
     entityType: string;
     entityId: string;

@@ -2,7 +2,7 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import { Request, Response } from 'express';
 import env from '../config/env';
-// import { auditSecurity } from './auditLogger';
+import { auditSecurity } from './auditLogger';
 
 /**
  * Rate limiting configuration based on environment
@@ -17,8 +17,8 @@ const getRateLimitConfig = () => {
     maxRequests: isProduction ? env.RATE_LIMIT_MAX_REQUESTS : 1000, // 100 in prod, 1000 in dev
     skipSuccessfulRequests: false,
     skipFailedRequests: false,
-    // Skip rate limiting in test environment
-    skip: isTest ? () => true : () => false,
+    // Do not skip in test environment so headers are present for assertions
+    skip: () => false,
   };
 };
 
@@ -29,7 +29,7 @@ const rateLimitHandler = (req: Request, res: Response) => {
   const config = getRateLimitConfig();
   
   // Audit rate limit violation
-  // auditSecurity.rateLimitExceeded(req, 'general');
+  auditSecurity.rateLimitExceeded(req, 'general');
   
   res.status(429).json({
     success: false,
@@ -50,7 +50,7 @@ const rateLimitHandler = (req: Request, res: Response) => {
 export const generalRateLimit = rateLimit({
   windowMs: getRateLimitConfig().windowMs,
   max: getRateLimitConfig().maxRequests,
-  message: rateLimitHandler,
+  handler: rateLimitHandler,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skip: getRateLimitConfig().skip,
@@ -63,7 +63,7 @@ export const generalRateLimit = rateLimit({
 export const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: env.NODE_ENV === 'production' ? 5 : 100, // 5 attempts per 15 min in production
-  message: (req: Request, res: Response) => {
+  handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
       message: 'Too many authentication attempts from this IP, please try again later.',
@@ -87,7 +87,7 @@ export const authRateLimit = rateLimit({
 export const passwordResetRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: env.NODE_ENV === 'production' ? 3 : 50, // 3 attempts per hour in production
-  message: (req: Request, res: Response) => {
+  handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
       message: 'Too many password reset attempts from this IP, please try again later.',
@@ -111,7 +111,7 @@ export const passwordResetRateLimit = rateLimit({
 export const registrationRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: env.NODE_ENV === 'production' ? 10 : 100, // 10 registrations per hour in production
-  message: (req: Request, res: Response) => {
+  handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
       message: 'Too many registration attempts from this IP, please try again later.',
@@ -135,7 +135,7 @@ export const registrationRateLimit = rateLimit({
 export const fileUploadRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: env.NODE_ENV === 'production' ? 20 : 200, // 20 uploads per 15 min in production
-  message: (req: Request, res: Response) => {
+  handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
       message: 'Too many file upload attempts from this IP, please try again later.',
@@ -159,7 +159,7 @@ export const fileUploadRateLimit = rateLimit({
 export const adminRateLimit = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: env.NODE_ENV === 'production' ? 100 : 1000, // 100 operations per 5 min in production
-  message: (req: Request, res: Response) => {
+  handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
       message: 'Too many admin operations from this IP, please try again later.',
@@ -200,7 +200,7 @@ export const createCustomRateLimit = (options: {
   return rateLimit({
     windowMs: options.windowMs,
     max: options.max,
-    message: (req: Request, res: Response) => {
+    handler: (req: Request, res: Response) => {
       res.status(429).json({
         success: false,
         message: options.message,

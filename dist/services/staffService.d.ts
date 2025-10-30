@@ -1,8 +1,8 @@
 import { CreateStaff, UpdateStaff, StaffQuery, StaffResponse, StaffSummary } from '../types/staff';
 import { BaseService } from './baseService';
 export declare class StaffService extends BaseService {
-    createStaff(staffData: CreateStaff, adminUserId: number): Promise<StaffResponse>;
-    getStaff(queryParams: StaffQuery, userRole: string, userId?: number): Promise<{
+    createStaff(staffData: CreateStaff, adminUserId: string): Promise<StaffResponse>;
+    getStaff(queryParams: StaffQuery, userRole: string, userId?: string): Promise<{
         staff: StaffResponse[];
         total: number;
     }>;

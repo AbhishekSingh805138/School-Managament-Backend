@@ -5,8 +5,8 @@ const zod_1 = require("zod");
 const common_1 = require("./common");
 exports.UserRoleSchema = zod_1.z.enum(['admin', 'teacher', 'student', 'parent', 'staff']);
 exports.CreateUserSchema = zod_1.z.object({
-    firstName: zod_1.z.string().min(2, 'First name must be at least 2 characters'),
-    lastName: zod_1.z.string().min(2, 'Last name must be at least 2 characters'),
+    firstName: zod_1.z.string().min(2, 'First name must be at least 2 characters').max(100, 'First name must be at most 100 characters'),
+    lastName: zod_1.z.string().min(2, 'Last name must be at least 2 characters').max(100, 'Last name must be at most 100 characters'),
     email: common_1.EmailSchema,
     password: zod_1.z.string().min(8, 'Password must be at least 8 characters'),
     role: exports.UserRoleSchema,

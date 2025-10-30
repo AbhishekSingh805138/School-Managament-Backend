@@ -239,9 +239,9 @@ export declare const AttendanceQuerySchema: z.ZodObject<{
     subjectId?: string | undefined;
 }, {
     status?: "present" | "absent" | "late" | "excused" | undefined;
+    limit?: string | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    limit?: string | undefined;
     page?: string | undefined;
     classId?: string | undefined;
     studentId?: string | undefined;

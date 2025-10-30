@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
@@ -11,6 +12,7 @@ const env_1 = __importDefault(require("./config/env"));
 const errorHandler_1 = require("./middleware/errorHandler");
 const sanitization_1 = require("./middleware/sanitization");
 const rateLimiting_1 = require("./middleware/rateLimiting");
+const sqlInjectionPrevention_1 = require("./middleware/sqlInjectionPrevention");
 const auth_1 = __importDefault(require("./routes/auth"));
 const users_1 = __importDefault(require("./routes/users"));
 const academicYears_1 = __importDefault(require("./routes/academicYears"));
@@ -31,6 +33,7 @@ const reportCards_1 = __importDefault(require("./routes/reportCards"));
 const staff_1 = __importDefault(require("./routes/staff"));
 const reportExports_1 = __importDefault(require("./routes/reportExports"));
 const app = (0, express_1.default)();
+exports.app = app;
 app.use((0, helmet_1.default)());
 app.use(rateLimiting_1.rateLimitLogger);
 app.use(rateLimiting_1.generalRateLimit);
@@ -43,8 +46,16 @@ app.use((0, cors_1.default)({
 app.use((0, morgan_1.default)(env_1.default.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
+app.use((err, _req, res, next) => {
+    if (err instanceof SyntaxError && 'body' in err) {
+        res.status(400).json({ success: false, message: 'Malformed JSON' });
+        return;
+    }
+    next(err);
+});
 app.use(sanitization_1.validateContentType);
 app.use(sanitization_1.sanitizeInputs);
+app.use(sqlInjectionPrevention_1.preventSQLInjection);
 app.get('/health', (req, res) => {
     res.json({
         success: true,

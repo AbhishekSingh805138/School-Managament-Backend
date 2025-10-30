@@ -1,9 +1,40 @@
 import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
-import { UpdateUser } from '../types/user';
+import { CreateUser, UpdateUser } from '../types/user';
 import { getPaginationParams } from '../utils/pagination';
+import { hashPassword } from '../utils/auth';
 
 export class UserService extends BaseService {
+  async createUser(userData: CreateUser) {
+    // Check duplicate email
+    const existing = await this.executeQuery('SELECT 1 FROM users WHERE email = $1', [userData.email]);
+    if (existing.rows.length > 0) {
+      throw new AppError('User with this email already exists', 409);
+    }
+
+    const passwordHash = await hashPassword(userData.password);
+    const sequentialId = await this.generateSequentialId('users');
+
+    const result = await this.executeQuery(
+      `INSERT INTO users (first_name, last_name, email, password_hash, role, phone, date_of_birth, address, alt_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id, first_name, last_name, email, role, phone, date_of_birth, address, is_active, created_at, updated_at`,
+      [
+        userData.firstName,
+        userData.lastName,
+        userData.email,
+        passwordHash,
+        userData.role,
+        userData.phone || null,
+        userData.dateOfBirth || null,
+        userData.address || null,
+        sequentialId,
+      ]
+    );
+
+    return this.transformUserResponse(result.rows[0]);
+  }
+
   async getUsers(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'created_at');
 

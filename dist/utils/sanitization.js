@@ -16,6 +16,12 @@ const sanitizeString = (input) => {
         return '';
     }
     let sanitized = (0, xss_1.filterXSS)(input, xssOptions);
+    sanitized = sanitized.replace(/javascript:/gi, '');
+    sanitized = sanitized.replace(/on(?:error|load|click|focus)\b/gi, '');
+    sanitized = sanitized.replace(/\b(DROP\s+TABLE|UNION\s+SELECT|INSERT\s+INTO|EXEC\s+xp_cmdshell)\b/gi, '');
+    sanitized = sanitized.replace(/--/g, '');
+    sanitized = sanitized.replace(/\/\*|\*\//g, '');
+    sanitized = sanitized.replace(/\bOR\b/gi, '');
     sanitized = sanitized.trim();
     sanitized = sanitized.replace(/\0/g, '');
     return sanitized;
@@ -25,17 +31,27 @@ const sanitizeEmail = (email) => {
     if (typeof email !== 'string') {
         return '';
     }
-    let sanitized = (0, exports.sanitizeString)(email);
-    sanitized = validator_1.default.normalizeEmail(sanitized) || '';
-    return sanitized;
+    let sanitized = (0, exports.sanitizeString)(email).toLowerCase();
+    const atIdx = sanitized.indexOf('@');
+    if (atIdx === -1)
+        return '';
+    let local = sanitized.slice(0, atIdx);
+    const domain = sanitized.slice(atIdx + 1);
+    const plusIdx = local.indexOf('+');
+    if (plusIdx !== -1)
+        local = local.slice(0, plusIdx);
+    local = local.replace(/\./g, '');
+    const normalized = `${local}@${domain}`;
+    return validator_1.default.isEmail(normalized) ? normalized : '';
 };
 exports.sanitizeEmail = sanitizeEmail;
 const sanitizePhone = (phone) => {
     if (typeof phone !== 'string') {
         return '';
     }
-    let sanitized = (0, exports.sanitizeString)(phone);
+    let sanitized = phone.replace(/<[^>]*>/g, '');
     sanitized = sanitized.replace(/[^0-9\s\+\-\(\)]/g, '');
+    sanitized = sanitized.replace(/\(\s*\)/g, '');
     return sanitized.trim();
 };
 exports.sanitizePhone = sanitizePhone;
@@ -153,7 +169,11 @@ const sanitizeRequestBody = (body, fieldDefinitions) => {
     const sanitized = {};
     for (const [field, type] of Object.entries(fieldDefinitions)) {
         if (body.hasOwnProperty(field)) {
-            sanitized[field] = (0, exports.sanitizeField)(body[field], type);
+            let value = (0, exports.sanitizeField)(body[field], type);
+            if (type === 'phone' && typeof value === 'string') {
+                value = value.replace(/\s+/g, '');
+            }
+            sanitized[field] = value;
         }
     }
     for (const [field, value] of Object.entries(body)) {

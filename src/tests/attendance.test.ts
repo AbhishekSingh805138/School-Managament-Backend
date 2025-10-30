@@ -129,10 +129,12 @@ describe('Attendance Management System', () => {
 
     it('should validate attendance date is not in future', () => {
       const isValidAttendanceDate = (dateString: string) => {
-        const attendanceDate = new Date(dateString);
-        const today = new Date();
-        today.setHours(23, 59, 59, 999); // End of today
-        return attendanceDate <= today;
+        // Compare using UTC to avoid timezone-dependent flakiness
+        const [y, m, d] = dateString.split('-').map((s) => parseInt(s, 10));
+        const attendanceUTC = Date.UTC(y, m - 1, d, 0, 0, 0, 0);
+        const now = new Date();
+        const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999);
+        return attendanceUTC <= todayUTC;
       };
 
       const today = new Date().toISOString().split('T')[0];

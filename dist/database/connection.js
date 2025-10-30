@@ -14,7 +14,7 @@ const dbConfig = {
     password: env_1.default.DB_PASSWORD,
     max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 5000,
 };
 exports.pool = new pg_1.Pool(dbConfig);
 exports.pool.on('error', (err) => {

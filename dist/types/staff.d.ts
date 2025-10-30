@@ -14,12 +14,12 @@ export declare const CreateStaffSchema: z.ZodObject<{
     salary: z.ZodOptional<z.ZodNumber>;
     responsibilities: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
     employeeId: string;
     joiningDate: string;
-    password: string;
     department: string;
     position: string;
     phone?: string | undefined;
@@ -28,12 +28,12 @@ export declare const CreateStaffSchema: z.ZodObject<{
     salary?: number | undefined;
     responsibilities?: string | undefined;
 }, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
     employeeId: string;
     joiningDate: string;
-    password: string;
     department: string;
     position: string;
     phone?: string | undefined;
@@ -109,11 +109,11 @@ export declare const StaffResponseSchema: z.ZodObject<{
         address: string | null;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    userId: string;
     employeeId: string;
     joiningDate: string;
     salary: number | null;
     id: string;
-    userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
@@ -130,11 +130,11 @@ export declare const StaffResponseSchema: z.ZodObject<{
         address: string | null;
     } | undefined;
 }, {
+    userId: string;
     employeeId: string;
     joiningDate: string;
     salary: number | null;
     id: string;
-    userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
@@ -167,19 +167,19 @@ export declare const StaffQuerySchema: z.ZodObject<{
     page: number;
     sortBy: "firstName" | "lastName" | "employeeId" | "joiningDate" | "department" | "position";
     sortOrder: "asc" | "desc";
-    isActive?: boolean | undefined;
     search?: string | undefined;
+    isActive?: boolean | undefined;
     department?: string | undefined;
     position?: string | undefined;
     joiningDateFrom?: string | undefined;
     joiningDateTo?: string | undefined;
 }, {
+    search?: string | undefined;
     limit?: string | undefined;
     page?: string | undefined;
     sortBy?: "firstName" | "lastName" | "employeeId" | "joiningDate" | "department" | "position" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     isActive?: boolean | undefined;
-    search?: string | undefined;
     department?: string | undefined;
     position?: string | undefined;
     joiningDateFrom?: string | undefined;

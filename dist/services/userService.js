@@ -4,7 +4,30 @@ exports.UserService = void 0;
 const baseService_1 = require("./baseService");
 const errorHandler_1 = require("../middleware/errorHandler");
 const pagination_1 = require("../utils/pagination");
+const auth_1 = require("../utils/auth");
 class UserService extends baseService_1.BaseService {
+    async createUser(userData) {
+        const existing = await this.executeQuery('SELECT 1 FROM users WHERE email = $1', [userData.email]);
+        if (existing.rows.length > 0) {
+            throw new errorHandler_1.AppError('User with this email already exists', 409);
+        }
+        const passwordHash = await (0, auth_1.hashPassword)(userData.password);
+        const sequentialId = await this.generateSequentialId('users');
+        const result = await this.executeQuery(`INSERT INTO users (first_name, last_name, email, password_hash, role, phone, date_of_birth, address, alt_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id, first_name, last_name, email, role, phone, date_of_birth, address, is_active, created_at, updated_at`, [
+            userData.firstName,
+            userData.lastName,
+            userData.email,
+            passwordHash,
+            userData.role,
+            userData.phone || null,
+            userData.dateOfBirth || null,
+            userData.address || null,
+            sequentialId,
+        ]);
+        return this.transformUserResponse(result.rows[0]);
+    }
     async getUsers(req) {
         const { page, limit, offset, sortBy, sortOrder } = (0, pagination_1.getPaginationParams)(req, 'created_at');
         const countResult = await this.executeQuery('SELECT COUNT(*) FROM users WHERE is_active = true');

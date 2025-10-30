@@ -7,6 +7,7 @@ exports.rateLimitLogger = exports.bulkOperationRateLimit = exports.reportRateLim
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express_slow_down_1 = __importDefault(require("express-slow-down"));
 const env_1 = __importDefault(require("../config/env"));
+const auditLogger_1 = require("./auditLogger");
 const getRateLimitConfig = () => {
     const isProduction = env_1.default.NODE_ENV === 'production';
     const isTest = env_1.default.NODE_ENV === 'test';
@@ -15,11 +16,12 @@ const getRateLimitConfig = () => {
         maxRequests: isProduction ? env_1.default.RATE_LIMIT_MAX_REQUESTS : 1000,
         skipSuccessfulRequests: false,
         skipFailedRequests: false,
-        skip: isTest ? () => true : () => false,
+        skip: () => false,
     };
 };
 const rateLimitHandler = (req, res) => {
     const config = getRateLimitConfig();
+    auditLogger_1.auditSecurity.rateLimitExceeded(req, 'general');
     res.status(429).json({
         success: false,
         message: 'Too many requests from this IP, please try again later.',
@@ -34,7 +36,7 @@ const rateLimitHandler = (req, res) => {
 exports.generalRateLimit = (0, express_rate_limit_1.default)({
     windowMs: getRateLimitConfig().windowMs,
     max: getRateLimitConfig().maxRequests,
-    message: rateLimitHandler,
+    handler: rateLimitHandler,
     standardHeaders: true,
     legacyHeaders: false,
     skip: getRateLimitConfig().skip,
@@ -42,7 +44,7 @@ exports.generalRateLimit = (0, express_rate_limit_1.default)({
 exports.authRateLimit = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: env_1.default.NODE_ENV === 'production' ? 5 : 100,
-    message: (req, res) => {
+    handler: (req, res) => {
         res.status(429).json({
             success: false,
             message: 'Too many authentication attempts from this IP, please try again later.',
@@ -61,7 +63,7 @@ exports.authRateLimit = (0, express_rate_limit_1.default)({
 exports.passwordResetRateLimit = (0, express_rate_limit_1.default)({
     windowMs: 60 * 60 * 1000,
     max: env_1.default.NODE_ENV === 'production' ? 3 : 50,
-    message: (req, res) => {
+    handler: (req, res) => {
         res.status(429).json({
             success: false,
             message: 'Too many password reset attempts from this IP, please try again later.',
@@ -80,7 +82,7 @@ exports.passwordResetRateLimit = (0, express_rate_limit_1.default)({
 exports.registrationRateLimit = (0, express_rate_limit_1.default)({
     windowMs: 60 * 60 * 1000,
     max: env_1.default.NODE_ENV === 'production' ? 10 : 100,
-    message: (req, res) => {
+    handler: (req, res) => {
         res.status(429).json({
             success: false,
             message: 'Too many registration attempts from this IP, please try again later.',
@@ -99,7 +101,7 @@ exports.registrationRateLimit = (0, express_rate_limit_1.default)({
 exports.fileUploadRateLimit = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: env_1.default.NODE_ENV === 'production' ? 20 : 200,
-    message: (req, res) => {
+    handler: (req, res) => {
         res.status(429).json({
             success: false,
             message: 'Too many file upload attempts from this IP, please try again later.',
@@ -118,7 +120,7 @@ exports.fileUploadRateLimit = (0, express_rate_limit_1.default)({
 exports.adminRateLimit = (0, express_rate_limit_1.default)({
     windowMs: 5 * 60 * 1000,
     max: env_1.default.NODE_ENV === 'production' ? 100 : 1000,
-    message: (req, res) => {
+    handler: (req, res) => {
         res.status(429).json({
             success: false,
             message: 'Too many admin operations from this IP, please try again later.',
@@ -145,7 +147,7 @@ const createCustomRateLimit = (options) => {
     return (0, express_rate_limit_1.default)({
         windowMs: options.windowMs,
         max: options.max,
-        message: (req, res) => {
+        handler: (req, res) => {
             res.status(429).json({
                 success: false,
                 message: options.message,

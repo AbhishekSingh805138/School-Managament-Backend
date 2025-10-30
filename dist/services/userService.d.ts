@@ -1,6 +1,19 @@
 import { BaseService } from './baseService';
-import { UpdateUser } from '../types/user';
+import { CreateUser, UpdateUser } from '../types/user';
 export declare class UserService extends BaseService {
+    createUser(userData: CreateUser): Promise<{
+        id: any;
+        firstName: any;
+        lastName: any;
+        email: any;
+        role: any;
+        phone: any;
+        dateOfBirth: any;
+        address: any;
+        isActive: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
     getUsers(req: any): Promise<{
         users: any;
         pagination: {

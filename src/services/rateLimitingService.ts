@@ -341,6 +341,13 @@ export class RateLimitingService extends BaseService {
     const result = await this.executeQuery(
       `INSERT INTO rate_limit_entries (identifier, endpoint, request_count, window_start, window_end, is_blocked, last_request)
        VALUES ($1, $2, 0, $3, $4, false, $5)
+       ON CONFLICT (identifier, endpoint)
+       DO UPDATE SET 
+         request_count = 0,
+         window_start = EXCLUDED.window_start,
+         window_end = EXCLUDED.window_end,
+         is_blocked = false,
+         last_request = EXCLUDED.last_request
        RETURNING id, identifier, endpoint, request_count, window_start, window_end, is_blocked, last_request`,
       [identifier, endpoint, now, windowEnd, now]
     );

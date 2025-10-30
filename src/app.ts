@@ -6,6 +6,7 @@ import env from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sanitizeInputs, addSecurityHeaders, validateContentType } from './middleware/sanitization';
 import { generalRateLimit, rateLimitLogger, speedLimiter } from './middleware/rateLimiting';
+import { preventSQLInjection } from './middleware/sqlInjectionPrevention';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -55,11 +56,23 @@ app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Handle malformed JSON bodies gracefully
+app.use((err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({ success: false, message: 'Malformed JSON' });
+    return;
+  }
+  next(err);
+});
+
 // Content type validation
 app.use(validateContentType);
 
 // Input sanitization middleware (must be after body parsing)
 app.use(sanitizeInputs);
+
+// SQL Injection prevention middleware
+app.use(preventSQLInjection);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -142,3 +155,4 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 export default app;
+export { app };

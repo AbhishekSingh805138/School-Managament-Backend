@@ -14,13 +14,13 @@ export declare const CreateTeacherSchema: z.ZodObject<{
     joiningDate: z.ZodEffects<z.ZodString, string, string>;
     salary: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
     employeeId: string;
     experienceYears: number;
     joiningDate: string;
-    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
@@ -28,12 +28,12 @@ export declare const CreateTeacherSchema: z.ZodObject<{
     specialization?: string | undefined;
     salary?: number | undefined;
 }, {
+    password: string;
     email: string;
     firstName: string;
     lastName: string;
     employeeId: string;
     joiningDate: string;
-    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
@@ -109,6 +109,7 @@ export declare const TeacherResponseSchema: z.ZodObject<{
         address: string | null;
     }>>;
 }, "strip", z.ZodTypeAny, {
+    userId: string;
     employeeId: string;
     qualification: string | null;
     experienceYears: number;
@@ -116,7 +117,6 @@ export declare const TeacherResponseSchema: z.ZodObject<{
     joiningDate: string;
     salary: number | null;
     id: string;
-    userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
@@ -130,6 +130,7 @@ export declare const TeacherResponseSchema: z.ZodObject<{
         address: string | null;
     } | undefined;
 }, {
+    userId: string;
     employeeId: string;
     qualification: string | null;
     experienceYears: number;
@@ -137,7 +138,6 @@ export declare const TeacherResponseSchema: z.ZodObject<{
     joiningDate: string;
     salary: number | null;
     id: string;
-    userId: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;

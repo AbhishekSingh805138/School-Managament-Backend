@@ -10,15 +10,19 @@ exports.createAcademicYear = (0, errorHandler_1.asyncHandler)(async (req, res) =
     res.status(201).json({
         success: true,
         message: 'Academic year created successfully',
-        data: academicYear,
+        data: {
+            academicYear: academicYear,
+        },
     });
 });
 exports.getAcademicYears = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     const result = await academicYearService.getAcademicYears(req);
     res.json({
         success: true,
-        data: result.academicYears,
-        pagination: result.pagination,
+        data: {
+            academicYears: result.academicYears,
+            pagination: result.pagination,
+        },
     });
 });
 exports.getAcademicYearById = (0, errorHandler_1.asyncHandler)(async (req, res) => {
@@ -26,7 +30,9 @@ exports.getAcademicYearById = (0, errorHandler_1.asyncHandler)(async (req, res) 
     const academicYear = await academicYearService.getAcademicYearById(id);
     res.json({
         success: true,
-        data: academicYear,
+        data: {
+            academicYear: academicYear,
+        },
     });
 });
 exports.updateAcademicYear = (0, errorHandler_1.asyncHandler)(async (req, res) => {
@@ -36,7 +42,9 @@ exports.updateAcademicYear = (0, errorHandler_1.asyncHandler)(async (req, res) =
     res.json({
         success: true,
         message: 'Academic year updated successfully',
-        data: academicYear,
+        data: {
+            academicYear: academicYear,
+        },
     });
 });
 exports.deleteAcademicYear = (0, errorHandler_1.asyncHandler)(async (req, res) => {
@@ -51,7 +59,9 @@ exports.getActiveAcademicYear = (0, errorHandler_1.asyncHandler)(async (req, res
     const academicYear = await academicYearService.getActiveAcademicYear();
     res.json({
         success: true,
-        data: academicYear,
+        data: {
+            academicYear: academicYear,
+        },
     });
 });
 //# sourceMappingURL=academicYearController.js.map

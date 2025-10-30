@@ -12,7 +12,9 @@ export const createAcademicYear = asyncHandler(async (req: Request, res: Respons
   res.status(201).json({
     success: true,
     message: 'Academic year created successfully',
-    data: academicYear,
+    data: {
+      academicYear: academicYear,
+    },
   });
 });
 
@@ -22,8 +24,10 @@ export const getAcademicYears = asyncHandler(async (req: Request, res: Response)
 
   res.json({
     success: true,
-    data: result.academicYears,
-    pagination: result.pagination,
+    data: {
+      academicYears: result.academicYears,
+      pagination: result.pagination,
+    },
   });
 });
 
@@ -34,7 +38,9 @@ export const getAcademicYearById = asyncHandler(async (req: Request, res: Respon
 
   res.json({
     success: true,
-    data: academicYear,
+    data: {
+      academicYear: academicYear,
+    },
   });
 });
 
@@ -47,7 +53,9 @@ export const updateAcademicYear = asyncHandler(async (req: Request, res: Respons
   res.json({
     success: true,
     message: 'Academic year updated successfully',
-    data: academicYear,
+    data: {
+      academicYear: academicYear,
+    },
   });
 });
 
@@ -68,6 +76,8 @@ export const getActiveAcademicYear = asyncHandler(async (req: Request, res: Resp
 
   res.json({
     success: true,
-    data: academicYear,
+    data: {
+      academicYear: academicYear,
+    },
   });
 });

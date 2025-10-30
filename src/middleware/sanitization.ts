@@ -6,26 +6,33 @@ import { sanitizeObject, sanitizeRequestBody, FIELD_DEFINITIONS } from '../utils
  */
 export const sanitizeInputs = (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Sanitize request body
-    if (req.body && typeof req.body === 'object') {
-      req.body = sanitizeObject(req.body);
-    }
-    
-    // Sanitize query parameters
-    if (req.query && typeof req.query === 'object') {
-      req.query = sanitizeObject(req.query);
-    }
-    
-    // Sanitize URL parameters
-    if (req.params && typeof req.params === 'object') {
-      req.params = sanitizeObject(req.params);
-    }
-    
-    next();
+  // Sanitize request body
+  if (req.body && typeof req.body === 'object') {
+    const sanitizedBody = sanitizeObject(req.body);
+    // Replace body object properties instead of the whole object (safer for some frameworks)
+    Object.keys(req.body).forEach(key => delete (req.body as any)[key]);
+    Object.assign(req.body as any, sanitizedBody);
+  }
+  
+  // Sanitize query parameters (do not reassign req.query - mutate keys)
+  if (req.query && typeof req.query === 'object') {
+    const sanitizedQuery = sanitizeObject(req.query);
+    Object.keys(req.query).forEach(key => delete (req.query as any)[key]);
+    Object.assign(req.query as any, sanitizedQuery);
+  }
+  
+  // Sanitize URL parameters (do not reassign req.params - mutate keys)
+  if (req.params && typeof req.params === 'object') {
+    const sanitizedParams = sanitizeObject(req.params);
+    Object.keys(req.params).forEach(key => delete (req.params as any)[key]);
+    Object.assign(req.params as any, sanitizedParams);
+  }
+  
+  next();
   } catch (error) {
     console.error('Error in input sanitization middleware:', error);
-    // Continue processing even if sanitization fails
-    next();
+    // Fail fast with a 400 for sanitization errors instead of 500s later
+    res.status(400).json({ success: false, message: 'Invalid input' });
   }
 };
 
@@ -37,22 +44,30 @@ export const createEntitySanitizer = (entityType: keyof typeof FIELD_DEFINITIONS
     try {
       if (req.body && typeof req.body === 'object') {
         const fieldDefinitions = FIELD_DEFINITIONS[entityType];
-        req.body = sanitizeRequestBody(req.body, fieldDefinitions);
+        const sanitizedBody = sanitizeRequestBody(req.body, fieldDefinitions);
+        Object.keys(req.body).forEach(key => delete (req.body as any)[key]);
+        Object.assign(req.body as any, sanitizedBody);
       }
       
-      // Still sanitize other parts of the request
+      // Still sanitize other parts of the request (mutate, do not reassign)
       if (req.query && typeof req.query === 'object') {
-        req.query = sanitizeObject(req.query);
+        const sanitizedQuery = sanitizeObject(req.query);
+        Object.keys(req.query).forEach(key => delete (req.query as any)[key]);
+        Object.assign(req.query as any, sanitizedQuery);
       }
       
       if (req.params && typeof req.params === 'object') {
-        req.params = sanitizeObject(req.params);
+        const sanitizedParams = sanitizeObject(req.params);
+        Object.keys(req.params).forEach(key => delete (req.params as any)[key]);
+        Object.assign(req.params as any, sanitizedParams);
       }
       
-      next();
+      return next();
     } catch (error) {
       console.error(`Error in ${entityType} sanitization middleware:`, error);
-      next();
+      // Fail fast with client error for bad inputs
+      res.status(400).json({ success: false, message: 'Invalid input' });
+      return;
     }
   };
 };

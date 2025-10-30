@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.asyncHandler = exports.notFoundHandler = exports.errorHandler = exports.AuthError = exports.AppError = void 0;
 const zod_1 = require("zod");
 const env_1 = __importDefault(require("../config/env"));
+const auditLogger_1 = require("./auditLogger");
 class AppError extends Error {
     constructor(message, statusCode = 500, errorCode, context) {
         super(message);
@@ -97,6 +98,7 @@ const errorHandler = (error, req, res, next) => {
         logSecurityEvent('INVALID_TOKEN', {
             error: error.message,
         }, req);
+        auditLogger_1.auditSecurity.unauthorizedAccess(req, 'Invalid JWT token');
     }
     else if (error.name === 'TokenExpiredError') {
         statusCode = 401;
@@ -105,6 +107,7 @@ const errorHandler = (error, req, res, next) => {
         logSecurityEvent('TOKEN_EXPIRED', {
             error: error.message,
         }, req);
+        auditLogger_1.auditSecurity.unauthorizedAccess(req, 'Expired JWT token');
     }
     else if (error.message.includes('duplicate key value')) {
         statusCode = 409;

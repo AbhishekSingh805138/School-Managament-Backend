@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler, AppError } from '../middleware/errorHandler';
 import { AuthService } from '../services/authService';
-// import { auditAuth } from '../middleware/auditLogger';
+import { auditAuth } from '../middleware/auditLogger';
 
 const authService = new AuthService();
 
@@ -17,11 +17,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.register(userData);
     
     // Audit successful registration
-    // auditAuth.login(req, userData.email, true, {
-    //   userId: result.user.id,
-    //   role: result.user.role,
-    //   action: 'REGISTER',
-    // });
+    auditAuth.login(req, userData.email, true, {
+      userId: result.user.id,
+      role: result.user.role,
+    });
 
     res.status(201).json({
       success: true,
@@ -30,7 +29,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     });
   } catch (error) {
     // Audit failed registration attempt
-    // auditAuth.failedAttempt(req, userData.email, error instanceof Error ? error.message : 'Registration failed');
+    auditAuth.failedAttempt(req, userData.email, error instanceof Error ? error.message : 'Registration failed');
     throw error;
   }
 });
@@ -45,11 +44,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.login(loginData);
     
     // Audit successful login
-    // auditAuth.login(req, loginData.email, true, {
-    //   userId: result.user.id,
-    //   role: result.user.role,
-    // });
+    auditAuth.login(req, loginData.email, true, {
+      userId: result.user.id,
+      role: result.user.role,
+    });
 
+    console.log('🎯 Login successful, generated token:', result.token.substring(0, 50) + '...');
+    
     res.json({
       success: true,
       message: 'Login successful',
@@ -57,19 +58,22 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
   } catch (error) {
     // Audit failed login attempt
-    // auditAuth.failedAttempt(req, loginData.email, error instanceof Error ? error.message : 'Unknown error');
+    auditAuth.failedAttempt(req, loginData.email, error instanceof Error ? error.message : 'Unknown error');
     throw error;
   }
 });
 
 // Get current user profile
 export const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
+  console.log('📋 Profile request for user:', req.user!.id);
   const userId = req.user!.id;
   const user = await authService.getCurrentUser(userId);
 
   res.json({
     success: true,
-    data: user,
+    data: {
+      user: user,
+    },
   });
 });
 

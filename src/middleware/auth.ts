@@ -20,14 +20,21 @@ declare global {
 
 // JWT authentication middleware
 export const authenticate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  console.log('🔐 Authentication middleware called');
+  console.log('Request URL:', req.url);
+  console.log('Request method:', req.method);
+  console.log('Authorization header:', req.headers.authorization);
+  
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
-
-
-
-  if (!token) {
+  if (!authHeader) {
+    console.log('❌ No authorization header found');
     throw new AppError('Access token is required', 401);
   }
+  const parts = authHeader.split(' ');
+  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer' || !parts[1]) {
+    throw new AppError('Access token is required', 401);
+  }
+  const token = parts[1];
 
   try {
     // Verify and decode the JWT token
@@ -38,27 +45,30 @@ export const authenticate = asyncHandler(async (req: Request, res: Response, nex
       role: UserRole 
     };
 
+    console.log('Token decoded successfully:', { 
+      id: decoded.id, 
+      userId: decoded.userId, 
+      email: decoded.email, 
+      role: decoded.role 
+    });
+
     // Handle both 'id' and 'userId' fields for backward compatibility
     const userId = decoded.id || decoded.userId;
+    const email = decoded.email;
+    const role = decoded.role;
     
-    if (!userId) {
-      throw new AppError('Invalid token payload: missing user ID', 401);
+    if (!userId || !email || !role) {
+      console.log('Missing required fields in token:', { userId, email, role });
+      throw new AppError('Invalid token payload', 401);
     }
 
-    // In test environment, allow mock users for testing (fake IDs like 'admin-1', 'teacher-1')
-    if (env.NODE_ENV === 'test' && userId.match(/^[a-z]+-\d+$/)) {
-      // This is likely a test token with fake ID like 'admin-1', 'teacher-1', etc.
-      req.user = {
-        id: userId,
-        email: decoded.email,
-        role: decoded.role,
-      };
-
-      next();
-      return;
+    // Validate UUID format to avoid DB errors on malformed IDs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(String(userId))) {
+      throw new AppError('Invalid token payload', 401);
     }
 
-    // For non-test environments or real users in test, verify user exists in database
+    // Verify user exists in database and is active
     const user = await query(
       'SELECT id, first_name, last_name, email, role, is_active FROM users WHERE id = $1 AND is_active = true', 
       [userId]
@@ -77,6 +87,7 @@ export const authenticate = asyncHandler(async (req: Request, res: Response, nex
     
     next();
   } catch (error) {
+    console.log('JWT verification error:', error);
     if (error instanceof jwt.TokenExpiredError) {
       throw new AppError('Access token has expired. Please refresh your token.', 401);
     }

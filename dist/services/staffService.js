@@ -22,14 +22,11 @@ class StaffService extends baseService_1.BaseService {
                 throw new errorHandler_1.AppError('Employee ID already exists', 409);
             }
             const hashedPassword = await bcrypt_1.default.hash(staffData.password, 10);
-            const userIdResult = await client.query('SELECT nextval(\'users_id_seq\') as id');
-            const userSequentialId = userIdResult.rows[0].id;
             const userResult = await client.query(`INSERT INTO users (
-           id, first_name, last_name, email, password_hash, role, phone, 
+           first_name, last_name, email, password_hash, role, phone, 
            date_of_birth, address, is_active
-         ) VALUES ($1, $2, $3, $4, $5, 'staff', $6, $7, $8, true)
+         ) VALUES ($1, $2, $3, $4, 'staff', $5, $6, $7, true)
          RETURNING *`, [
-                userSequentialId,
                 staffData.firstName,
                 staffData.lastName,
                 staffData.email,
@@ -39,14 +36,11 @@ class StaffService extends baseService_1.BaseService {
                 staffData.address || null
             ]);
             const user = userResult.rows[0];
-            const staffIdResult = await client.query('SELECT nextval(\'staff_id_seq\') as id');
-            const staffSequentialId = staffIdResult.rows[0].id;
             const staffResult = await client.query(`INSERT INTO staff (
-           id, user_id, employee_id, department, position, joining_date, 
+           user_id, employee_id, department, position, joining_date, 
            salary, responsibilities, is_active
-         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, true)
          RETURNING *`, [
-                staffSequentialId,
                 user.id,
                 staffData.employeeId,
                 staffData.department,
@@ -125,7 +119,7 @@ class StaffService extends baseService_1.BaseService {
        JOIN users u ON s.user_id = u.id
        ${whereClause}
        ORDER BY ${sortColumn} ${queryParams.sortOrder}
-       LIMIT ${sqlParams.length + 1} OFFSET ${sqlParams.length + 2}`, [...sqlParams, queryParams.limit, offset]);
+       LIMIT $${sqlParams.length + 1} OFFSET $${sqlParams.length + 2}`, [...sqlParams, queryParams.limit, offset]);
         const staff = result.rows.map(this.formatStaffResponse);
         return { staff, total };
     }

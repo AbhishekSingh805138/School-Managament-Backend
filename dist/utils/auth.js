@@ -7,6 +7,7 @@ exports.isTokenExpired = exports.verifyToken = exports.generateToken = exports.g
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = __importDefault(require("../config/env"));
+const crypto_1 = __importDefault(require("crypto"));
 const hashPassword = async (password) => {
     const saltRounds = 12;
     return await bcryptjs_1.default.hash(password, saltRounds);
@@ -18,13 +19,14 @@ const comparePassword = async (password, hashedPassword) => {
 exports.comparePassword = comparePassword;
 const generateAccessToken = (payload) => {
     return jsonwebtoken_1.default.sign(payload, env_1.default.JWT_SECRET, {
-        expiresIn: '15m',
+        expiresIn: '1h',
     });
 };
 exports.generateAccessToken = generateAccessToken;
 const generateRefreshToken = (payload) => {
     return jsonwebtoken_1.default.sign(payload, env_1.default.JWT_SECRET, {
         expiresIn: env_1.default.JWT_EXPIRES_IN,
+        jwtid: crypto_1.default.randomUUID(),
     });
 };
 exports.generateRefreshToken = generateRefreshToken;

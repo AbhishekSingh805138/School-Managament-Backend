@@ -19,7 +19,7 @@ export const createStaff = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError('Only administrators can create staff members', 403);
   }
 
-  const staff = await staffService.createStaff(staffData, parseInt(req.user!.id));
+  const staff = await staffService.createStaff(staffData, req.user!.id);
 
   res.status(201).json({
     success: true,
@@ -33,7 +33,7 @@ export const getStaff = asyncHandler(async (req: Request, res: Response) => {
   const queryParams = StaffQuerySchema.parse(req.query);
   const userRole = req.user!.role;
 
-  const { staff, total } = await staffService.getStaff(queryParams, userRole, parseInt(req.user!.id));
+  const { staff, total } = await staffService.getStaff(queryParams, userRole, req.user!.id);
 
   res.json({
     success: true,

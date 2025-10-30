@@ -1,1 +1,128 @@
-import request from 'supertest';\nimport { app } from '../app';\nimport { AuditLogger, auditAuth, auditData, auditSecurity } from '../middleware/auditLogger';\nimport fs from 'fs';\nimport path from 'path';\n\ndescribe('Audit Logger', () => {\n  let auditor: AuditLogger;\n  const testLogDir = 'logs/audit';\n  const testLogFile = 'audit.log';\n\n  beforeAll(() => {\n    auditor = AuditLogger.getInstance();\n  });\n\n  beforeEach(() => {\n    // Clean up test logs\n    try {\n      const logPath = path.join(testLogDir, testLogFile);\n      if (fs.existsSync(logPath)) {\n        fs.unlinkSync(logPath);\n      }\n    } catch (error) {\n      // Ignore cleanup errors\n    }\n  });\n\n  describe('AuditLogger Class', () => {\n    it('should be a singleton', () => {\n      const instance1 = AuditLogger.getInstance();\n      const instance2 = AuditLogger.getInstance();\n      expect(instance1).toBe(instance2);\n    });\n\n    it('should log events with all required fields', () => {\n      const testEvent = {\n        eventType: 'TEST_EVENT',\n        userId: 'user123',\n        userEmail: 'test@example.com',\n        ipAddress: '127.0.0.1',\n        userAgent: 'test-agent',\n        method: 'POST',\n        endpoint: '/test',\n        action: 'TEST_ACTION',\n        success: true,\n      };\n\n      auditor.logEvent(testEvent);\n\n      // Force flush to write to file\n      auditor.gracefulShutdown();\n\n      // Verify log was written\n      const logPath = path.join(testLogDir, testLogFile);\n      expect(fs.existsSync(logPath)).toBe(true);\n\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('TEST_EVENT');\n      expect(logEntry.userId).toBe('user123');\n      expect(logEntry.userEmail).toBe('test@example.com');\n      expect(logEntry.success).toBe(true);\n      expect(logEntry.timestamp).toBeDefined();\n    });\n\n    it('should retrieve audit logs with filters', async () => {\n      // Log multiple events\n      auditor.logEvent({\n        eventType: 'AUTH_LOGIN',\n        userId: 'user1',\n        userEmail: 'user1@example.com',\n        action: 'LOGIN',\n        success: true,\n      });\n\n      auditor.logEvent({\n        eventType: 'DATA_CREATE',\n        userId: 'user2',\n        userEmail: 'user2@example.com',\n        action: 'CREATE',\n        success: true,\n      });\n\n      auditor.gracefulShutdown();\n\n      // Retrieve logs with filter\n      const logs = await auditor.getAuditLogs({ eventType: 'AUTH_LOGIN' });\n      expect(logs).toHaveLength(1);\n      expect(logs[0].eventType).toBe('AUTH_LOGIN');\n      expect(logs[0].userId).toBe('user1');\n    });\n\n    it('should limit results when specified', async () => {\n      // Log multiple events\n      for (let i = 0; i < 5; i++) {\n        auditor.logEvent({\n          eventType: 'TEST_EVENT',\n          userId: `user${i}`,\n          action: 'TEST',\n          success: true,\n        });\n      }\n\n      auditor.gracefulShutdown();\n\n      const logs = await auditor.getAuditLogs({ limit: 3 });\n      expect(logs).toHaveLength(3);\n    });\n  });\n\n  describe('Audit Auth Functions', () => {\n    let mockReq: any;\n\n    beforeEach(() => {\n      mockReq = {\n        ip: '127.0.0.1',\n        get: jest.fn().mockReturnValue('test-agent'),\n        method: 'POST',\n        originalUrl: '/api/v1/auth/login',\n      };\n    });\n\n    it('should log successful login', () => {\n      auditAuth.login(mockReq, 'test@example.com', true, {\n        userId: 'user123',\n        role: 'student',\n      });\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('AUTH_LOGIN');\n      expect(logEntry.userEmail).toBe('test@example.com');\n      expect(logEntry.success).toBe(true);\n      expect(logEntry.action).toBe('LOGIN');\n    });\n\n    it('should log failed login attempt', () => {\n      auditAuth.failedAttempt(mockReq, 'test@example.com', 'Invalid password', 3);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('AUTH_FAILED_ATTEMPT');\n      expect(logEntry.userEmail).toBe('test@example.com');\n      expect(logEntry.success).toBe(false);\n      expect(logEntry.details.reason).toBe('Invalid password');\n      expect(logEntry.details.attemptCount).toBe(3);\n    });\n\n    it('should log password change', () => {\n      auditAuth.passwordChange(mockReq, 'user123', 'test@example.com', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('AUTH_PASSWORD_CHANGE');\n      expect(logEntry.userId).toBe('user123');\n      expect(logEntry.userEmail).toBe('test@example.com');\n      expect(logEntry.success).toBe(true);\n    });\n  });\n\n  describe('Audit Data Functions', () => {\n    let mockReq: any;\n\n    beforeEach(() => {\n      mockReq = {\n        ip: '127.0.0.1',\n        get: jest.fn().mockReturnValue('test-agent'),\n        method: 'POST',\n        originalUrl: '/api/v1/users',\n        body: { name: 'Test User', email: 'test@example.com' },\n        user: { id: 'user123', email: 'admin@example.com', role: 'admin' },\n      };\n    });\n\n    it('should log data creation', () => {\n      auditData.create(mockReq, 'users', 'user456', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('DATA_CREATE');\n      expect(logEntry.resource).toBe('users');\n      expect(logEntry.resourceId).toBe('user456');\n      expect(logEntry.action).toBe('CREATE');\n      expect(logEntry.success).toBe(true);\n    });\n\n    it('should log data update with changes', () => {\n      const changes = { name: 'Updated Name' };\n      auditData.update(mockReq, 'users', 'user456', true, changes);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('DATA_UPDATE');\n      expect(logEntry.resource).toBe('users');\n      expect(logEntry.resourceId).toBe('user456');\n      expect(logEntry.details.changes.name).toBe('Updated Name');\n    });\n\n    it('should log data deletion', () => {\n      auditData.delete(mockReq, 'users', 'user456', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('DATA_DELETE');\n      expect(logEntry.resource).toBe('users');\n      expect(logEntry.resourceId).toBe('user456');\n      expect(logEntry.action).toBe('DELETE');\n    });\n\n    it('should log sensitive data access', () => {\n      auditData.access(mockReq, 'users', 'user456', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('DATA_ACCESS');\n      expect(logEntry.resource).toBe('users');\n      expect(logEntry.resourceId).toBe('user456');\n      expect(logEntry.action).toBe('ACCESS');\n    });\n\n    it('should not log access for non-sensitive resources', () => {\n      auditData.access(mockReq, 'subjects', 'subject123', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      // Should not create log file for non-sensitive resources\n      expect(fs.existsSync(logPath)).toBe(false);\n    });\n  });\n\n  describe('Audit Security Functions', () => {\n    let mockReq: any;\n\n    beforeEach(() => {\n      mockReq = {\n        ip: '127.0.0.1',\n        get: jest.fn().mockReturnValue('test-agent'),\n        method: 'GET',\n        originalUrl: '/api/v1/admin',\n        user: { id: 'user123', email: 'test@example.com' },\n      };\n    });\n\n    it('should log suspicious activity', () => {\n      auditSecurity.suspiciousActivity(mockReq, 'MULTIPLE_FAILED_LOGINS', {\n        attemptCount: 5,\n        timeWindow: '5 minutes',\n      });\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('SECURITY_SUSPICIOUS');\n      expect(logEntry.action).toBe('MULTIPLE_FAILED_LOGINS');\n      expect(logEntry.success).toBe(false);\n      expect(logEntry.details.attemptCount).toBe(5);\n    });\n\n    it('should log rate limit exceeded', () => {\n      auditSecurity.rateLimitExceeded(mockReq, 'auth');\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('SECURITY_RATE_LIMIT');\n      expect(logEntry.action).toBe('RATE_LIMIT_EXCEEDED');\n      expect(logEntry.details.limitType).toBe('auth');\n    });\n\n    it('should log unauthorized access', () => {\n      auditSecurity.unauthorizedAccess(mockReq, 'Invalid JWT token');\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.eventType).toBe('SECURITY_UNAUTHORIZED');\n      expect(logEntry.action).toBe('UNAUTHORIZED_ACCESS');\n      expect(logEntry.details.reason).toBe('Invalid JWT token');\n    });\n  });\n\n  describe('Data Sanitization', () => {\n    it('should sanitize sensitive fields in request body', () => {\n      const mockReq = {\n        ip: '127.0.0.1',\n        get: jest.fn().mockReturnValue('test-agent'),\n        method: 'POST',\n        originalUrl: '/api/v1/auth/login',\n        body: {\n          email: 'test@example.com',\n          password: 'secretpassword',\n          token: 'jwt-token-here',\n        },\n        user: { id: 'user123', email: 'admin@example.com' },\n      };\n\n      auditData.create(mockReq, 'users', 'user456', true);\n\n      auditor.gracefulShutdown();\n\n      const logPath = path.join(testLogDir, testLogFile);\n      const logContent = fs.readFileSync(logPath, 'utf-8');\n      const logEntry = JSON.parse(logContent.trim());\n\n      expect(logEntry.details.body.email).toBe('test@example.com');\n      expect(logEntry.details.body.password).toBe('[REDACTED]');\n      expect(logEntry.details.body.token).toBe('[REDACTED]');\n    });\n  });\n\n  describe('Integration with Express App', () => {\n    it('should audit failed authentication attempts', async () => {\n      const response = await request(app)\n        .post('/api/v1/auth/login')\n        .send({\n          email: 'nonexistent@example.com',\n          password: 'wrongpassword',\n        });\n\n      expect(response.status).toBe(400);\n\n      // Allow time for audit log to be written\n      await new Promise(resolve => setTimeout(resolve, 100));\n      auditor.gracefulShutdown();\n\n      const logs = await auditor.getAuditLogs({ eventType: 'AUTH_FAILED_ATTEMPT' });\n      expect(logs.length).toBeGreaterThan(0);\n      \n      const loginAttempt = logs.find(log => log.userEmail === 'nonexistent@example.com');\n      expect(loginAttempt).toBeDefined();\n      expect(loginAttempt?.success).toBe(false);\n    });\n  });\n\n  describe('Performance', () => {\n    it('should handle high volume of audit events', () => {\n      const startTime = Date.now();\n      \n      // Log 1000 events\n      for (let i = 0; i < 1000; i++) {\n        auditor.logEvent({\n          eventType: 'PERFORMANCE_TEST',\n          userId: `user${i}`,\n          action: 'TEST',\n          success: true,\n        });\n      }\n      \n      const endTime = Date.now();\n      const duration = endTime - startTime;\n      \n      // Should complete within reasonable time (less than 1 second)\n      expect(duration).toBeLessThan(1000);\n    });\n  });\n});\n"
+import request from 'supertest';
+import { app } from '../app';
+import fs from 'fs';
+import path from 'path';
+import { AuditLogger, auditAuth, auditData, auditSecurity } from '../middleware/auditLogger';
+
+describe('Audit Logger', () => {
+  let auditor: AuditLogger;
+  const testLogDir = path.join('logs', 'audit');
+  const testLogPath = path.join(testLogDir, 'audit.log');
+
+  beforeAll(() => {
+    auditor = AuditLogger.getInstance();
+  });
+
+  beforeEach(() => {
+    // Clean up test log file
+    try {
+      if (fs.existsSync(testLogPath)) fs.unlinkSync(testLogPath);
+    } catch {}
+  });
+
+  describe('AuditLogger Class', () => {
+    it('should be a singleton', () => {
+      const instance1 = AuditLogger.getInstance();
+      const instance2 = AuditLogger.getInstance();
+      expect(instance1).toBe(instance2);
+    });
+
+    it('should log events with all required fields', () => {
+      auditor.logEvent({
+        eventType: 'TEST_EVENT',
+        userId: 'user123',
+        userEmail: 'test@example.com',
+        ipAddress: '127.0.0.1',
+        userAgent: 'test-agent',
+        method: 'POST',
+        endpoint: '/test',
+        action: 'TEST_ACTION',
+        success: true,
+      });
+
+      auditor.gracefulShutdown();
+      expect(fs.existsSync(testLogPath)).toBe(true);
+      const content = fs.readFileSync(testLogPath, 'utf-8').trim();
+      const entry = JSON.parse(content.split(/\r?\n/).pop() as string);
+      expect(entry.eventType).toBe('TEST_EVENT');
+      expect(entry.userId).toBe('user123');
+      expect(entry.userEmail).toBe('test@example.com');
+      expect(entry.success).toBe(true);
+      expect(entry.timestamp).toBeDefined();
+    });
+
+    it('should retrieve audit logs with filters and limits', async () => {
+      auditor.logEvent({ eventType: 'AUTH_LOGIN', userId: 'u1', userEmail: 'u1@example.com', action: 'LOGIN', success: true });
+      auditor.logEvent({ eventType: 'DATA_CREATE', userId: 'u2', userEmail: 'u2@example.com', action: 'CREATE', success: true });
+      auditor.gracefulShutdown();
+
+      const authLogs = await auditor.getAuditLogs({ eventType: 'AUTH_LOGIN' });
+      expect(authLogs.length).toBeGreaterThan(0);
+      expect(authLogs[authLogs.length - 1].eventType).toBe('AUTH_LOGIN');
+
+      const limited = await auditor.getAuditLogs({ limit: 1 });
+      expect(limited.length).toBe(1);
+    });
+  });
+
+  describe('Audit helpers', () => {
+    it('should log auth events', () => {
+      const req: any = { ip: '127.0.0.1', get: jest.fn().mockReturnValue('test-agent'), method: 'POST', originalUrl: '/api/v1/auth/login' };
+      auditAuth.login(req, 'test@example.com', true, { userId: 'user123', role: 'student' });
+      auditor.gracefulShutdown();
+      const content = fs.readFileSync(testLogPath, 'utf-8').trim();
+      const entry = JSON.parse(content.split(/\r?\n/).pop() as string);
+      expect(entry.eventType).toBe('AUTH_LOGIN');
+      expect(entry.userEmail).toBe('test@example.com');
+      expect(entry.success).toBe(true);
+      expect(entry.action).toBe('LOGIN');
+    });
+
+    it('should log data events and redact sensitive fields', () => {
+      const req: any = { ip: '127.0.0.1', get: jest.fn().mockReturnValue('test-agent'), method: 'POST', originalUrl: '/api/v1/users', body: { password: 'secret', token: 'abc', email: 'user@example.com' }, user: { id: 'u', email: 'e' } };
+      auditData.create(req, 'users', 'r1', true);
+      auditor.gracefulShutdown();
+      const content = fs.readFileSync(testLogPath, 'utf-8').trim();
+      const entry = JSON.parse(content.split(/\r?\n/).pop() as string);
+      expect(entry.eventType).toBe('DATA_CREATE');
+      expect(entry.details.body.password).toBe('[REDACTED]');
+      expect(entry.details.body.token).toBe('[REDACTED]');
+    });
+
+    it('should log security events', () => {
+      const req: any = { ip: '127.0.0.1', get: jest.fn().mockReturnValue('test-agent'), method: 'GET', originalUrl: '/api/v1/admin', user: { id: 'u', email: 'e' } };
+      auditSecurity.unauthorizedAccess(req, 'Invalid JWT token');
+      auditor.gracefulShutdown();
+      const content = fs.readFileSync(testLogPath, 'utf-8').trim();
+      const entry = JSON.parse(content.split(/\r?\n/).pop() as string);
+      expect(entry.eventType).toBe('SECURITY_UNAUTHORIZED');
+      expect(entry.action).toBe('UNAUTHORIZED_ACCESS');
+      expect(entry.details.reason).toBe('Invalid JWT token');
+    });
+  });
+
+  describe('Integration with Express App', () => {
+    it('should audit failed authentication attempts', async () => {
+      const response = await request(app).post('/api/v1/auth/login').send({ email: 'nonexistent@example.com', password: 'wrongpassword' });
+      expect(response.status).toBe(401);
+      await new Promise((r) => setTimeout(r, 100));
+      auditor.gracefulShutdown();
+      const logs = await auditor.getAuditLogs({ eventType: 'AUTH_FAILED_ATTEMPT' });
+      expect(logs.length).toBeGreaterThan(0);
+      const loginAttempt = logs.find((l) => l.userEmail === 'nonexistent@example.com');
+      expect(loginAttempt).toBeDefined();
+      expect(loginAttempt?.success).toBe(false);
+    });
+  });
+
+  describe('Performance', () => {
+    it('should handle high volume of audit events', () => {
+      const start = Date.now();
+      for (let i = 0; i < 500; i++) {
+        auditor.logEvent({ eventType: 'PERFORMANCE_TEST', userId: `user${i}`, action: 'TEST', success: true });
+      }
+      const duration = Date.now() - start;
+      expect(duration).toBeLessThan(1500);
+    });
+  });
+});

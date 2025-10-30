@@ -10,20 +10,20 @@ export declare const CreateUserSchema: z.ZodObject<{
     dateOfBirth: z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>;
     address: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    password: string;
+    role: "teacher" | "admin" | "student" | "parent" | "staff";
     email: string;
     firstName: string;
     lastName: string;
-    role: "teacher" | "admin" | "student" | "parent" | "staff";
-    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
 }, {
+    password: string;
+    role: "teacher" | "admin" | "student" | "parent" | "staff";
     email: string;
     firstName: string;
     lastName: string;
-    role: "teacher" | "admin" | "student" | "parent" | "staff";
-    password: string;
     phone?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
@@ -38,31 +38,31 @@ export declare const UpdateUserSchema: z.ZodObject<Omit<{
     dateOfBirth: z.ZodOptional<z.ZodOptional<z.ZodEffects<z.ZodString, string, string>>>;
     address: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, "password">, "strip", z.ZodTypeAny, {
+    role?: "teacher" | "admin" | "student" | "parent" | "staff" | undefined;
     email?: string | undefined;
     phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
-    role?: "teacher" | "admin" | "student" | "parent" | "staff" | undefined;
 }, {
+    role?: "teacher" | "admin" | "student" | "parent" | "staff" | undefined;
     email?: string | undefined;
     phone?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     dateOfBirth?: string | undefined;
     address?: string | undefined;
-    role?: "teacher" | "admin" | "student" | "parent" | "staff" | undefined;
 }>;
 export declare const LoginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    email: string;
     password: string;
+    email: string;
 }, {
-    email: string;
     password: string;
+    email: string;
 }>;
 export declare const ChangePasswordSchema: z.ZodEffects<z.ZodObject<{
     currentPassword: z.ZodString;
@@ -98,25 +98,25 @@ export declare const UserResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    role: "teacher" | "admin" | "student" | "parent" | "staff";
     email: string;
     phone: string | null;
     firstName: string;
     lastName: string;
     dateOfBirth: string | null;
     address: string | null;
-    role: "teacher" | "admin" | "student" | "parent" | "staff";
     id: string;
     createdAt: string;
     isActive: boolean;
     updatedAt: string;
 }, {
+    role: "teacher" | "admin" | "student" | "parent" | "staff";
     email: string;
     phone: string | null;
     firstName: string;
     lastName: string;
     dateOfBirth: string | null;
     address: string | null;
-    role: "teacher" | "admin" | "student" | "parent" | "staff";
     id: string;
     createdAt: string;
     isActive: boolean;

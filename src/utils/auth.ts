@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import env from '../config/env';
 import { UserRole } from '../types/user';
+import crypto from 'crypto';
 
 // Hash password
 export const hashPassword = async (password: string): Promise<string> => {
@@ -24,7 +25,7 @@ export const generateAccessToken = (payload: {
   role: UserRole;
 }): string => {
   return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: '15m', // Short-lived access token
+    expiresIn: '1h', // Increased for testing
   } as jwt.SignOptions);
 };
 
@@ -36,6 +37,7 @@ export const generateRefreshToken = (payload: {
 }): string => {
   return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN, // Use the configured expiration for refresh token
+    jwtid: crypto.randomUUID(),
   } as jwt.SignOptions);
 };
 

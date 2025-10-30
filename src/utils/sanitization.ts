@@ -16,8 +16,19 @@ export const sanitizeString = (input: string): string => {
     return '';
   }
   
-  // Remove XSS attempts
+  // Remove XSS attempts in HTML
   let sanitized = filterXSS(input, xssOptions);
+  
+  // Remove dangerous schemes and event handler tokens even in plain text
+  sanitized = sanitized.replace(/javascript:/gi, '');
+  sanitized = sanitized.replace(/on(?:error|load|click|focus)\b/gi, '');
+  
+  // Neutralize common SQL injection keywords
+  sanitized = sanitized.replace(/\b(DROP\s+TABLE|UNION\s+SELECT|INSERT\s+INTO|EXEC\s+xp_cmdshell)\b/gi, '');
+  // Strip common SQL comment markers and boolean operators used in injections
+  sanitized = sanitized.replace(/--/g, '');
+  sanitized = sanitized.replace(/\/\*|\*\//g, '');
+  sanitized = sanitized.replace(/\bOR\b/gi, '');
   
   // Normalize whitespace
   sanitized = sanitized.trim();
@@ -37,12 +48,21 @@ export const sanitizeEmail = (email: string): string => {
   }
   
   // Basic sanitization
-  let sanitized = sanitizeString(email);
+  let sanitized = sanitizeString(email).toLowerCase();
   
-  // Normalize email
-  sanitized = validator.normalizeEmail(sanitized) || '';
+  // Split local and domain
+  const atIdx = sanitized.indexOf('@');
+  if (atIdx === -1) return '';
+  let local = sanitized.slice(0, atIdx);
+  const domain = sanitized.slice(atIdx + 1);
   
-  return sanitized;
+  // Remove "+tag" and dots in local part (gmail-style normalization)
+  const plusIdx = local.indexOf('+');
+  if (plusIdx !== -1) local = local.slice(0, plusIdx);
+  local = local.replace(/\./g, '');
+  
+  const normalized = `${local}@${domain}`;
+  return validator.isEmail(normalized) ? normalized : '';
 };
 
 /**
@@ -53,9 +73,12 @@ export const sanitizePhone = (phone: string): string => {
     return '';
   }
   
-  // Remove XSS and keep only digits, spaces, +, -, (, )
-  let sanitized = sanitizeString(phone);
+  // Strip HTML tags but preserve inner text (so "(555)" inside <script> is kept)
+  let sanitized = phone.replace(/<[^>]*>/g, '');
+  // Keep only digits, spaces, +, -, (, )
   sanitized = sanitized.replace(/[^0-9\s\+\-\(\)]/g, '');
+  // Remove empty parentheses introduced by stripping
+  sanitized = sanitized.replace(/\(\s*\)/g, '');
   
   return sanitized.trim();
 };
@@ -222,7 +245,12 @@ export const sanitizeRequestBody = (body: any, fieldDefinitions: Record<string, 
   
   for (const [field, type] of Object.entries(fieldDefinitions)) {
     if (body.hasOwnProperty(field)) {
-      sanitized[field] = sanitizeField(body[field], type);
+      let value = sanitizeField(body[field], type);
+      // Additional normalization for certain types
+      if (type === 'phone' && typeof value === 'string') {
+        value = value.replace(/\s+/g, ''); // remove spaces in phone for storage
+      }
+      sanitized[field] = value;
     }
   }
   

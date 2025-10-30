@@ -14,7 +14,7 @@ import bcrypt from 'bcrypt';
 export class StaffService extends BaseService {
   
   // Create staff member
-  async createStaff(staffData: CreateStaff, adminUserId: number): Promise<StaffResponse> {
+  async createStaff(staffData: CreateStaff, adminUserId: string): Promise<StaffResponse> {
     const client = await getClient();
     
     try {
@@ -43,19 +43,14 @@ export class StaffService extends BaseService {
       // Hash password
       const hashedPassword = await bcrypt.hash(staffData.password, 10);
 
-      // Generate sequential ID for user
-      const userIdResult = await client.query('SELECT nextval(\'users_id_seq\') as id');
-      const userSequentialId = userIdResult.rows[0].id;
-
-      // Create user account
+      // Create user account (let DB generate UUID)
       const userResult = await client.query(
         `INSERT INTO users (
-           id, first_name, last_name, email, password_hash, role, phone, 
+           first_name, last_name, email, password_hash, role, phone, 
            date_of_birth, address, is_active
-         ) VALUES ($1, $2, $3, $4, $5, 'staff', $6, $7, $8, true)
+         ) VALUES ($1, $2, $3, $4, 'staff', $5, $6, $7, true)
          RETURNING *`,
         [
-          userSequentialId,
           staffData.firstName,
           staffData.lastName,
           staffData.email,
@@ -68,19 +63,14 @@ export class StaffService extends BaseService {
 
       const user = userResult.rows[0];
 
-      // Generate sequential ID for staff
-      const staffIdResult = await client.query('SELECT nextval(\'staff_id_seq\') as id');
-      const staffSequentialId = staffIdResult.rows[0].id;
-
-      // Create staff profile
+      // Create staff profile (let DB generate UUID)
       const staffResult = await client.query(
         `INSERT INTO staff (
-           id, user_id, employee_id, department, position, joining_date, 
+           user_id, employee_id, department, position, joining_date, 
            salary, responsibilities, is_active
-         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, true)
          RETURNING *`,
         [
-          staffSequentialId,
           user.id,
           staffData.employeeId,
           staffData.department,
@@ -111,7 +101,7 @@ export class StaffService extends BaseService {
   }
 
   // Get staff members with filtering and pagination
-  async getStaff(queryParams: StaffQuery, userRole: string, userId?: number): Promise<{
+  async getStaff(queryParams: StaffQuery, userRole: string, userId?: string): Promise<{
     staff: StaffResponse[];
     total: number;
   }> {
@@ -190,7 +180,7 @@ export class StaffService extends BaseService {
        JOIN users u ON s.user_id = u.id
        ${whereClause}
        ORDER BY ${sortColumn} ${queryParams.sortOrder}
-       LIMIT ${sqlParams.length + 1} OFFSET ${sqlParams.length + 2}`,
+       LIMIT $${sqlParams.length + 1} OFFSET $${sqlParams.length + 2}`,
       [...sqlParams, queryParams.limit, offset]
     );
 

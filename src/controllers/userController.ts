@@ -1,9 +1,16 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../middleware/errorHandler';
 import { UserService } from '../services/userService';
-// import { auditData } from '../middleware/auditLogger';
+import { auditData } from '../middleware/auditLogger';
 
 const userService = new UserService();
+
+// Create user (admin-only)
+export const createUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await userService.createUser(req.body);
+  auditData.create(req, 'users', user.id, true);
+  res.status(201).json({ success: true, data: user });
+});
 
 // Get all users with pagination
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
@@ -12,8 +19,10 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
 
   res.json({
     success: true,
-    data: result.users,
-    pagination: result.pagination,
+    data: {
+      users: result.users,
+      pagination: result.pagination,
+    },
   });
 });
 
@@ -27,15 +36,17 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
     const user = await userService.getUserById(id);
     
     // Audit sensitive user data access
-    // auditData.access(req, 'users', id, true);
+    auditData.access(req, 'users', id, true);
 
     res.json({
       success: true,
-      data: user,
+      data: {
+        user: user,
+      },
     });
   } catch (error) {
     // Audit failed access attempt
-    // auditData.access(req, 'users', id, false);
+    auditData.access(req, 'users', id, false);
     throw error;
   }
 });
@@ -47,11 +58,14 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const updateData = req.body;
 
   const user = await userService.updateUser(id, updateData);
+  auditData.update(req, 'users', id, true, updateData);
 
   res.json({
     success: true,
     message: 'User updated successfully',
-    data: user,
+    data: {
+      user: user,
+    },
   });
 });
 
@@ -61,6 +75,7 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   await userService.deleteUser(id);
+  auditData.delete(req, 'users', id, true);
 
   res.json({
     success: true,

@@ -1,1 +1,1 @@
-{"version":3,"file":"sqlInjectionPrevention.d.ts","sourceRoot":"","sources":["../../src/middleware/sqlInjectionPrevention.ts"],"names":[],"mappings":""}
+{"version":3,"file":"sqlInjectionPrevention.d.ts","sourceRoot":"","sources":["../../src/middleware/sqlInjectionPrevention.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AAO1D,eAAO,MAAM,mBAAmB,GAAI,KAAK,OAAO,EAAE,KAAK,QAAQ,EAAE,MAAM,YAAY,SAYlF,CAAC"}

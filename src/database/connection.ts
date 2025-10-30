@@ -10,7 +10,7 @@ const dbConfig = {
   password: env.DB_PASSWORD,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 5000, // Increase timeout to reduce spurious connection failures under load
 };
 
 // Create connection pool
@@ -28,7 +28,9 @@ export const testConnection = async (): Promise<boolean> => {
     const client = await pool.connect();
     await client.query('SELECT NOW()');
     client.release();
-    console.log('✅ Database connected successfully');
+    if (env.NODE_ENV !== 'test') {
+      console.log('✅ Database connected successfully');
+    }
     return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error);
@@ -42,7 +44,9 @@ export const query = async (text: string, params?: any[]): Promise<any> => {
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
-    console.log('📊 Executed query', { text, duration, rows: res.rowCount });
+    if (env.NODE_ENV !== 'test') {
+      console.log('📊 Executed query', { text, duration, rows: res.rowCount });
+    }
     return res;
   } catch (error) {
     console.error('❌ Query error:', error);
@@ -58,7 +62,9 @@ export const getClient = async (): Promise<PoolClient> => {
 // Graceful shutdown
 export const closePool = async (): Promise<void> => {
   await pool.end();
-  console.log('🔌 Database pool closed');
+  if (env.NODE_ENV !== 'test') {
+    console.log('🔌 Database pool closed');
+  }
 };
 
 export default pool;

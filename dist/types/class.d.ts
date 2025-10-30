@@ -172,13 +172,13 @@ export declare const TransferStudentSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     studentId: string;
     newClassId: string;
-    transferDate?: string | undefined;
     reason?: string | undefined;
+    transferDate?: string | undefined;
 }, {
     studentId: string;
     newClassId: string;
-    transferDate?: string | undefined;
     reason?: string | undefined;
+    transferDate?: string | undefined;
 }>;
 export declare const ClassRosterQuerySchema: z.ZodObject<{
     search: z.ZodOptional<z.ZodString>;
@@ -190,15 +190,15 @@ export declare const ClassRosterQuerySchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     sortBy: "firstName" | "lastName" | "studentId" | "enrollmentDate";
     sortOrder: "asc" | "desc";
-    isActive?: boolean | undefined;
     search?: string | undefined;
+    isActive?: boolean | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
 }, {
+    search?: string | undefined;
     sortBy?: "firstName" | "lastName" | "studentId" | "enrollmentDate" | undefined;
     sortOrder?: "asc" | "desc" | undefined;
     isActive?: boolean | undefined;
-    search?: string | undefined;
     enrollmentDateFrom?: string | undefined;
     enrollmentDateTo?: string | undefined;
 }>;
