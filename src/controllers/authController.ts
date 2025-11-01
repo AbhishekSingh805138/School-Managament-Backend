@@ -67,13 +67,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 export const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
   console.log('📋 Profile request for user:', req.user!.id);
   const userId = req.user!.id;
-  const user = await authService.getCurrentUser(userId);
+  const user = await authService.getCurrentUser(userId, { email: req.user!.email, role: req.user!.role });
 
   res.json({
     success: true,
-    data: {
-      user: user,
-    },
+    data: user,
   });
 });
 

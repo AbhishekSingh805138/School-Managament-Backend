@@ -203,8 +203,8 @@ export class RateLimitingService extends BaseService {
 
     await this.executeQuery(
       `UPDATE rate_limit_entries 
-       SET is_blocked = false, window_end = NOW()
-       WHERE ${whereClause} AND is_blocked = true`,
+       SET is_blocked = false, request_count = 0, window_start = NOW(), window_end = NOW(), last_request = NOW()
+       WHERE ${whereClause}`,
       params
     );
 
@@ -319,7 +319,12 @@ export class RateLimitingService extends BaseService {
       });
     }
 
-    return rule || null;
+    // Fallback generic rule so manual blocks apply to any endpoint
+    if (!rule) {
+      rule = { endpoint: '*', windowMs: 60 * 1000, maxRequests: 100 };
+    }
+
+    return rule;
   }
 
   private async getRateLimitEntry(identifier: string, endpoint: string, windowStart: Date): Promise<RateLimitEntry | null> {

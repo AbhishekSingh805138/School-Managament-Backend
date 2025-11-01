@@ -183,7 +183,7 @@ export const adminRateLimit = rateLimit({
 export const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: env.NODE_ENV === 'production' ? 50 : 500, // Allow 50 requests per 15 min at full speed in production
-  delayMs: 500, // Add 500ms delay per request after delayAfter
+  delayMs: () => 500, // express-slow-down v2 requires function for dynamic delay
   maxDelayMs: 20000, // Maximum delay of 20 seconds
   skip: env.NODE_ENV === 'test' ? () => true : () => false,
 });

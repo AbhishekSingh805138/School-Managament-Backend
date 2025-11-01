@@ -18,24 +18,18 @@ process.env.RATE_LIMIT_MAX_REQUESTS = '100';
 // Global test timeout
 jest.setTimeout(10000);
 
-// Clean up common test emails to ensure idempotent runs
+// Clean up common test emails to ensure idempotent runs (single, early attempt)
 (async () => {
-  const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    try {
-      const { query } = await import('../database/connection');
-      const emails = [
-        'newuser@test.com',
-        'admincreated@test.com',
-        'teacherattempt@test.com',
-        'studentattempt@test.com',
-        'inactive@test.com'
-      ];
-      await query('DELETE FROM users WHERE email = ANY($1)', [emails]);
-      break;
-    } catch (e) {
-      if (attempt === 5) break;
-      await sleep(500);
-    }
-  }
+  try {
+    const { query, closePool } = await import('../database/connection');
+    const emails = [
+      'newuser@test.com',
+      'admincreated@test.com',
+      'teacherattempt@test.com',
+      'studentattempt@test.com',
+      'inactive@test.com'
+    ];
+    await query('DELETE FROM users WHERE email = ANY($1)', [emails]);
+    // Optional: do not close the pool here; tests will use it
+  } catch {}
 })();

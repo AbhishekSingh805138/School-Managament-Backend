@@ -33,7 +33,9 @@ export const testConnection = async (): Promise<boolean> => {
     }
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
+    if (env.NODE_ENV !== 'test') {
+      console.error('❌ Database connection failed:', error);
+    }
     return false;
   }
 };
@@ -49,7 +51,9 @@ export const query = async (text: string, params?: any[]): Promise<any> => {
     }
     return res;
   } catch (error) {
-    console.error('❌ Query error:', error);
+    if (env.NODE_ENV !== 'test') {
+      console.error('❌ Query error:', error);
+    }
     throw error;
   }
 };

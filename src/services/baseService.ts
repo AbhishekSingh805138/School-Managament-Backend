@@ -5,8 +5,17 @@ export abstract class BaseService {
   protected async executeQuery(sql: string, params: any[] = []) {
     try {
       return await query(sql, params);
-    } catch (error) {
-      console.error('Database query error:', error);
+    } catch (error: any) {
+      const code = error?.code || error?.original?.code;
+      if (code === '22P02') {
+        throw new AppError('Invalid token', 401);
+      }
+      if (code === '23505') {
+        throw new AppError('Resource already exists', 409);
+      }
+      if (code === '40P01') {
+        throw new AppError('Service temporarily unavailable', 503);
+      }
       throw new AppError('Database operation failed', 500);
     }
   }
