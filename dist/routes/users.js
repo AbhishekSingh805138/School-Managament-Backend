@@ -9,12 +9,13 @@ const common_1 = require("../types/common");
 const common_2 = require("../types/common");
 const zod_1 = require("zod");
 const sanitization_1 = require("../middleware/sanitization");
+const caching_1 = require("../middleware/caching");
 const router = (0, express_1.Router)();
 router.use(auth_1.authenticate);
-router.post('/', (0, auth_1.authorize)('admin'), sanitization_1.sanitizeUser, (0, validation_1.validateBody)(user_1.CreateUserSchema), userController_1.createUser);
-router.get('/', (0, auth_1.authorize)('admin'), (0, validation_1.validateQuery)(common_1.PaginationSchema), userController_1.getUsers);
-router.get('/:id', (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), userController_1.getUserById);
-router.put('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), (0, validation_1.validateBody)(user_1.UpdateUserSchema), userController_1.updateUser);
-router.delete('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), userController_1.deleteUser);
+router.post('/', (0, auth_1.authorize)('admin'), sanitization_1.sanitizeUser, (0, validation_1.validateBody)(user_1.CreateUserSchema), (0, caching_1.invalidateCache)(['users:*', 'user_session:*']), userController_1.createUser);
+router.get('/', (0, auth_1.authorize)('admin'), (0, validation_1.validateQuery)(common_1.PaginationSchema), (0, caching_1.cacheResponse)(300), userController_1.getUsers);
+router.get('/:id', (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), (0, caching_1.cacheResponse)(600), userController_1.getUserById);
+router.put('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), (0, validation_1.validateBody)(user_1.UpdateUserSchema), (0, caching_1.invalidateCache)(['users:*', 'user_session:*']), userController_1.updateUser);
+router.delete('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_2.IdSchema })), (0, caching_1.invalidateCache)(['users:*', 'user_session:*']), userController_1.deleteUser);
 exports.default = router;
 //# sourceMappingURL=users.js.map

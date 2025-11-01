@@ -13,6 +13,7 @@ import {
 } from '../controllers/feeController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateFeeCategorySchema, 
   UpdateFeeCategorySchema,
@@ -36,6 +37,7 @@ router.post(
   '/categories',
   authorize('admin'),
   validateBody(CreateFeeCategorySchema),
+  invalidateCache(['fees:*', 'stats:fees:*']),
   createFeeCategory
 );
 
@@ -48,6 +50,7 @@ router.get(
     isActive: z.string().optional().transform(val => val === 'true'),
     isMandatory: z.string().optional().transform(val => val === 'true'),
   })),
+  cacheResponse(600), // Cache for 10 minutes
   getFeeCategories
 );
 
@@ -55,6 +58,7 @@ router.get(
 router.get(
   '/categories/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache for 10 minutes
   getFeeCategoryById
 );
 

@@ -8,6 +8,7 @@ import {
 } from '../controllers/gradeController';
 import { validateBody, validateQuery } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateGradeSchema,
   UpdateGradeSchema,
@@ -25,6 +26,7 @@ router.post(
   '/',
   authorize('admin', 'teacher'),
   validateBody(CreateGradeSchema),
+  invalidateCache(['report:grades*', 'stats:*']),
   createGrade
 );
 
@@ -32,6 +34,7 @@ router.post(
 router.get(
   '/',
   validateQuery(GradeQuerySchema),
+  cacheResponse(300), // Cache for 5 minutes
   getGrades
 );
 

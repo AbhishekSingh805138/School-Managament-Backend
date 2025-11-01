@@ -193,27 +193,27 @@ export declare const DepartmentSummarySchema: z.ZodObject<{
         position: z.ZodString;
         count: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        position: string;
         count: number;
+        position: string;
     }, {
-        position: string;
         count: number;
+        position: string;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     totalStaff: number;
     department: string;
     activeStaff: number;
     positions: {
-        position: string;
         count: number;
+        position: string;
     }[];
 }, {
     totalStaff: number;
     department: string;
     activeStaff: number;
     positions: {
-        position: string;
         count: number;
+        position: string;
     }[];
 }>;
 export declare const StaffSummarySchema: z.ZodObject<{
@@ -228,27 +228,27 @@ export declare const StaffSummarySchema: z.ZodObject<{
             position: z.ZodString;
             count: z.ZodNumber;
         }, "strip", z.ZodTypeAny, {
-            position: string;
             count: number;
+            position: string;
         }, {
-            position: string;
             count: number;
+            position: string;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
         totalStaff: number;
         department: string;
         activeStaff: number;
         positions: {
-            position: string;
             count: number;
+            position: string;
         }[];
     }, {
         totalStaff: number;
         department: string;
         activeStaff: number;
         positions: {
-            position: string;
             count: number;
+            position: string;
         }[];
     }>, "many">;
     recentJoinings: z.ZodArray<z.ZodObject<{
@@ -279,8 +279,8 @@ export declare const StaffSummarySchema: z.ZodObject<{
         department: string;
         activeStaff: number;
         positions: {
-            position: string;
             count: number;
+            position: string;
         }[];
     }[];
     recentJoinings: {
@@ -299,8 +299,8 @@ export declare const StaffSummarySchema: z.ZodObject<{
         department: string;
         activeStaff: number;
         positions: {
-            position: string;
             count: number;
+            position: string;
         }[];
     }[];
     recentJoinings: {

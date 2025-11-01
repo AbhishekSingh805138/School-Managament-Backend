@@ -36,6 +36,7 @@ exports.login = (0, errorHandler_1.asyncHandler)(async (req, res) => {
             userId: result.user.id,
             role: result.user.role,
         });
+        console.log('🎯 Login successful, generated token:', result.token.substring(0, 50) + '...');
         res.json({
             success: true,
             message: 'Login successful',
@@ -48,8 +49,9 @@ exports.login = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     }
 });
 exports.getCurrentUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
+    console.log('📋 Profile request for user:', req.user.id);
     const userId = req.user.id;
-    const user = await authService.getCurrentUser(userId);
+    const user = await authService.getCurrentUser(userId, { email: req.user.email, role: req.user.role });
     res.json({
         success: true,
         data: user,

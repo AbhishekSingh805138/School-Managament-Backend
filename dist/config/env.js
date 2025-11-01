@@ -20,6 +20,12 @@ const envSchema = zod_1.z.object({
     CORS_ORIGIN: zod_1.z.string().default('http://localhost:3000'),
     RATE_LIMIT_WINDOW_MS: zod_1.z.string().default('900000').transform(Number),
     RATE_LIMIT_MAX_REQUESTS: zod_1.z.string().default('100').transform(Number),
+    REDIS_HOST: zod_1.z.string().default('localhost'),
+    REDIS_PORT: zod_1.z.string().default('6379').transform(Number),
+    REDIS_PASSWORD: zod_1.z.string().optional(),
+    REDIS_DB: zod_1.z.string().default('0').transform(Number),
+    CACHE_TTL_SECONDS: zod_1.z.string().default('300').transform(Number),
+    REDIS_ENABLED: zod_1.z.string().default('false').transform(val => val === 'true'),
 });
 const validateEnv = () => {
     try {

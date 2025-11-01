@@ -9,7 +9,16 @@ class BaseService {
             return await (0, connection_1.query)(sql, params);
         }
         catch (error) {
-            console.error('Database query error:', error);
+            const code = error?.code || error?.original?.code;
+            if (code === '22P02') {
+                throw new errorHandler_1.AppError('Invalid token', 401);
+            }
+            if (code === '23505') {
+                throw new errorHandler_1.AppError('Resource already exists', 409);
+            }
+            if (code === '40P01') {
+                throw new errorHandler_1.AppError('Service temporarily unavailable', 503);
+            }
             throw new errorHandler_1.AppError('Database operation failed', 500);
         }
     }

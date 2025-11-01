@@ -11,6 +11,7 @@ import {
 } from '../controllers/attendanceController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateAttendanceSchema, 
   UpdateAttendanceSchema,
@@ -30,6 +31,7 @@ router.post(
   '/',
   authorize('admin', 'teacher'),
   validateBody(CreateAttendanceSchema),
+  invalidateCache(['report:attendance*', 'stats:attendance*']),
   markAttendance
 );
 
@@ -38,6 +40,7 @@ router.post(
   '/bulk',
   authorize('admin', 'teacher'),
   validateBody(CreateBulkAttendanceSchema),
+  invalidateCache(['report:attendance*', 'stats:attendance*']),
   markBulkAttendance
 );
 
@@ -45,6 +48,7 @@ router.post(
 router.get(
   '/',
   validateQuery(AttendanceQuerySchema),
+  cacheResponse(300), // Cache for 5 minutes
   getAttendanceRecords
 );
 

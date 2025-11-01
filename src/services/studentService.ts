@@ -3,10 +3,11 @@ import { AppError } from '../middleware/errorHandler';
 import { CreateStudent, UpdateStudent } from '../types/student';
 import { getPaginationParams } from '../utils/pagination';
 import { hashPassword } from '../utils/auth';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class StudentService extends BaseService {
   async createStudent(studentData: CreateStudent) {
-    return await this.executeTransaction(async (client) => {
+    const result = await this.executeTransaction(async (client) => {
       // Check if user with email already exists
       const existingUser = await client.query(
         'SELECT id FROM users WHERE email = $1',
@@ -111,9 +112,38 @@ export class StudentService extends BaseService {
         temporaryPassword: studentData.password ? undefined : password,
       };
     });
+
+    // Invalidate related caches after creating student
+    await cacheService.delPattern(`${CacheKeys.STUDENTS_BY_CLASS}*`);
+    await cacheService.delPattern(`${CacheKeys.CLASS}*`);
+    await cacheService.delPattern(`${CacheKeys.STATS_ENROLLMENT}*`);
+
+    return result;
   }
 
   async getStudents(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'first_name');
+    const { isActive, search, classId, grade } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `${CacheKeys.STUDENTS_BY_CLASS}:${page}:${limit}:${sortBy}:${sortOrder}:${isActive || 'all'}:${search || 'none'}:${classId || 'all'}:${grade || 'all'}`;
+
+    // Use cache wrapper for non-search queries
+    if (!search) {
+      return await cacheService.cacheQuery(
+        cacheKey,
+        async () => {
+          return await this.executeStudentsQuery(req);
+        },
+        CacheTTL.FIVE_MINUTES
+      );
+    }
+
+    // For search queries, execute directly without caching
+    return await this.executeStudentsQuery(req);
+  }
+
+  private async executeStudentsQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'first_name');
     const { isActive, search, classId, grade } = req.query;
 
@@ -192,82 +222,91 @@ export class StudentService extends BaseService {
   }
 
   async getStudentById(id: string) {
-    const isUUID = this.validateUUID(id);
+    // Try cache first
+    const cacheKey = `${CacheKeys.STUDENT}:${id}`;
     
-    let result;
-    if (isUUID) {
-      result = await this.executeQuery(
-        `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date, 
-                s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact, 
-                s.medical_info, s.is_active, s.created_at, s.updated_at,
-                u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address,
-                c.name as class_name, c.grade, c.section,
-                ay.name as academic_year_name
-         FROM students s
-         JOIN users u ON s.user_id = u.id
-         JOIN classes c ON s.class_id = c.id
-         JOIN academic_years ay ON c.academic_year_id = ay.id
-         WHERE s.id = $1`,
-        [id]
-      );
-    } else {
-      result = await this.executeQuery(
-        `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date, 
-                s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact, 
-                s.medical_info, s.is_active, s.created_at, s.updated_at,
-                u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address,
-                c.name as class_name, c.grade, c.section,
-                ay.name as academic_year_name
-         FROM students s
-         JOIN users u ON s.user_id = u.id
-         JOIN classes c ON s.class_id = c.id
-         JOIN academic_years ay ON c.academic_year_id = ay.id
-         WHERE s.alt_id = $1 OR s.student_id = $1`,
-        [id]
-      );
-    }
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        const isUUID = this.validateUUID(id);
+        
+        let result;
+        if (isUUID) {
+          result = await this.executeQuery(
+            `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date, 
+                    s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact, 
+                    s.medical_info, s.is_active, s.created_at, s.updated_at,
+                    u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address,
+                    c.name as class_name, c.grade, c.section,
+                    ay.name as academic_year_name
+             FROM students s
+             JOIN users u ON s.user_id = u.id
+             JOIN classes c ON s.class_id = c.id
+             JOIN academic_years ay ON c.academic_year_id = ay.id
+             WHERE s.id = $1`,
+            [id]
+          );
+        } else {
+          result = await this.executeQuery(
+            `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date, 
+                    s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact, 
+                    s.medical_info, s.is_active, s.created_at, s.updated_at,
+                    u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address,
+                    c.name as class_name, c.grade, c.section,
+                    ay.name as academic_year_name
+             FROM students s
+             JOIN users u ON s.user_id = u.id
+             JOIN classes c ON s.class_id = c.id
+             JOIN academic_years ay ON c.academic_year_id = ay.id
+             WHERE s.alt_id = $1 OR s.student_id = $1`,
+            [id]
+          );
+        }
 
-    if (result.rows.length === 0) {
-      throw new AppError('Student not found', 404);
-    }
+        if (result.rows.length === 0) {
+          throw new AppError('Student not found', 404);
+        }
 
-    const student = result.rows[0];
+        const student = result.rows[0];
 
-    // Get attendance summary
-    const attendanceResult = await this.executeQuery(
-      `SELECT 
-         COUNT(*) as total_days,
-         COUNT(CASE WHEN status = 'present' THEN 1 END) as present_days,
-         COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_days,
-         COUNT(CASE WHEN status = 'late' THEN 1 END) as late_days
-       FROM attendance 
-       WHERE student_id = $1`,
-      [student.id]
+        // Get attendance summary
+        const attendanceResult = await this.executeQuery(
+          `SELECT 
+             COUNT(*) as total_days,
+             COUNT(CASE WHEN status = 'present' THEN 1 END) as present_days,
+             COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_days,
+             COUNT(CASE WHEN status = 'late' THEN 1 END) as late_days
+           FROM attendance 
+           WHERE student_id = $1`,
+          [student.id]
+        );
+
+        const attendance = attendanceResult.rows[0];
+        const attendancePercentage = attendance.total_days > 0 
+          ? Math.round((attendance.present_days / attendance.total_days) * 100) 
+          : 0;
+
+        return {
+          ...this.transformStudentResponse(student),
+          user: this.transformUserResponse(student),
+          class: {
+            id: student.class_id,
+            name: student.class_name,
+            grade: student.grade,
+            section: student.section,
+            academicYear: student.academic_year_name,
+          },
+          attendanceSummary: {
+            totalDays: parseInt(attendance.total_days),
+            presentDays: parseInt(attendance.present_days),
+            absentDays: parseInt(attendance.absent_days),
+            lateDays: parseInt(attendance.late_days),
+            attendancePercentage,
+          },
+        };
+      },
+      CacheTTL.TEN_MINUTES
     );
-
-    const attendance = attendanceResult.rows[0];
-    const attendancePercentage = attendance.total_days > 0 
-      ? Math.round((attendance.present_days / attendance.total_days) * 100) 
-      : 0;
-
-    return {
-      ...this.transformStudentResponse(student),
-      user: this.transformUserResponse(student),
-      class: {
-        id: student.class_id,
-        name: student.class_name,
-        grade: student.grade,
-        section: student.section,
-        academicYear: student.academic_year_name,
-      },
-      attendanceSummary: {
-        totalDays: parseInt(attendance.total_days),
-        presentDays: parseInt(attendance.present_days),
-        absentDays: parseInt(attendance.absent_days),
-        lateDays: parseInt(attendance.late_days),
-        attendancePercentage,
-      },
-    };
   }
 
   async updateStudent(id: string, updateData: UpdateStudent) {
@@ -275,7 +314,7 @@ export class StudentService extends BaseService {
     const studentId = existingStudent.id;
     const userId = existingStudent.user_id;
 
-    return await this.executeTransaction(async (client) => {
+    const result = await this.executeTransaction(async (client) => {
       // Update user information if provided
       const userUpdateData: any = {};
       if (updateData.firstName) userUpdateData.firstName = updateData.firstName;
@@ -371,6 +410,13 @@ export class StudentService extends BaseService {
         user: this.transformUserResponse(user),
       };
     });
+
+    // Invalidate related caches after updating student
+    await cacheService.delPattern(`${CacheKeys.STUDENT}*`);
+    await cacheService.delPattern(`${CacheKeys.STUDENTS_BY_CLASS}*`);
+    await cacheService.delPattern(`${CacheKeys.CLASS}*`);
+
+    return result;
   }
 
   async deleteStudent(id: string) {
@@ -378,7 +424,7 @@ export class StudentService extends BaseService {
     const studentId = existingStudent.id;
     const userId = existingStudent.user_id;
 
-    return await this.executeTransaction(async (client) => {
+    const result = await this.executeTransaction(async (client) => {
       // Deactivate student
       await client.query(
         'UPDATE students SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
@@ -405,10 +451,70 @@ export class StudentService extends BaseService {
 
       return { success: true };
     });
+
+    // Invalidate related caches after deleting student
+    await cacheService.delPattern(`${CacheKeys.STUDENT}*`);
+    await cacheService.delPattern(`${CacheKeys.STUDENTS_BY_CLASS}*`);
+    await cacheService.delPattern(`${CacheKeys.CLASS}*`);
+    await cacheService.delPattern(`${CacheKeys.STATS_ENROLLMENT}*`);
+
+    return result;
+  }
+
+  // Get students by class with caching
+  async getStudentsByClass(classId: string, params: { page: number; limit: number }) {
+    const { page, limit } = params;
+    const cacheKey = `${CacheKeys.STUDENTS_BY_CLASS}:${classId}:${page}:${limit}`;
+
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        const offset = (page - 1) * limit;
+
+        // Validate class exists
+        await this.checkEntityExists('classes', classId, 'alt_id');
+
+        // Get total count
+        const countResult = await this.executeQuery(
+          `SELECT COUNT(*) FROM students s WHERE s.class_id = $1 AND s.is_active = true`,
+          [classId]
+        );
+        const total = parseInt(countResult.rows[0].count);
+
+        // Get students
+        const result = await this.executeQuery(
+          `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date,
+                  s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact,
+                  s.medical_info, s.is_active, s.created_at, s.updated_at,
+                  u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address
+           FROM students s
+           JOIN users u ON s.user_id = u.id
+           WHERE s.class_id = $1 AND s.is_active = true
+           ORDER BY u.first_name, u.last_name
+           LIMIT $2 OFFSET $3`,
+          [classId, limit, offset]
+        );
+
+        const students = result.rows.map((row: any) => ({
+          ...this.transformStudentResponse(row),
+          user: this.transformUserResponse(row),
+        }));
+
+        return {
+          students,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
+        };
+      },
+      CacheTTL.FIVE_MINUTES
+    );
   }
 
   private generateDefaultPassword(studentId: string): string {
-    // Generate a simple default password based on student ID
     return `student${studentId}`;
   }
 
@@ -556,51 +662,6 @@ export class StudentService extends BaseService {
     }));
   }
 
-  // Get students by class with pagination
-  async getStudentsByClass(classId: string, params: { page: number; limit: number }) {
-    const { page, limit } = params;
-    const offset = (page - 1) * limit;
-
-    // Validate class exists
-    await this.checkEntityExists('classes', classId, 'alt_id');
-
-    // Get total count
-    const countResult = await this.executeQuery(
-      `SELECT COUNT(*) FROM students s WHERE s.class_id = $1 AND s.is_active = true`,
-      [classId]
-    );
-    const total = parseInt(countResult.rows[0].count);
-
-    // Get students
-    const result = await this.executeQuery(
-      `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date,
-              s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact,
-              s.medical_info, s.is_active, s.created_at, s.updated_at,
-              u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address
-       FROM students s
-       JOIN users u ON s.user_id = u.id
-       WHERE s.class_id = $1 AND s.is_active = true
-       ORDER BY u.first_name, u.last_name
-       LIMIT $2 OFFSET $3`,
-      [classId, limit, offset]
-    );
-
-    const students = result.rows.map((row: any) => ({
-      ...this.transformStudentResponse(row),
-      user: this.transformUserResponse(row),
-    }));
-
-    return {
-      students,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
   // Bulk update students
   async bulkUpdateStudents(studentIds: string[], updateData: any) {
     return await this.executeTransaction(async (client) => {
@@ -662,5 +723,4 @@ export class StudentService extends BaseService {
 
       return results;
     });
-  }
-}
+  }}

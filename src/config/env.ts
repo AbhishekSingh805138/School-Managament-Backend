@@ -26,6 +26,14 @@ const envSchema = z.object({
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform(Number),
   RATE_LIMIT_MAX_REQUESTS: z.string().default('100').transform(Number),
+  
+  // Redis Cache (Phase 3.1.2)
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.string().default('6379').transform(Number),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_DB: z.string().default('0').transform(Number),
+  CACHE_TTL_SECONDS: z.string().default('300').transform(Number), // 5 minutes default
+  REDIS_ENABLED: z.string().default('false').transform(val => val === 'true'),
 });
 
 // Validate and export environment variables

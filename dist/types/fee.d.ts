@@ -243,7 +243,7 @@ export declare const CreatePaymentSchema: z.ZodObject<{
     remarks: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     amount: number;
-    paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    paymentMethod: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi";
     studentFeeId: string;
     paymentDate?: string | undefined;
     receiptNumber?: string | undefined;
@@ -251,7 +251,7 @@ export declare const CreatePaymentSchema: z.ZodObject<{
     transactionId?: string | undefined;
 }, {
     amount: number;
-    paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    paymentMethod: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi";
     studentFeeId: string;
     paymentDate?: string | undefined;
     receiptNumber?: string | undefined;
@@ -346,7 +346,7 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     paymentDate: string;
     receiptNumber: string;
     remarks: string | null;
-    paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    paymentMethod: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi";
     studentFeeId: string;
     transactionId: string | null;
     processedBy: string;
@@ -375,7 +375,7 @@ export declare const PaymentResponseSchema: z.ZodObject<{
     paymentDate: string;
     receiptNumber: string;
     remarks: string | null;
-    paymentMethod: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi";
+    paymentMethod: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi";
     studentFeeId: string;
     transactionId: string | null;
     processedBy: string;

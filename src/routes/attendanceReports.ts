@@ -7,6 +7,7 @@ import {
 } from '../controllers/attendanceReportController';
 import { validateQuery } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { AttendanceReportQuerySchema } from '../types/report';
 import { z } from 'zod';
 

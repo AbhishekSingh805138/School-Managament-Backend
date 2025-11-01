@@ -3,6 +3,7 @@ import { AppError } from '../middleware/errorHandler';
 import { CreateTeacher, UpdateTeacher } from '../types/teacher';
 import { getPaginationParams } from '../utils/pagination';
 import { hashPassword } from '../utils/auth';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class TeacherService extends BaseService {
   async createTeacher(teacherData: CreateTeacher) {
@@ -143,7 +144,7 @@ export class TeacherService extends BaseService {
 
   async getTeacherById(id: string) {
     const isUUID = this.validateUUID(id);
-    
+
     let result;
     if (isUUID) {
       result = await this.executeQuery(
@@ -596,7 +597,7 @@ export class TeacherService extends BaseService {
     // Calculate workload metrics
     const maxRecommendedHours = 25;
     const workloadIntensity = Math.min((weeklyHours / maxRecommendedHours) * 100, 100);
-    
+
     let workloadStatus = 'normal';
     if (weeklyHours > 30) {
       workloadStatus = 'overloaded';
@@ -765,7 +766,7 @@ export class TeacherService extends BaseService {
     } else {
       // Update existing assignment
       const currentAssignment = classSubjectExists.rows[0];
-      
+
       if (currentAssignment.teacher_id === teacher.user_id) {
         throw new AppError('Teacher is already assigned to teach this subject in this class', 409);
       }

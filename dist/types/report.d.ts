@@ -122,7 +122,7 @@ export declare const FinancialReportQuerySchema: z.ZodObject<{
     status?: "pending" | "overdue" | "partial" | "paid" | "waived" | undefined;
     classId?: string | undefined;
     feeCategoryId?: string | undefined;
-    paymentMethod?: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi" | undefined;
+    paymentMethod?: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi" | undefined;
 }, {
     startDate: string;
     endDate: string;
@@ -133,7 +133,7 @@ export declare const FinancialReportQuerySchema: z.ZodObject<{
     includeInactive?: boolean | undefined;
     groupBy?: "date" | "method" | "class" | "student" | "category" | undefined;
     feeCategoryId?: string | undefined;
-    paymentMethod?: "cash" | "card" | "bank_transfer" | "cheque" | "online" | "upi" | undefined;
+    paymentMethod?: "card" | "cash" | "bank_transfer" | "cheque" | "online" | "upi" | undefined;
 }>;
 export declare const EnrollmentReportQuerySchema: z.ZodObject<{
     startDate: z.ZodEffects<z.ZodString, string, string>;
@@ -151,7 +151,7 @@ export declare const EnrollmentReportQuerySchema: z.ZodObject<{
     reportType: "enrollment";
     format: "json" | "csv" | "pdf" | "excel";
     includeInactive: boolean;
-    groupBy: "class" | "grade" | "month" | "academic_year";
+    groupBy: "class" | "grade" | "academic_year" | "month";
     academicYearId?: string | undefined;
     classId?: string | undefined;
 }, {
@@ -162,7 +162,7 @@ export declare const EnrollmentReportQuerySchema: z.ZodObject<{
     classId?: string | undefined;
     format?: "json" | "csv" | "pdf" | "excel" | undefined;
     includeInactive?: boolean | undefined;
-    groupBy?: "class" | "grade" | "month" | "academic_year" | undefined;
+    groupBy?: "class" | "grade" | "academic_year" | "month" | undefined;
 }>;
 export declare const TeacherWorkloadReportQuerySchema: z.ZodObject<{
     startDate: z.ZodEffects<z.ZodString, string, string>;

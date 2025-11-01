@@ -6,21 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.reportExportService = exports.ReportExportService = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const exceljs_1 = __importDefault(require("exceljs"));
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const errorHandler_1 = require("../middleware/errorHandler");
+const emailService_1 = require("./emailService");
 class ReportExportService {
     constructor() {
-        this.emailTransporter = nodemailer_1.default.createTransport({
-            host: process.env.SMTP_HOST || 'localhost',
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: process.env.SMTP_SECURE === 'true',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
     }
     static getInstance() {
         if (!ReportExportService.instance) {
@@ -46,11 +37,19 @@ class ReportExportService {
         }
     }
     async exportToPDF(reportData, options) {
-        const browser = await puppeteer_1.default.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
+        let browser;
         try {
+            browser = await puppeteer_1.default.launch({
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-accelerated-2d-canvas',
+                    '--disable-gpu'
+                ],
+                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+            });
             const page = await browser.newPage();
             const htmlContent = this.generateReportHTML(reportData, options);
             await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
@@ -80,8 +79,14 @@ class ReportExportService {
                 mimeType: 'application/pdf',
             };
         }
+        catch (error) {
+            console.error('PDF generation error:', error);
+            throw new errorHandler_1.AppError(`PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 500);
+        }
         finally {
-            await browser.close();
+            if (browser) {
+                await browser.close();
+            }
         }
     }
     async exportToExcel(reportData, options) {
@@ -149,20 +154,18 @@ class ReportExportService {
     }
     async emailReport(exportResult, recipients, reportData, customMessage) {
         try {
-            const mailOptions = {
-                from: process.env.SMTP_FROM || 'noreply@schoolmanagement.com',
-                to: recipients.join(', '),
+            const html = this.generateEmailHTML(reportData, customMessage);
+            await emailService_1.emailService.sendEmail({
+                to: recipients,
                 subject: `School Management Report: ${reportData.metadata.title}`,
-                html: this.generateEmailHTML(reportData, customMessage),
+                html,
                 attachments: [
                     {
                         filename: exportResult.fileName,
                         path: exportResult.filePath,
-                        contentType: exportResult.mimeType,
                     },
                 ],
-            };
-            await this.emailTransporter.sendMail(mailOptions);
+            });
         }
         catch (error) {
             throw new errorHandler_1.AppError(`Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`, 500);

@@ -1,7 +1,6 @@
 import { ReportResponse, ReportFormat } from '../types/report';
 export declare class ReportExportService {
     private static instance;
-    private emailTransporter;
     private constructor();
     static getInstance(): ReportExportService;
     exportReport(reportData: ReportResponse, format: ReportFormat, options?: ExportOptions): Promise<ExportResult>;

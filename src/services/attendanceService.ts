@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateAttendance, UpdateAttendance, CreateBulkAttendance } from '../types/attendance';
 import { getPaginationParams } from '../utils/pagination';
+import { cacheService, CacheKeys, CacheTTL } from './cacheService';
 
 export class AttendanceService extends BaseService {
   async markAttendance(attendanceData: CreateAttendance, markedBy: string) {
@@ -84,6 +85,10 @@ export class AttendanceService extends BaseService {
         section: classInfo.section,
       },
     };
+
+    // Invalidate attendance cache after marking
+    await cacheService.delPattern(`${CacheKeys.REPORT_ATTENDANCE}*`);
+    await cacheService.delPattern(`${CacheKeys.STATS_ATTENDANCE}*`);
   }
 
   async markBulkAttendance(bulkData: CreateBulkAttendance, markedBy: string) {
@@ -176,6 +181,23 @@ export class AttendanceService extends BaseService {
   }
 
   async getAttendance(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'date');
+    const { studentId, classId, subjectId, date, status, startDate, endDate } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `${CacheKeys.REPORT_ATTENDANCE}:${page}:${limit}:${sortBy}:${sortOrder}:${studentId || 'all'}:${classId || 'all'}:${subjectId || 'all'}:${date || 'all'}:${status || 'all'}:${startDate || 'none'}:${endDate || 'none'}`;
+
+    // Use cache wrapper for attendance queries (5 minute cache)
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        return await this.executeAttendanceQuery(req);
+      },
+      CacheTTL.FIVE_MINUTES
+    );
+  }
+
+  private async executeAttendanceQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'date');
     const { studentId, classId, subjectId, date, status, startDate, endDate } = req.query;
 

@@ -1,6 +1,7 @@
 import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { AttendanceReportQuery, ReportFormat, ReportResponse } from '../types/report';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class AttendanceReportService extends BaseService {
   async generateAttendanceReport(reportQuery: AttendanceReportQuery, userId: string, userRole: string): Promise<ReportResponse> {

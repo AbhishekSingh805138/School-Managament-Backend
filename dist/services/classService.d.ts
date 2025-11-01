@@ -33,6 +33,7 @@ export declare class ClassService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeClassesQuery;
     getClassById(id: string): Promise<{
         academicYear: {
             id: any;

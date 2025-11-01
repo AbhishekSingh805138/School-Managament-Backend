@@ -4,13 +4,14 @@ exports.AcademicYearService = void 0;
 const baseService_1 = require("./baseService");
 const errorHandler_1 = require("../middleware/errorHandler");
 const pagination_1 = require("../utils/pagination");
+const cacheService_1 = require("./cacheService");
 class AcademicYearService extends baseService_1.BaseService {
     async createAcademicYear(academicYearData) {
         const existingYear = await this.executeQuery('SELECT id FROM academic_years WHERE name = $1', [academicYearData.name]);
         if (existingYear.rows.length > 0) {
             throw new errorHandler_1.AppError('Academic year with this name already exists', 409);
         }
-        return await this.executeTransaction(async (client) => {
+        const result = await this.executeTransaction(async (client) => {
             if (academicYearData.isActive) {
                 await client.query('UPDATE academic_years SET is_active = false WHERE is_active = true');
             }
@@ -26,6 +27,8 @@ class AcademicYearService extends baseService_1.BaseService {
             ]);
             return this.transformAcademicYearResponse(result.rows[0]);
         });
+        await cacheService_1.cacheService.delPattern(`${cacheService_1.CacheKeys.ACADEMIC_YEAR}*`);
+        return result;
     }
     async getAcademicYears(req) {
         const { page, limit, offset, sortBy, sortOrder } = (0, pagination_1.getPaginationParams)(req, 'start_date');
@@ -104,12 +107,14 @@ class AcademicYearService extends baseService_1.BaseService {
         return { success: true };
     }
     async getActiveAcademicYear() {
-        const result = await this.executeQuery(`SELECT id, alt_id, name, start_date, end_date, is_active, created_at, updated_at
-       FROM academic_years WHERE is_active = true LIMIT 1`);
-        if (result.rows.length === 0) {
-            throw new errorHandler_1.AppError('No active academic year found', 404);
-        }
-        return this.transformAcademicYearResponse(result.rows[0]);
+        return await cacheService_1.cacheService.cacheQuery(cacheService_1.CacheKeys.ACADEMIC_YEAR_ACTIVE, async () => {
+            const result = await this.executeQuery(`SELECT id, alt_id, name, start_date, end_date, is_active, created_at, updated_at
+           FROM academic_years WHERE is_active = true LIMIT 1`);
+            if (result.rows.length === 0) {
+                throw new errorHandler_1.AppError('No active academic year found', 404);
+            }
+            return this.transformAcademicYearResponse(result.rows[0]);
+        }, cacheService_1.CacheTTL.ONE_HOUR);
     }
     transformAcademicYearResponse(academicYear) {
         return {

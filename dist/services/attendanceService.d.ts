@@ -56,6 +56,7 @@ export declare class AttendanceService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeAttendanceQuery;
     getAttendanceById(id: string): Promise<{
         student: {
             id: any;

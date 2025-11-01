@@ -11,6 +11,7 @@ import {
 } from '../controllers/parentController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateParentSchema, 
   UpdateParentSchema,
@@ -31,6 +32,7 @@ router.post(
   '/',
   authorize('admin'),
   validateBody(CreateParentSchema),
+  invalidateCache(['parents:*']),
   createParent
 );
 
@@ -39,6 +41,7 @@ router.get(
   '/',
   authorize('admin', 'teacher'),
   validateQuery(ParentQuerySchema),
+  cacheResponse(300), // Cache for 5 minutes
   getParents
 );
 
@@ -46,6 +49,7 @@ router.get(
 router.get(
   '/dashboard',
   authorize('parent'),
+  cacheResponse(300), // Cache for 5 minutes
   getParentDashboard
 );
 
@@ -54,6 +58,7 @@ router.get(
   '/:id',
   authorize('admin', 'teacher'),
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache for 10 minutes
   getParentById
 );
 
@@ -63,6 +68,7 @@ router.put(
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
   validateBody(UpdateParentSchema),
+  invalidateCache(['parents:*']),
   updateParent
 );
 
@@ -71,6 +77,7 @@ router.post(
   '/link-student',
   authorize('admin'),
   validateBody(CreateStudentParentSchema),
+  invalidateCache(['parents:*', 'students:*']),
   linkParentToStudent
 );
 

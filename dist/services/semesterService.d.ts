@@ -25,6 +25,7 @@ export declare class SemesterService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeSemestersQuery;
     getSemesterById(id: string): Promise<{
         academicYear: {
             id: any;

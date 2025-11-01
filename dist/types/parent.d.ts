@@ -428,14 +428,14 @@ export declare const ParentAccessQuerySchema: z.ZodObject<{
     endDate: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     studentId: string;
-    dataType: "fees" | "attendance" | "grades" | "all";
+    dataType: "fees" | "all" | "attendance" | "grades";
     startDate?: string | undefined;
     endDate?: string | undefined;
 }, {
     studentId: string;
     startDate?: string | undefined;
     endDate?: string | undefined;
-    dataType?: "fees" | "attendance" | "grades" | "all" | undefined;
+    dataType?: "fees" | "all" | "attendance" | "grades" | undefined;
 }>;
 export declare const ParentStudentDataSchema: z.ZodObject<{
     student: z.ZodObject<{

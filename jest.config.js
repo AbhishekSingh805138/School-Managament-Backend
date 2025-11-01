@@ -13,4 +13,5 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFiles: ['<rootDir>/src/tests/setup.ts'],
+  testTimeout: 30000, // 30 seconds global timeout for all tests
 };

@@ -4,6 +4,7 @@ exports.AttendanceService = void 0;
 const baseService_1 = require("./baseService");
 const errorHandler_1 = require("../middleware/errorHandler");
 const pagination_1 = require("../utils/pagination");
+const cacheService_1 = require("./cacheService");
 class AttendanceService extends baseService_1.BaseService {
     async markAttendance(attendanceData, markedBy) {
         const studentExists = await this.executeQuery(`SELECT s.id, s.student_id, s.class_id, u.first_name, u.last_name 
@@ -55,6 +56,8 @@ class AttendanceService extends baseService_1.BaseService {
                 section: classInfo.section,
             },
         };
+        await cacheService_1.cacheService.delPattern(`${cacheService_1.CacheKeys.REPORT_ATTENDANCE}*`);
+        await cacheService_1.cacheService.delPattern(`${cacheService_1.CacheKeys.STATS_ATTENDANCE}*`);
     }
     async markBulkAttendance(bulkData, markedBy) {
         const classExists = await this.executeQuery('SELECT id, name, grade, section FROM classes WHERE id = $1 AND is_active = true', [bulkData.classId]);
@@ -113,6 +116,14 @@ class AttendanceService extends baseService_1.BaseService {
         });
     }
     async getAttendance(req) {
+        const { page, limit, offset, sortBy, sortOrder } = (0, pagination_1.getPaginationParams)(req, 'date');
+        const { studentId, classId, subjectId, date, status, startDate, endDate } = req.query;
+        const cacheKey = `${cacheService_1.CacheKeys.REPORT_ATTENDANCE}:${page}:${limit}:${sortBy}:${sortOrder}:${studentId || 'all'}:${classId || 'all'}:${subjectId || 'all'}:${date || 'all'}:${status || 'all'}:${startDate || 'none'}:${endDate || 'none'}`;
+        return await cacheService_1.cacheService.cacheQuery(cacheKey, async () => {
+            return await this.executeAttendanceQuery(req);
+        }, cacheService_1.CacheTTL.FIVE_MINUTES);
+    }
+    async executeAttendanceQuery(req) {
         const { page, limit, offset, sortBy, sortOrder } = (0, pagination_1.getPaginationParams)(req, 'date');
         const { studentId, classId, subjectId, date, status, startDate, endDate } = req.query;
         let whereClause = 'WHERE 1=1';

@@ -1,6 +1,7 @@
 import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { FeeReportQuery, FeeReport } from '../types/fee';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class FeeReportService extends BaseService {
   async generateFeeCollectionReport(reportQuery: FeeReportQuery, userId: string, userRole: string): Promise<FeeReport> {

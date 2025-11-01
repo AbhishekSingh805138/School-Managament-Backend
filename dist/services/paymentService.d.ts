@@ -39,6 +39,7 @@ export declare class PaymentService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executePaymentsQuery;
     getPaymentById(id: string): Promise<{
         studentFee: {
             id: any;

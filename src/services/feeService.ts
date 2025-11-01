@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateFeeCategory, UpdateFeeCategory, CreateStudentFee, AssignFeesToStudents } from '../types/fee';
 import { getPaginationParams } from '../utils/pagination';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class FeeService extends BaseService {
   async createFeeCategory(feeCategoryData: CreateFeeCategory) {
@@ -57,6 +58,22 @@ export class FeeService extends BaseService {
   }
 
   async getFeeCategories(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'name');
+    const { isActive, academicYearId, frequency, isMandatory } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `${CacheKeys.STATS_FEES}:categories:${page}:${limit}:${sortBy}:${sortOrder}:${isActive || 'all'}:${academicYearId || 'all'}:${frequency || 'all'}:${isMandatory || 'all'}`;
+
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        return await this.executeFeeCategoriesQuery(req);
+      },
+      CacheTTL.TEN_MINUTES
+    );
+  }
+
+  private async executeFeeCategoriesQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'name');
     const { isActive, academicYearId, frequency, isMandatory } = req.query;
 

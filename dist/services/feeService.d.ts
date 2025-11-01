@@ -27,6 +27,7 @@ export declare class FeeService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeFeeCategoriesQuery;
     getFeeCategoryById(id: string): Promise<{
         academicYear: {
             id: any;

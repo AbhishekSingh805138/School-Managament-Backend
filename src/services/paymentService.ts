@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreatePayment } from '../types/fee';
 import { getPaginationParams } from '../utils/pagination';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class PaymentService extends BaseService {
   async recordPayment(paymentData: CreatePayment, processedBy: string) {
@@ -111,6 +112,22 @@ export class PaymentService extends BaseService {
   }
 
   async getPayments(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'payment_date');
+    const { studentId, feeCategoryId, paymentMethod, startDate, endDate } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `payments:list:${page}:${limit}:${sortBy}:${sortOrder}:${studentId || 'all'}:${feeCategoryId || 'all'}:${paymentMethod || 'all'}:${startDate || 'none'}:${endDate || 'none'}`;
+
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        return await this.executePaymentsQuery(req);
+      },
+      CacheTTL.FIVE_MINUTES
+    );
+  }
+
+  private async executePaymentsQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'payment_date');
     const { studentId, feeCategoryId, paymentMethod, startDate, endDate } = req.query;
 

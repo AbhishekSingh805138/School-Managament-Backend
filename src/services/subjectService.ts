@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateSubject, UpdateSubject } from '../types/academic';
 import { getPaginationParams } from '../utils/pagination';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class SubjectService extends BaseService {
   async createSubject(subjectData: CreateSubject) {

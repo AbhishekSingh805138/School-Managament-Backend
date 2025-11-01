@@ -10,6 +10,7 @@ import {
 } from '../controllers/paymentController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreatePaymentSchema,
   FeeQuerySchema
@@ -27,6 +28,7 @@ router.post(
   '/',
   authorize('admin', 'staff'),
   validateBody(CreatePaymentSchema),
+  invalidateCache(['payments:*', 'fees:*', 'stats:fees:*']),
   recordPayment
 );
 
@@ -34,6 +36,7 @@ router.post(
 router.get(
   '/',
   validateQuery(FeeQuerySchema),
+  cacheResponse(300), // Cache for 5 minutes
   getPayments
 );
 
@@ -41,6 +44,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache for 10 minutes
   getPaymentById
 );
 

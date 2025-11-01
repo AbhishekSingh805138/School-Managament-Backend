@@ -8,6 +8,7 @@ import {
 } from '../controllers/feeReportController';
 import { validateQuery } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { FeeReportQuerySchema } from '../types/fee';
 import { IdSchema } from '../types/common';
 import { z } from 'zod';

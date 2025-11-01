@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateSemester, UpdateSemester } from '../types/academic';
 import { getPaginationParams } from '../utils/pagination';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class SemesterService extends BaseService {
   async createSemester(semesterData: CreateSemester) {
@@ -77,6 +78,22 @@ export class SemesterService extends BaseService {
   }
 
   async getSemesters(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'start_date');
+    const { isActive, academicYearId } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `${CacheKeys.SEMESTERS_ALL}:${page}:${limit}:${sortBy}:${sortOrder}:${isActive || 'all'}:${academicYearId || 'all'}`;
+
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        return await this.executeSemestersQuery(req);
+      },
+      CacheTTL.ONE_HOUR // Semesters change rarely
+    );
+  }
+
+  private async executeSemestersQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'start_date');
     const { isActive, academicYearId } = req.query;
 

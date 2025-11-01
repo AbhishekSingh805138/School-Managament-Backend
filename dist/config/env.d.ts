@@ -11,6 +11,12 @@ export declare const env: {
     CORS_ORIGIN: string;
     RATE_LIMIT_WINDOW_MS: number;
     RATE_LIMIT_MAX_REQUESTS: number;
+    REDIS_HOST: string;
+    REDIS_PORT: number;
+    REDIS_DB: number;
+    CACHE_TTL_SECONDS: number;
+    REDIS_ENABLED: boolean;
+    REDIS_PASSWORD?: string | undefined;
 };
 export default env;
 //# sourceMappingURL=env.d.ts.map

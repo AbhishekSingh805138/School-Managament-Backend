@@ -11,6 +11,7 @@ import { validateBody, validateQuery, validateParams } from '../middleware/valid
 import { authenticate, authorize } from '../middleware/auth';
 import { sanitizeAcademicYear } from '../middleware/sanitization';
 import { adminRateLimit } from '../middleware/rateLimiting';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateAcademicYearSchema, 
   UpdateAcademicYearSchema 
@@ -30,6 +31,7 @@ router.post(
   adminRateLimit,
   sanitizeAcademicYear,
   validateBody(CreateAcademicYearSchema),
+  invalidateCache(['academic_year*']),
   createAcademicYear
 );
 
@@ -39,12 +41,14 @@ router.get(
   validateQuery(PaginationSchema.extend({
     isActive: z.string().optional().transform(val => val === 'true'),
   })),
+  cacheResponse(3600), // Cache for 1 hour (rarely changes)
   getAcademicYears
 );
 
 // Get active academic year
 router.get(
   '/active',
+  cacheResponse(3600), // Cache for 1 hour (rarely changes)
   getActiveAcademicYear
 );
 
@@ -52,6 +56,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(3600), // Cache for 1 hour
   getAcademicYearById
 );
 
@@ -62,6 +67,7 @@ router.put(
   validateParams(z.object({ id: IdSchema })),
   sanitizeAcademicYear,
   validateBody(UpdateAcademicYearSchema),
+  invalidateCache(['academic_year*']),
   updateAcademicYear
 );
 
@@ -70,6 +76,7 @@ router.delete(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  invalidateCache(['academic_year*']),
   deleteAcademicYear
 );
 

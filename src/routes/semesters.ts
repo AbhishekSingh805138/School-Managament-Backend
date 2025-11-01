@@ -8,6 +8,7 @@ import {
   getCurrentSemester
 } from '../controllers/semesterController';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 
 const router = Router();
 
@@ -15,21 +16,21 @@ const router = Router();
 router.use(authenticate);
 
 // Get current active semester (public for authenticated users)
-router.get('/current', getCurrentSemester);
+router.get('/current', cacheResponse(3600), getCurrentSemester); // Cache for 1 hour
 
 // Get all semesters with filtering and pagination
-router.get('/', getSemesters);
+router.get('/', cacheResponse(3600), getSemesters); // Cache for 1 hour
 
 // Get semester by ID
-router.get('/:id', getSemesterById);
+router.get('/:id', cacheResponse(3600), getSemesterById); // Cache for 1 hour
 
 // Create semester (admin only)
-router.post('/', authorize('admin'), createSemester);
+router.post('/', authorize('admin'), invalidateCache(['semesters:*']), createSemester);
 
 // Update semester (admin only)
-router.put('/:id', authorize('admin'), updateSemester);
+router.put('/:id', authorize('admin'), invalidateCache(['semesters:*']), updateSemester);
 
 // Delete semester (admin only)
-router.delete('/:id', authorize('admin'), deleteSemester);
+router.delete('/:id', authorize('admin'), invalidateCache(['semesters:*']), deleteSemester);
 
 export default router;

@@ -35,7 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const globals_1 = require("@jest/globals");
 process.env.NODE_ENV = 'test';
-process.env.JWT_SECRET = 'test-secret-that-is-at-least-32-characters-long-for-jwt-validation';
+process.env.JWT_SECRET = 'your_super_secret_jwt_key_change_this_in_production_environment_32_chars_minimum';
 process.env.DB_HOST = 'localhost';
 process.env.DB_PORT = '5432';
 process.env.DB_NAME = 'SMS';
@@ -47,25 +47,17 @@ process.env.RATE_LIMIT_WINDOW_MS = '900000';
 process.env.RATE_LIMIT_MAX_REQUESTS = '100';
 globals_1.jest.setTimeout(10000);
 (async () => {
-    const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-    for (let attempt = 1; attempt <= 5; attempt++) {
-        try {
-            const { query } = await Promise.resolve().then(() => __importStar(require('../database/connection')));
-            const emails = [
-                'newuser@test.com',
-                'admincreated@test.com',
-                'teacherattempt@test.com',
-                'studentattempt@test.com',
-                'inactive@test.com'
-            ];
-            await query('DELETE FROM users WHERE email = ANY($1)', [emails]);
-            break;
-        }
-        catch (e) {
-            if (attempt === 5)
-                break;
-            await sleep(500);
-        }
+    try {
+        const { query, closePool } = await Promise.resolve().then(() => __importStar(require('../database/connection')));
+        const emails = [
+            'newuser@test.com',
+            'admincreated@test.com',
+            'teacherattempt@test.com',
+            'studentattempt@test.com',
+            'inactive@test.com'
+        ];
+        await query('DELETE FROM users WHERE email = ANY($1)', [emails]);
     }
+    catch { }
 })();
 //# sourceMappingURL=setup.js.map

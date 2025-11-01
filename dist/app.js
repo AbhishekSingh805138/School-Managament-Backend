@@ -32,8 +32,45 @@ const assessmentTypes_1 = __importDefault(require("./routes/assessmentTypes"));
 const reportCards_1 = __importDefault(require("./routes/reportCards"));
 const staff_1 = __importDefault(require("./routes/staff"));
 const reportExports_1 = __importDefault(require("./routes/reportExports"));
+const health_1 = __importDefault(require("./routes/health"));
+const cache_1 = __importDefault(require("./routes/cache"));
+const files_1 = __importDefault(require("./routes/files"));
+const monitoring_1 = __importDefault(require("./routes/monitoring"));
+const monitoringService_1 = require("./services/monitoringService");
+const requestTiming_1 = require("./middleware/requestTiming");
+const express_status_monitor_1 = __importDefault(require("express-status-monitor"));
+const caching_1 = require("./middleware/caching");
 const app = (0, express_1.default)();
 exports.app = app;
+monitoringService_1.monitoringService.initializeSentry(app);
+app.use(monitoringService_1.monitoringService.getRequestHandler());
+app.use(monitoringService_1.monitoringService.getTracingHandler());
+app.use((0, express_status_monitor_1.default)({
+    title: 'School Management System - Status',
+    path: '/status',
+    spans: [
+        { interval: 1, retention: 60 },
+        { interval: 5, retention: 60 },
+        { interval: 15, retention: 60 },
+    ],
+    chartVisibility: {
+        cpu: true,
+        mem: true,
+        load: true,
+        responseTime: true,
+        rps: true,
+        statusCodes: true,
+    },
+    healthChecks: [
+        {
+            protocol: 'http',
+            host: 'localhost',
+            path: '/health',
+            port: parseInt(process.env.PORT || '3000'),
+        },
+    ],
+}));
+app.use(requestTiming_1.requestTimingMiddleware);
 app.use((0, helmet_1.default)());
 app.use(rateLimiting_1.rateLimitLogger);
 app.use(rateLimiting_1.generalRateLimit);
@@ -56,14 +93,8 @@ app.use((err, _req, res, next) => {
 app.use(sanitization_1.validateContentType);
 app.use(sanitization_1.sanitizeInputs);
 app.use(sqlInjectionPrevention_1.preventSQLInjection);
-app.get('/health', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Server is running',
-        timestamp: new Date().toISOString(),
-        environment: env_1.default.NODE_ENV,
-    });
-});
+app.use('/health', health_1.default);
+app.use('/api/v1/health', health_1.default);
 app.post('/test', (req, res) => {
     console.log('Test endpoint - Headers:', req.headers);
     console.log('Test endpoint - Body:', req.body);
@@ -93,7 +124,11 @@ app.use('/api/v1/assessment-types', assessmentTypes_1.default);
 app.use('/api/v1/report-cards', reportCards_1.default);
 app.use('/api/v1/staff', staff_1.default);
 app.use('/api/v1/reports', reportExports_1.default);
-app.get('/api/v1', (req, res) => {
+app.use('/api/v1/cache', cache_1.default);
+app.use('/api/v1/files', files_1.default);
+app.use('/api/v1/monitoring', monitoring_1.default);
+app.use('/uploads', express_1.default.static('uploads'));
+app.get('/api/v1', (0, caching_1.cacheResponse)(300), (req, res) => {
     res.json({
         success: true,
         message: 'School Management API v1',
@@ -122,6 +157,7 @@ app.get('/api/v1', (req, res) => {
     });
 });
 app.use(errorHandler_1.notFoundHandler);
+app.use(monitoringService_1.monitoringService.getErrorHandler());
 app.use(errorHandler_1.errorHandler);
 exports.default = app;
 //# sourceMappingURL=app.js.map

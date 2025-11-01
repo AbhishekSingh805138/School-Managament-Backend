@@ -35,6 +35,7 @@ export declare class StudentService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeStudentsQuery;
     getStudentById(id: string): Promise<{
         user: {
             firstName: any;
@@ -100,8 +101,54 @@ export declare class StudentService extends BaseService {
     deleteStudent(id: string): Promise<{
         success: boolean;
     }>;
+    getStudentsByClass(classId: string, params: {
+        page: number;
+        limit: number;
+    }): Promise<{
+        students: any;
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+    }>;
     private generateDefaultPassword;
     private transformStudentResponse;
     private transformUserResponse;
+    getStudentSummary(id: string): Promise<{
+        studentId: any;
+        personalInfo: {
+            name: string;
+            studentIdNumber: any;
+            email: any;
+            phone: any;
+            dateOfBirth: any;
+            address: any;
+        };
+        academicInfo: {
+            currentClass: string;
+            enrollmentDate: any;
+            academicYear: any;
+        };
+        guardianInfo: {
+            guardianName: any;
+            guardianPhone: any;
+            guardianEmail: any;
+            emergencyContact: any;
+        };
+        currentStats: {
+            attendancePercentage: number;
+            overallGpa: string | null;
+            pendingFees: number;
+            nextDueDate: any;
+            recentGrades: any;
+        };
+    }>;
+    getStudentClassHistory(id: string): Promise<any>;
+    bulkUpdateStudents(studentIds: string[], updateData: any): Promise<{
+        updatedCount: number;
+        failedUpdates: any[];
+    }>;
 }
 //# sourceMappingURL=studentService.d.ts.map

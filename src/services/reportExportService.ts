@@ -1,26 +1,16 @@
 import puppeteer from 'puppeteer';
 import ExcelJS from 'exceljs';
-import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import path from 'path';
 import { ReportResponse, ReportFormat, ReportType } from '../types/report';
 import { AppError } from '../middleware/errorHandler';
+import { emailService } from './emailService';
 
 export class ReportExportService {
   private static instance: ReportExportService;
-  private emailTransporter: nodemailer.Transporter;
 
   private constructor() {
-    // Initialize email transporter
-    this.emailTransporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'localhost',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    // Email service is now handled by emailService singleton
   }
 
   public static getInstance(): ReportExportService {
@@ -58,12 +48,20 @@ export class ReportExportService {
    * Export report to PDF format
    */
   private async exportToPDF(reportData: ReportResponse, options: ExportOptions): Promise<ExportResult> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-
+    let browser;
     try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu'
+        ],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      });
+
       const page = await browser.newPage();
       
       // Generate HTML content for the report
@@ -102,8 +100,13 @@ export class ReportExportService {
         downloadUrl: `/api/v1/reports/download/${fileName}`,
         mimeType: 'application/pdf',
       };
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      throw new AppError(`PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 500);
     } finally {
-      await browser.close();
+      if (browser) {
+        await browser.close();
+      }
     }
   }
 
@@ -224,21 +227,19 @@ export class ReportExportService {
     customMessage?: string
   ): Promise<void> {
     try {
-      const mailOptions = {
-        from: process.env.SMTP_FROM || 'noreply@schoolmanagement.com',
-        to: recipients.join(', '),
+      const html = this.generateEmailHTML(reportData, customMessage);
+      
+      await emailService.sendEmail({
+        to: recipients,
         subject: `School Management Report: ${reportData.metadata.title}`,
-        html: this.generateEmailHTML(reportData, customMessage),
+        html,
         attachments: [
           {
             filename: exportResult.fileName,
             path: exportResult.filePath,
-            contentType: exportResult.mimeType,
           },
         ],
-      };
-
-      await this.emailTransporter.sendMail(mailOptions);
+      });
     } catch (error) {
       throw new AppError(`Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`, 500);
     }

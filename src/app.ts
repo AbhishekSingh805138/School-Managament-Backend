@@ -29,9 +29,55 @@ import reportCardRoutes from './routes/reportCards';
 import staffRoutes from './routes/staff';
 import reportExportRoutes from './routes/reportExports';
 import healthRoutes from './routes/health';
+import cacheRoutes from './routes/cache';
+import fileRoutes from './routes/files';
+import monitoringRoutes from './routes/monitoring';
 // import auditRoutes from './routes/audit';
 
+// Import monitoring service
+import { monitoringService } from './services/monitoringService';
+import { requestTimingMiddleware } from './middleware/requestTiming';
+import statusMonitor from 'express-status-monitor';
+import { cacheResponse } from './middleware/caching';
+
 const app = express();
+
+// Initialize Sentry monitoring (must be first)
+monitoringService.initializeSentry(app);
+
+// Sentry request handler (must be before other middleware)
+app.use(monitoringService.getRequestHandler());
+app.use(monitoringService.getTracingHandler());
+
+// Status monitor dashboard (accessible at /status)
+app.use(statusMonitor({
+  title: 'School Management System - Status',
+  path: '/status',
+  spans: [
+    { interval: 1, retention: 60 },      // Last 60 seconds
+    { interval: 5, retention: 60 },      // Last 5 minutes
+    { interval: 15, retention: 60 },     // Last 15 minutes
+  ],
+  chartVisibility: {
+    cpu: true,
+    mem: true,
+    load: true,
+    responseTime: true,
+    rps: true,
+    statusCodes: true,
+  },
+  healthChecks: [
+    {
+      protocol: 'http',
+      host: 'localhost',
+      path: '/health',
+      port: parseInt(process.env.PORT || '3000'),
+    },
+  ],
+}));
+
+// Request timing middleware
+app.use(requestTimingMiddleware);
 
 // Security middleware
 app.use(helmet());
@@ -111,10 +157,16 @@ app.use('/api/v1/assessment-types', assessmentTypeRoutes);
 app.use('/api/v1/report-cards', reportCardRoutes);
 app.use('/api/v1/staff', staffRoutes);
 app.use('/api/v1/reports', reportExportRoutes);
+app.use('/api/v1/cache', cacheRoutes);
+app.use('/api/v1/files', fileRoutes);
+app.use('/api/v1/monitoring', monitoringRoutes);
 // app.use('/api/v1/audit', auditRoutes);
 
+// Serve static files (uploaded files)
+app.use('/uploads', express.static('uploads'));
+
 // API documentation endpoint
-app.get('/api/v1', (req, res) => {
+app.get('/api/v1', cacheResponse(300), (req, res) => {
   res.json({
     success: true,
     message: 'School Management API v1',
@@ -145,6 +197,9 @@ app.get('/api/v1', (req, res) => {
 
 // 404 handler
 app.use(notFoundHandler);
+
+// Sentry error handler (must be before other error handlers)
+app.use(monitoringService.getErrorHandler());
 
 // Error handling middleware (must be last)
 app.use(errorHandler);

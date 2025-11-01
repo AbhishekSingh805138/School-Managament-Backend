@@ -1,5 +1,6 @@
 import { query, getClient } from '../database/connection';
 import { AppError } from '../middleware/errorHandler';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 import { 
   CreateStaff,
   UpdateStaff,

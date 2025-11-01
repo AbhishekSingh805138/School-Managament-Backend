@@ -12,6 +12,7 @@ import {
 } from '../controllers/studentController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateStudentSchema, 
   UpdateStudentSchema,
@@ -30,6 +31,7 @@ router.post(
   '/',
   authorize('admin'),
   validateBody(CreateStudentSchema),
+  invalidateCache(['students:*', 'classes:*', 'stats:*']),
   createStudent
 );
 
@@ -38,6 +40,7 @@ router.get(
   '/',
   authorize('admin', 'teacher'),
   validateQuery(StudentQuerySchema),
+  cacheResponse(300), // Cache for 5 minutes
   getStudents
 );
 
@@ -45,6 +48,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache for 10 minutes
   getStudentById
 );
 
@@ -72,6 +76,7 @@ router.get(
     page: z.string().optional().default('1'),
     limit: z.string().optional().default('50'),
   })),
+  cacheResponse(300), // Cache for 5 minutes
   getStudentsByClass
 );
 
@@ -101,6 +106,7 @@ router.put(
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
   validateBody(UpdateStudentSchema),
+  invalidateCache(['students:*', 'classes:*']),
   updateStudent
 );
 
@@ -109,6 +115,7 @@ router.delete(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  invalidateCache(['students:*', 'classes:*', 'stats:*']),
   deleteStudent
 );
 

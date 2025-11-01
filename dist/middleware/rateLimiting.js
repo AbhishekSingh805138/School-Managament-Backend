@@ -139,7 +139,7 @@ exports.adminRateLimit = (0, express_rate_limit_1.default)({
 exports.speedLimiter = (0, express_slow_down_1.default)({
     windowMs: 15 * 60 * 1000,
     delayAfter: env_1.default.NODE_ENV === 'production' ? 50 : 500,
-    delayMs: 500,
+    delayMs: () => 500,
     maxDelayMs: 20000,
     skip: env_1.default.NODE_ENV === 'test' ? () => true : () => false,
 });

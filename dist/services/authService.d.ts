@@ -33,7 +33,10 @@ export declare class AuthService extends BaseService {
         accessToken: string;
         refreshToken: string;
     }>;
-    getCurrentUser(userId: string): Promise<{
+    getCurrentUser(userId: string, fallback?: {
+        email: string;
+        role: string;
+    }): Promise<{
         id: any;
         firstName: any;
         lastName: any;

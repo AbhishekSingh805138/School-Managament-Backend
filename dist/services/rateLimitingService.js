@@ -134,8 +134,8 @@ class RateLimitingService extends baseService_1.BaseService {
         const whereClause = endpoint ? 'identifier = $1 AND endpoint = $2' : 'identifier = $1';
         const params = endpoint ? [identifier, endpoint] : [identifier];
         await this.executeQuery(`UPDATE rate_limit_entries 
-       SET is_blocked = false, window_end = NOW()
-       WHERE ${whereClause} AND is_blocked = true`, params);
+       SET is_blocked = false, request_count = 0, window_start = NOW(), window_end = NOW(), last_request = NOW()
+       WHERE ${whereClause}`, params);
         console.info('Identifier unblocked:', {
             identifier,
             endpoint: endpoint || 'all endpoints',
@@ -213,7 +213,10 @@ class RateLimitingService extends baseService_1.BaseService {
                 return new RegExp(`^${pattern}$`).test(endpoint);
             });
         }
-        return rule || null;
+        if (!rule) {
+            rule = { endpoint: '*', windowMs: 60 * 1000, maxRequests: 100 };
+        }
+        return rule;
     }
     async getRateLimitEntry(identifier, endpoint, windowStart) {
         const result = await this.executeQuery(`SELECT id, identifier, endpoint, request_count, window_start, window_end, is_blocked, last_request

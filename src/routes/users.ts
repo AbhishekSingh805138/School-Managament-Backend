@@ -7,6 +7,7 @@ import { PaginationSchema } from '../types/common';
 import { IdSchema } from '../types/common';
 import { z } from 'zod';
 import { sanitizeUser } from '../middleware/sanitization';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.post(
   authorize('admin'),
   sanitizeUser,
   validateBody(CreateUserSchema),
+  invalidateCache(['users:*', 'user_session:*']),
   createUser
 );
 
@@ -27,6 +29,7 @@ router.get(
   '/',
   authorize('admin'),
   validateQuery(PaginationSchema),
+  cacheResponse(300), // 5 minutes cache
   getUsers
 );
 
@@ -34,6 +37,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // 10 minutes cache
   getUserById
 );
 
@@ -43,6 +47,7 @@ router.put(
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
   validateBody(UpdateUserSchema),
+  invalidateCache(['users:*', 'user_session:*']),
   updateUser
 );
 
@@ -51,6 +56,7 @@ router.delete(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  invalidateCache(['users:*', 'user_session:*']),
   deleteUser
 );
 

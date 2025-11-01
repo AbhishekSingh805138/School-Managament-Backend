@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateClass, UpdateClass } from '../types/class';
 import { getPaginationParams } from '../utils/pagination';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class ClassService extends BaseService {
   async createClass(classData: any) {
@@ -92,6 +93,10 @@ export class ClassService extends BaseService {
         }
       }
 
+      // Invalidate class cache after creation
+      await cacheService.delPattern(`${CacheKeys.CLASS}*`);
+      await cacheService.delPattern(`${CacheKeys.CLASSES_ALL}*`);
+
       return {
         ...this.transformClassResponse(newClass),
         academicYear: {
@@ -104,6 +109,22 @@ export class ClassService extends BaseService {
   }
 
   async getClasses(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'grade');
+    const { isActive, academicYearId, grade, teacherId } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `${CacheKeys.CLASSES_ALL}:${page}:${limit}:${sortBy}:${sortOrder}:${isActive || 'all'}:${academicYearId || 'all'}:${grade || 'all'}:${teacherId || 'all'}`;
+
+    return await cacheService.cacheQuery(
+      cacheKey,
+      async () => {
+        return await this.executeClassesQuery(req);
+      },
+      CacheTTL.FIVE_MINUTES
+    );
+  }
+
+  private async executeClassesQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'grade');
     const { isActive, academicYearId, grade, teacherId } = req.query;
 

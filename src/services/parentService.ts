@@ -3,6 +3,7 @@ import { AppError } from '../middleware/errorHandler';
 import { CreateParent, UpdateParent, CreateStudentParent } from '../types/parent';
 import { getPaginationParams } from '../utils/pagination';
 import { hashPassword } from '../utils/auth';
+import cacheService, { CacheKeys, CacheTTL } from './cacheService';
 
 export class ParentService extends BaseService {
   async createParent(parentData: CreateParent) {
@@ -43,6 +44,28 @@ export class ParentService extends BaseService {
   }
 
   async getParents(req: any) {
+    const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'first_name');
+    const { isActive, search } = req.query;
+
+    // Create cache key based on query parameters
+    const cacheKey = `parents:list:${page}:${limit}:${sortBy}:${sortOrder}:${isActive || 'all'}:${search || 'none'}`;
+
+    // Use cache wrapper for non-search queries
+    if (!search) {
+      return await cacheService.cacheQuery(
+        cacheKey,
+        async () => {
+          return await this.executeParentsQuery(req);
+        },
+        CacheTTL.FIVE_MINUTES
+      );
+    }
+
+    // For search queries, execute directly without caching
+    return await this.executeParentsQuery(req);
+  }
+
+  private async executeParentsQuery(req: any) {
     const { page, limit, offset, sortBy, sortOrder } = getPaginationParams(req, 'first_name');
     const { isActive, search } = req.query;
 

@@ -9,6 +9,7 @@ import {
 } from '../controllers/reportCardController';
 import { validateBody, validateQuery } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { 
   CreateReportCardSchema,
   UpdateReportCardSchema

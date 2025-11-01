@@ -23,6 +23,7 @@ export declare class ParentService extends BaseService {
             totalPages: number;
         };
     }>;
+    private executeParentsQuery;
     getParentById(id: string): Promise<{
         children: any;
         id: any;

@@ -18,6 +18,7 @@ import {
 } from '../controllers/teacherController';
 import { validateBody, validateQuery, validateParams } from '../middleware/validation';
 import { authenticate, authorize } from '../middleware/auth';
+import { cacheResponse, invalidateCache } from '../middleware/caching';
 import { sanitizeTeacher } from '../middleware/sanitization';
 import { 
   CreateTeacherSchema, 
@@ -37,6 +38,7 @@ router.post(
   authorize('admin'),
   sanitizeTeacher,
   validateBody(CreateTeacherSchema),
+  invalidateCache(['teachers:*', 'teacher:*']),
   createTeacher
 );
 
@@ -48,6 +50,7 @@ router.get(
     search: z.string().optional(),
     specialization: z.string().optional(),
   })),
+  cacheResponse(300), // Cache for 5 minutes
   getTeachers
 );
 
@@ -69,6 +72,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache for 10 minutes
   getTeacherById
 );
 
@@ -79,6 +83,7 @@ router.put(
   validateParams(z.object({ id: IdSchema })),
   sanitizeTeacher,
   validateBody(UpdateTeacherSchema),
+  invalidateCache(['teachers:*', 'teacher:*']),
   updateTeacher
 );
 
@@ -87,6 +92,7 @@ router.delete(
   '/:id',
   authorize('admin'),
   validateParams(z.object({ id: IdSchema })),
+  invalidateCache(['teachers:*', 'teacher:*', 'classes:*']),
   deleteTeacher
 );
 
@@ -94,6 +100,7 @@ router.delete(
 router.get(
   '/:id/workload',
   validateParams(z.object({ id: IdSchema })),
+  cacheResponse(600), // Cache workload for 10 minutes (expensive calculation)
   getTeacherWorkload
 );
 
@@ -128,6 +135,7 @@ router.post(
     teacherId: IdSchema,
     subjectId: IdSchema,
   })),
+  invalidateCache(['teacher:*', 'teachers:*']),
   assignTeacherToSubject
 );
 
@@ -138,6 +146,7 @@ router.delete(
     teacherId: IdSchema,
     subjectId: IdSchema,
   })),
+  invalidateCache(['teacher:*', 'teachers:*']),
   removeTeacherFromSubject
 );
 
@@ -149,6 +158,7 @@ router.post(
     teacherId: IdSchema,
     classId: IdSchema,
   })),
+  invalidateCache(['teacher:*', 'teachers:*', 'classes:*']),
   assignTeacherToClass
 );
 

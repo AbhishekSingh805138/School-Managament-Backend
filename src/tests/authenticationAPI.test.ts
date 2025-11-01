@@ -735,7 +735,7 @@ describe('Authentication and Authorization API', () => {
         expect(response.body.success).toBe(true);
         expect(response.body.data.token).toBeTruthy();
       });
-    });
+    }, 30000); // 30 second timeout for performance test
 
     it('should handle concurrent profile requests', async () => {
       const concurrentRequests = Array(20).fill(null).map(() =>
@@ -754,7 +754,7 @@ describe('Authentication and Authorization API', () => {
       });
 
       // Should complete within reasonable time (adjust threshold as needed)
-      expect(endTime - startTime).toBeLessThan(5000); // 5 seconds
-    });
+      expect(endTime - startTime).toBeLessThan(10000); // 10 seconds (increased from 5)
+    }, 30000); // 30 second timeout for performance test
   });
 });

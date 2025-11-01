@@ -2,6 +2,7 @@ import { BaseService } from './baseService';
 import { AppError } from '../middleware/errorHandler';
 import { CreateAcademicYear, UpdateAcademicYear } from '../types/academic';
 import { getPaginationParams } from '../utils/pagination';
+import { cacheService, CacheKeys, CacheTTL } from './cacheService';
 
 export class AcademicYearService extends BaseService {
   async createAcademicYear(academicYearData: CreateAcademicYear) {
@@ -15,7 +16,7 @@ export class AcademicYearService extends BaseService {
       throw new AppError('Academic year with this name already exists', 409);
     }
 
-    return await this.executeTransaction(async (client) => {
+    const result = await this.executeTransaction(async (client) => {
       // If setting as active, deactivate other active years
       if (academicYearData.isActive) {
         await client.query('UPDATE academic_years SET is_active = false WHERE is_active = true');
@@ -40,6 +41,11 @@ export class AcademicYearService extends BaseService {
 
       return this.transformAcademicYearResponse(result.rows[0]);
     });
+
+    // Invalidate cache after creating
+    await cacheService.delPattern(`${CacheKeys.ACADEMIC_YEAR}*`);
+    
+    return result;
   }
 
   async getAcademicYears(req: any) {
@@ -162,16 +168,23 @@ export class AcademicYearService extends BaseService {
   }
 
   async getActiveAcademicYear() {
-    const result = await this.executeQuery(
-      `SELECT id, alt_id, name, start_date, end_date, is_active, created_at, updated_at
-       FROM academic_years WHERE is_active = true LIMIT 1`
+    // Try cache first (1 hour TTL since active year rarely changes)
+    return await cacheService.cacheQuery(
+      CacheKeys.ACADEMIC_YEAR_ACTIVE,
+      async () => {
+        const result = await this.executeQuery(
+          `SELECT id, alt_id, name, start_date, end_date, is_active, created_at, updated_at
+           FROM academic_years WHERE is_active = true LIMIT 1`
+        );
+
+        if (result.rows.length === 0) {
+          throw new AppError('No active academic year found', 404);
+        }
+
+        return this.transformAcademicYearResponse(result.rows[0]);
+      },
+      CacheTTL.ONE_HOUR
     );
-
-    if (result.rows.length === 0) {
-      throw new AppError('No active academic year found', 404);
-    }
-
-    return this.transformAcademicYearResponse(result.rows[0]);
   }
 
   private transformAcademicYearResponse(academicYear: any) {
