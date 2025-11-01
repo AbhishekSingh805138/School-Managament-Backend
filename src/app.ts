@@ -28,6 +28,7 @@ import assessmentTypeRoutes from './routes/assessmentTypes';
 import reportCardRoutes from './routes/reportCards';
 import staffRoutes from './routes/staff';
 import reportExportRoutes from './routes/reportExports';
+import healthRoutes from './routes/health';
 // import auditRoutes from './routes/audit';
 
 const app = express();
@@ -74,15 +75,9 @@ app.use(sanitizeInputs);
 // SQL Injection prevention middleware
 app.use(preventSQLInjection);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    environment: env.NODE_ENV,
-  });
-});
+// Health check endpoints (Phase 3.2.1)
+app.use('/health', healthRoutes);
+app.use('/api/v1/health', healthRoutes);
 
 // Test endpoint
 app.post('/test', (req, res) => {

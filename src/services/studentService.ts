@@ -441,4 +441,226 @@ export class StudentService extends BaseService {
       address: user.address,
     };
   }
+
+  // Get student summary with all related information
+  async getStudentSummary(id: string) {
+    const student = await this.getStudentById(id);
+
+    // Get fee information
+    const feeResult = await this.executeQuery(
+      `SELECT 
+         COALESCE(SUM(CASE WHEN p.status = 'pending' THEN p.amount_due - p.amount_paid ELSE 0 END), 0) as pending_fees,
+         MAX(p.due_date) as next_due_date
+       FROM payments p
+       WHERE p.student_id = $1`,
+      [student.id]
+    );
+
+    // Get recent grades
+    const gradesResult = await this.executeQuery(
+      `SELECT g.grade_value, g.grade_letter, g.assessment_date,
+              s.name as subject_name, at.name as assessment_type
+       FROM grades g
+       JOIN subjects s ON g.subject_id = s.id
+       JOIN assessment_types at ON g.assessment_type_id = at.id
+       WHERE g.student_id = $1
+       ORDER BY g.assessment_date DESC
+       LIMIT 5`,
+      [student.id]
+    );
+
+    // Calculate overall GPA
+    const gpaResult = await this.executeQuery(
+      `SELECT AVG(grade_value) as overall_gpa
+       FROM grades
+       WHERE student_id = $1 AND grade_value IS NOT NULL`,
+      [student.id]
+    );
+
+    return {
+      studentId: student.id,
+      personalInfo: {
+        name: `${student.user.firstName} ${student.user.lastName}`,
+        studentIdNumber: student.studentId,
+        email: student.user.email,
+        phone: student.user.phone,
+        dateOfBirth: student.user.dateOfBirth,
+        address: student.user.address,
+      },
+      academicInfo: {
+        currentClass: `${student.class?.grade} ${student.class?.section}`,
+        enrollmentDate: student.enrollmentDate,
+        academicYear: student.class?.academicYear,
+      },
+      guardianInfo: {
+        guardianName: student.guardianName,
+        guardianPhone: student.guardianPhone,
+        guardianEmail: student.guardianEmail,
+        emergencyContact: student.emergencyContact,
+      },
+      currentStats: {
+        attendancePercentage: student.attendanceSummary?.attendancePercentage || 0,
+        overallGpa: gpaResult.rows[0]?.overall_gpa 
+          ? parseFloat(gpaResult.rows[0].overall_gpa).toFixed(2) 
+          : null,
+        pendingFees: parseFloat(feeResult.rows[0]?.pending_fees || '0'),
+        nextDueDate: feeResult.rows[0]?.next_due_date,
+        recentGrades: gradesResult.rows.map((g: any) => ({
+          subject: g.subject_name,
+          assessmentType: g.assessment_type,
+          gradeValue: g.grade_value,
+          gradeLetter: g.grade_letter,
+          assessmentDate: g.assessment_date,
+        })),
+      },
+    };
+  }
+
+  // Get student class history
+  async getStudentClassHistory(id: string) {
+    const existingStudent = await this.checkEntityExists('students', id, 'alt_id');
+    const studentId = existingStudent.id;
+
+    const result = await this.executeQuery(
+      `SELECT sch.id, sch.student_id, sch.class_id, sch.academic_year_id,
+              sch.start_date, sch.end_date, sch.created_at, sch.updated_at,
+              c.name as class_name, c.grade, c.section,
+              ay.name as academic_year_name, ay.start_date as year_start, ay.end_date as year_end
+       FROM student_class_history sch
+       JOIN classes c ON sch.class_id = c.id
+       JOIN academic_years ay ON sch.academic_year_id = ay.id
+       WHERE sch.student_id = $1
+       ORDER BY sch.start_date DESC`,
+      [studentId]
+    );
+
+    return result.rows.map((row: any) => ({
+      id: row.id,
+      studentId: row.student_id,
+      classId: row.class_id,
+      academicYearId: row.academic_year_id,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      class: {
+        name: row.class_name,
+        grade: row.grade,
+        section: row.section,
+      },
+      academicYear: {
+        name: row.academic_year_name,
+        startDate: row.year_start,
+        endDate: row.year_end,
+      },
+    }));
+  }
+
+  // Get students by class with pagination
+  async getStudentsByClass(classId: string, params: { page: number; limit: number }) {
+    const { page, limit } = params;
+    const offset = (page - 1) * limit;
+
+    // Validate class exists
+    await this.checkEntityExists('classes', classId, 'alt_id');
+
+    // Get total count
+    const countResult = await this.executeQuery(
+      `SELECT COUNT(*) FROM students s WHERE s.class_id = $1 AND s.is_active = true`,
+      [classId]
+    );
+    const total = parseInt(countResult.rows[0].count);
+
+    // Get students
+    const result = await this.executeQuery(
+      `SELECT s.id, s.alt_id, s.user_id, s.student_id, s.class_id, s.enrollment_date,
+              s.guardian_name, s.guardian_phone, s.guardian_email, s.emergency_contact,
+              s.medical_info, s.is_active, s.created_at, s.updated_at,
+              u.first_name, u.last_name, u.email, u.phone, u.date_of_birth, u.address
+       FROM students s
+       JOIN users u ON s.user_id = u.id
+       WHERE s.class_id = $1 AND s.is_active = true
+       ORDER BY u.first_name, u.last_name
+       LIMIT $2 OFFSET $3`,
+      [classId, limit, offset]
+    );
+
+    const students = result.rows.map((row: any) => ({
+      ...this.transformStudentResponse(row),
+      user: this.transformUserResponse(row),
+    }));
+
+    return {
+      students,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  // Bulk update students
+  async bulkUpdateStudents(studentIds: string[], updateData: any) {
+    return await this.executeTransaction(async (client) => {
+      const results = {
+        updatedCount: 0,
+        failedUpdates: [] as any[],
+      };
+
+      for (const studentId of studentIds) {
+        try {
+          // Check if student exists
+          const studentResult = await client.query(
+            'SELECT id, user_id FROM students WHERE id = $1 OR alt_id = $1',
+            [studentId]
+          );
+
+          if (studentResult.rows.length === 0) {
+            results.failedUpdates.push({
+              studentId,
+              error: 'Student not found',
+            });
+            continue;
+          }
+
+          const student = studentResult.rows[0];
+
+          // Update user information if provided
+          const userUpdateData: any = {};
+          if (updateData.firstName) userUpdateData.firstName = updateData.firstName;
+          if (updateData.lastName) userUpdateData.lastName = updateData.lastName;
+          if (updateData.phone !== undefined) userUpdateData.phone = updateData.phone;
+
+          if (Object.keys(userUpdateData).length > 0) {
+            const { query: userUpdateQuery, values: userValues } = this.buildUpdateQuery('users', userUpdateData);
+            userValues.push(student.user_id);
+            await client.query(userUpdateQuery, userValues);
+          }
+
+          // Update student information if provided
+          const studentUpdateData: any = {};
+          if (updateData.guardianName) studentUpdateData.guardianName = updateData.guardianName;
+          if (updateData.guardianPhone) studentUpdateData.guardianPhone = updateData.guardianPhone;
+          if (updateData.classId) studentUpdateData.classId = updateData.classId;
+
+          if (Object.keys(studentUpdateData).length > 0) {
+            const { query: studentUpdateQuery, values: studentValues } = this.buildUpdateQuery('students', studentUpdateData);
+            studentValues.push(student.id);
+            await client.query(studentUpdateQuery, studentValues);
+          }
+
+          results.updatedCount++;
+        } catch (error: any) {
+          results.failedUpdates.push({
+            studentId,
+            error: error.message,
+          });
+        }
+      }
+
+      return results;
+    });
+  }
 }
