@@ -1,0 +1,25 @@
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
+  
+  h2 {
+    margin-bottom: 1rem;
+  }
+  
+  button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+    
+    &:hover {
+      background: #5a67d8;
+    }
+  }
+}

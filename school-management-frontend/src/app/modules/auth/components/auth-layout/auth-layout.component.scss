@@ -1,0 +1,17 @@
+.auth-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-content {
+  text-align: center;
+  color: white;
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+}

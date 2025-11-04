@@ -1,0 +1,69 @@
+<div class="sidebar-container">
+  <!-- User Profile Section -->
+  <div class="user-profile">
+    <div class="user-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="user-details">
+      <h3 class="user-name">{{ getUserDisplayName() }}</h3>
+      <p class="user-role">{{ getUserRole() }}</p>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Navigation Menu -->
+  <nav class="navigation-menu">
+    <mat-nav-list>
+      <ng-container *ngFor="let item of menuItems">
+        <div *ngIf="hasAccess(item.roles)">
+          <!-- Menu item without children -->
+          <mat-list-item 
+            *ngIf="!item.children && item.route" 
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="navigateTo(item.route)">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.title }}</span>
+          </mat-list-item>
+
+          <!-- Menu item with children -->
+          <div *ngIf="item.children" class="nav-group">
+            <mat-list-item 
+              class="nav-item group-header"
+              (click)="toggleExpansion(item)">
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span matListItemTitle>{{ item.title }}</span>
+              <mat-icon class="expand-icon" [class.expanded]="item.expanded">
+                keyboard_arrow_down
+              </mat-icon>
+            </mat-list-item>
+
+            <div class="nav-children" [class.expanded]="item.expanded">
+              <mat-list-item 
+                *ngFor="let child of item.children"
+                [routerLink]="child.route"
+                routerLinkActive="active"
+                class="nav-item child-item"
+                (click)="navigateTo(child.route!)"
+                [class.hidden]="!hasAccess(child.roles)">
+                <mat-icon matListItemIcon>{{ child.icon }}</mat-icon>
+                <span matListItemTitle>{{ child.title }}</span>
+              </mat-list-item>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </mat-nav-list>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <mat-divider></mat-divider>
+    <div class="footer-content">
+      <p class="app-version">Version 1.0.0</p>
+      <p class="copyright">© 2024 School Management</p>
+    </div>
+  </div>
+</div>
