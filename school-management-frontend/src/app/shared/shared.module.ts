@@ -19,17 +19,46 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 // Components
 import { HeaderComponent } from '../components/header/header.component';
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
 import { LoadingSpinnerComponent } from '../components/loading-spinner/loading-spinner.component';
+import { FormFieldComponent } from './components/form-field/form-field.component';
+import { FormSelectComponent } from './components/form-select/form-select.component';
+import { FormDatepickerComponent } from './components/form-datepicker/form-datepicker.component';
+
+// Pipes
+import { TruncatePipe } from './pipes/truncate.pipe';
+import { DateFormatPipe } from './pipes/date-format.pipe';
+import { CurrencyFormatPipe } from './pipes/currency-format.pipe';
+
+// Directives
+import { AutofocusDirective } from './directives/autofocus.directive';
 
 @NgModule({
   declarations: [
     HeaderComponent,
     SidebarComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    FormFieldComponent,
+    FormSelectComponent,
+    FormDatepickerComponent,
+    TruncatePipe,
+    DateFormatPipe,
+    CurrencyFormatPipe,
+    AutofocusDirective
   ],
   imports: [
     CommonModule,
@@ -49,13 +78,35 @@ import { LoadingSpinnerComponent } from '../components/loading-spinner/loading-s
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatChipsModule,
+    MatTooltipModule,
+    MatTabsModule,
+    MatExpansionModule
   ],
   exports: [
     // Components
     HeaderComponent,
     SidebarComponent,
     LoadingSpinnerComponent,
+    FormFieldComponent,
+    FormSelectComponent,
+    FormDatepickerComponent,
+
+    // Pipes
+    TruncatePipe,
+    DateFormatPipe,
+    CurrencyFormatPipe,
+
+    // Directives
+    AutofocusDirective,
 
     // Modules
     CommonModule,
@@ -75,7 +126,18 @@ import { LoadingSpinnerComponent } from '../components/loading-spinner/loading-s
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatChipsModule,
+    MatTooltipModule,
+    MatTabsModule,
+    MatExpansionModule
   ]
 })
 export class SharedModule { }
