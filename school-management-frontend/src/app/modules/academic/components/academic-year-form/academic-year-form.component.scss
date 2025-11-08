@@ -1,0 +1,30 @@
+.academic-year-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0;
+  min-width: 400px;
+
+  @media (max-width: 600px) {
+    min-width: 100%;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0 -24px -24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+  button {
+    min-width: 80px;
+  }
+
+  mat-spinner {
+    display: inline-block;
+    margin: 0 auto;
+  }
+}

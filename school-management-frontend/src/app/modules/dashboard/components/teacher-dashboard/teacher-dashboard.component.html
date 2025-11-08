@@ -1,0 +1,96 @@
+<div class="teacher-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h1 class="dashboard-title">Welcome back, {{ getUserDisplayName() }}!</h1>
+      <p class="dashboard-subtitle">Teacher Dashboard</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <mat-card class="quick-actions-card">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions-grid">
+        <button
+          *ngFor="let action of quickActions"
+          mat-raised-button
+          color="primary"
+          class="quick-action-btn"
+          (click)="navigateTo(action.route)"
+        >
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <span>{{ action.label }}</span>
+        </button>
+      </div>
+    </mat-card>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Assigned Classes -->
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>class</mat-icon>
+          My Classes
+        </h3>
+        <div class="card-content">
+          <div class="placeholder-content">
+            <mat-icon class="placeholder-icon">school</mat-icon>
+            <p>Your assigned classes will appear here</p>
+            <p class="placeholder-subtext">View and manage your teaching assignments</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Today's Schedule -->
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>schedule</mat-icon>
+          Today's Schedule
+        </h3>
+        <div class="card-content">
+          <div class="placeholder-content">
+            <mat-icon class="placeholder-icon">event</mat-icon>
+            <p>Your teaching schedule for today</p>
+            <p class="placeholder-subtext">View your classes and timings</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Upcoming Classes -->
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>upcoming</mat-icon>
+          Upcoming Classes
+        </h3>
+        <div class="card-content">
+          <div class="placeholder-content">
+            <mat-icon class="placeholder-icon">access_time</mat-icon>
+            <p>Your next classes</p>
+            <p class="placeholder-subtext">Prepare for upcoming sessions</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Recent Attendance -->
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>how_to_reg</mat-icon>
+          Recent Attendance
+        </h3>
+        <div class="card-content">
+          <div class="placeholder-content">
+            <mat-icon class="placeholder-icon">fact_check</mat-icon>
+            <p>Recently marked attendance</p>
+            <p class="placeholder-subtext">View your attendance records</p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

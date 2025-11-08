@@ -1,0 +1,503 @@
+.class-detail-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+
+    p {
+      color: #64748b;
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+
+  .class-content {
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .header-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+
+        .back-btn {
+          margin-top: 8px;
+        }
+
+        .title-section {
+          .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+          }
+
+          .subtitle {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+
+            .academic-year {
+              color: #64748b;
+              font-size: 16px;
+            }
+
+            .status-badge {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 6px 12px;
+              border-radius: 16px;
+              font-size: 13px;
+              font-weight: 500;
+
+              &.active {
+                background-color: #dcfce7;
+                color: #166534;
+
+                mat-icon {
+                  color: #16a34a;
+                }
+              }
+
+              &.inactive {
+                background-color: #fef2f2;
+                color: #991b1b;
+
+                mat-icon {
+                  color: #dc2626;
+                }
+              }
+
+              mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+              }
+            }
+          }
+        }
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+    }
+
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+
+      .info-card {
+        border-radius: 12px;
+
+        mat-card-header {
+          mat-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+
+            mat-icon {
+              color: #667eea;
+            }
+          }
+        }
+
+        .info-grid {
+          display: grid;
+          gap: 16px;
+
+          .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            label {
+              font-size: 14px;
+              font-weight: 500;
+              color: #6b7280;
+            }
+
+            span {
+              font-size: 15px;
+              color: #1f2937;
+
+              &.section-badge {
+                background-color: #dbeafe;
+                color: #1e40af;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+                width: fit-content;
+              }
+
+              &.teacher-name {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  color: #6b7280;
+                }
+              }
+            }
+          }
+        }
+
+        &.capacity-card {
+          .capacity-display {
+            .capacity-numbers {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 16px;
+              margin-bottom: 24px;
+
+              .current-strength,
+              .total-capacity {
+                text-align: center;
+
+                .number {
+                  display: block;
+                  font-size: 32px;
+                  font-weight: 700;
+                  color: #1e293b;
+                }
+
+                .label {
+                  font-size: 14px;
+                  color: #6b7280;
+                }
+              }
+
+              .separator {
+                font-size: 24px;
+                color: #9ca3af;
+                font-weight: 300;
+              }
+            }
+
+            .capacity-bar {
+              .progress-bar {
+                width: 100%;
+                height: 8px;
+                background-color: #f1f5f9;
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 8px;
+
+                .progress-fill {
+                  height: 100%;
+                  transition: width 0.3s ease;
+
+                  &.available {
+                    background-color: #10b981;
+                  }
+
+                  &.near-full {
+                    background-color: #f59e0b;
+                  }
+
+                  &.full {
+                    background-color: #ef4444;
+                  }
+                }
+              }
+
+              .percentage {
+                font-size: 14px;
+                color: #6b7280;
+                text-align: center;
+                display: block;
+              }
+            }
+          }
+        }
+
+        .subjects-list {
+          mat-chip-listbox {
+            mat-chip-option {
+              margin: 4px;
+            }
+          }
+        }
+      }
+    }
+
+    .tabs-card {
+      border-radius: 12px;
+
+      .tab-content {
+        padding: 24px;
+
+        .tab-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+          gap: 16px;
+
+          h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+          }
+
+          .tab-actions {
+            button {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+          }
+        }
+
+        .students-table-container {
+          table {
+            width: 100%;
+
+            th {
+              background-color: #f8fafc;
+              font-weight: 600;
+              color: #374151;
+            }
+
+            .student-info strong {
+              color: #1e293b;
+            }
+
+            .roll-number {
+              background-color: #f3f4f6;
+              padding: 4px 8px;
+              border-radius: 12px;
+              font-size: 13px;
+              font-weight: 500;
+            }
+
+            .status-badge {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 6px 12px;
+              border-radius: 16px;
+              font-size: 13px;
+              font-weight: 500;
+
+              &.active {
+                background-color: #dcfce7;
+                color: #166534;
+
+                mat-icon {
+                  color: #16a34a;
+                }
+              }
+
+              mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+              }
+            }
+          }
+
+          .no-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+
+            mat-icon {
+              font-size: 64px;
+              width: 64px;
+              height: 64px;
+              color: #cbd5e1;
+              margin-bottom: 16px;
+            }
+
+            h3 {
+              margin: 0 0 8px 0;
+              color: #374151;
+              font-size: 20px;
+            }
+
+            p {
+              margin: 0 0 24px 0;
+              color: #6b7280;
+              font-size: 16px;
+            }
+
+            button {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+          }
+        }
+
+        .placeholder-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 60px 20px;
+          text-align: center;
+
+          mat-icon {
+            font-size: 64px;
+            width: 64px;
+            height: 64px;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+          }
+
+          h3 {
+            margin: 0 0 8px 0;
+            color: #374151;
+            font-size: 20px;
+          }
+
+          p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #ef4444;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      color: #374151;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0 0 24px 0;
+      color: #6b7280;
+      font-size: 16px;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .class-detail-container {
+    padding: 16px;
+
+    .class-content {
+      .page-header {
+        .header-left {
+          flex-direction: column;
+          align-items: stretch;
+
+          .back-btn {
+            margin-top: 0;
+            align-self: flex-start;
+          }
+
+          .title-section {
+            .page-title {
+              font-size: 24px;
+            }
+
+            .subtitle {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 8px;
+            }
+          }
+        }
+
+        .header-actions {
+          width: 100%;
+
+          button {
+            flex: 1;
+          }
+        }
+      }
+
+      .info-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs-card .tab-content {
+        padding: 16px;
+
+        .tab-header {
+          flex-direction: column;
+          align-items: stretch;
+
+          .tab-actions button {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        .students-table-container table {
+          font-size: 14px;
+
+          th, td {
+            padding: 12px 8px;
+          }
+        }
+      }
+    }
+  }
+}

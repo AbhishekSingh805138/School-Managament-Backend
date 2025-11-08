@@ -1,0 +1,109 @@
+.semester-container {
+  width: 100%;
+
+  mat-card {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+
+        h2 {
+          margin: 0;
+          font-size: 24px;
+          font-weight: 600;
+        }
+
+        .filter-field {
+          min-width: 250px;
+          margin-bottom: -1.25em;
+        }
+      }
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .semester-table {
+      width: 100%;
+      margin-top: 16px;
+
+      th {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .active-badge,
+      .inactive-badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .active-badge {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      .inactive-badge {
+        background-color: #f3f4f6;
+        color: #6b7280;
+      }
+    }
+
+    .no-data {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      color: #64748b;
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .semester-container mat-card .header {
+    flex-direction: column;
+    align-items: stretch;
+
+    .header-left {
+      flex-direction: column;
+      align-items: stretch;
+
+      .filter-field {
+        width: 100%;
+      }
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}

@@ -5,6 +5,8 @@ export interface Student {
   userId: string;
   studentId: string;
   classId: string;
+  dateOfBirth: string;
+  gender: 'male' | 'female' | 'other';
   enrollmentDate: string;
   guardianName: string;
   guardianPhone: string;
@@ -15,7 +17,7 @@ export interface Student {
   createdAt: string;
   updatedAt: string;
   user: User;
-  class: {
+  class?: {
     id: string;
     name: string;
     grade: string;

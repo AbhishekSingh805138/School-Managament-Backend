@@ -1,0 +1,106 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Add' }} Teacher</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="teacherForm" class="teacher-form">
+    <h3 class="section-title">Personal Information</h3>
+    
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" />
+        <mat-error *ngIf="teacherForm.get('firstName')?.hasError('required')">
+          First name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" />
+        <mat-error *ngIf="teacherForm.get('lastName')?.hasError('required')">
+          Last name is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <mat-error *ngIf="teacherForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="teacherForm.get('email')?.hasError('email')">
+        Please enter a valid email
+      </mat-error>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phone" />
+        <mat-error *ngIf="teacherForm.get('phone')?.hasError('pattern')">
+          Please enter a valid phone number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Employee ID</mat-label>
+        <input matInput formControlName="employeeId" />
+        <mat-error *ngIf="teacherForm.get('employeeId')?.hasError('required')">
+          Employee ID is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Address</mat-label>
+      <textarea matInput formControlName="address" rows="2"></textarea>
+    </mat-form-field>
+
+    <h3 class="section-title">Professional Information</h3>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date of Joining</mat-label>
+      <input
+        matInput
+        [matDatepicker]="joinPicker"
+        formControlName="dateOfJoining"
+      />
+      <mat-datepicker-toggle matSuffix [for]="joinPicker"></mat-datepicker-toggle>
+      <mat-datepicker #joinPicker></mat-datepicker>
+      <mat-error *ngIf="teacherForm.get('dateOfJoining')?.hasError('required')">
+        Date of joining is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Qualification</mat-label>
+      <input matInput formControlName="qualification" placeholder="e.g., M.Ed, B.Sc" />
+      <mat-error *ngIf="teacherForm.get('qualification')?.hasError('required')">
+        Qualification is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Specialization</mat-label>
+      <input matInput formControlName="specialization" placeholder="e.g., Mathematics, Science" />
+      <mat-error *ngIf="teacherForm.get('specialization')?.hasError('required')">
+        Specialization is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isLoading">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="isLoading"
+  >
+    <span *ngIf="!isLoading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+    <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+  </button>
+</mat-dialog-actions>

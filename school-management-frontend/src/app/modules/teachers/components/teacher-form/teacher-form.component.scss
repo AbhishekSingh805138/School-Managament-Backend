@@ -1,0 +1,66 @@
+.teacher-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0;
+  min-width: 600px;
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 16px 0 8px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .half-width {
+      flex: 1;
+
+      @media (max-width: 600px) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+mat-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0 -24px -24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+  button {
+    min-width: 80px;
+  }
+
+  mat-spinner {
+    display: inline-block;
+    margin: 0 auto;
+  }
+}

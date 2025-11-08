@@ -1,0 +1,106 @@
+<div class="teacher-detail-container">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading teacher details...</p>
+  </div>
+
+  <div *ngIf="!isLoading && teacher" class="teacher-content">
+    <div class="detail-header">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>{{ getTeacherName() }}</h1>
+        <p class="employee-id">Employee ID: {{ teacher.employeeId }}</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button (click)="openEditDialog()">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteTeacher()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <mat-tab-group class="detail-tabs">
+      <mat-tab label="Personal Information">
+        <div class="tab-content">
+          <mat-card>
+            <h3>Basic Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Full Name:</span>
+                <span class="value">{{ getTeacherName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ teacher.user.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Phone:</span>
+                <span class="value">{{ teacher.user.phone || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Address:</span>
+                <span class="value">{{ teacher.user.address || 'N/A' }}</span>
+              </div>
+            </div>
+          </mat-card>
+
+          <mat-card>
+            <h3>Professional Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Employee ID:</span>
+                <span class="value">{{ teacher.employeeId }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date of Joining:</span>
+                <span class="value">{{ teacher.joiningDate | date:'longDate' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Qualification:</span>
+                <span class="value">{{ teacher.qualification }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Specialization:</span>
+                <span class="value">{{ teacher.specialization.join(', ') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Subjects Teaching:</span>
+                <span class="value">{{ getSubjectCount() }} subject(s)</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Classes Assigned:</span>
+                <span class="value">{{ getClassCount() }} class(es)</span>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Classes & Subjects">
+        <div class="tab-content">
+          <mat-card class="placeholder-card">
+            <mat-icon>class</mat-icon>
+            <h3>Classes & Subjects</h3>
+            <p>Class and subject management coming soon</p>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Schedule">
+        <div class="tab-content">
+          <mat-card class="placeholder-card">
+            <mat-icon>schedule</mat-icon>
+            <h3>Teaching Schedule</h3>
+            <p>Schedule management coming soon</p>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

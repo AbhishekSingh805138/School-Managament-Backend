@@ -1,0 +1,96 @@
+<div class="parent-dashboard">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <div class="welcome-header">
+      <h1 class="dashboard-title">Welcome back, {{ getUserDisplayName() }}!</h1>
+      <p class="dashboard-subtitle">Parent Dashboard</p>
+    </div>
+
+    <!-- Child Selector -->
+    <mat-card class="child-selector-card">
+      <h3 class="section-title">
+        <mat-icon>family_restroom</mat-icon>
+        Select Child
+      </h3>
+      <mat-form-field appearance="outline" class="child-select">
+        <mat-label>Select a child</mat-label>
+        <mat-select [(ngModel)]="selectedChildId" (selectionChange)="onChildChange()">
+          <mat-option value="">No children found</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>person</mat-icon>
+      </mat-form-field>
+      <p class="info-text">Select a child to view their information</p>
+    </mat-card>
+
+    <mat-card class="quick-actions-card">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions-grid">
+        <button
+          *ngFor="let action of quickActions"
+          mat-raised-button
+          color="primary"
+          class="quick-action-btn"
+          (click)="navigateTo(action.route)"
+          [disabled]="!selectedChildId"
+        >
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <span>{{ action.label }}</span>
+        </button>
+      </div>
+    </mat-card>
+
+    <div class="dashboard-grid">
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>how_to_reg</mat-icon>
+          Attendance
+        </h3>
+        <div class="placeholder-content">
+          <mat-icon class="placeholder-icon">fact_check</mat-icon>
+          <p>Child's attendance records</p>
+          <p class="placeholder-subtext">Monitor attendance and absences</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>payment</mat-icon>
+          Fees
+        </h3>
+        <div class="placeholder-content">
+          <mat-icon class="placeholder-icon">account_balance_wallet</mat-icon>
+          <p>Fee information</p>
+          <p class="placeholder-subtext">View pending and paid fees</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>grade</mat-icon>
+          Grades
+        </h3>
+        <div class="placeholder-content">
+          <mat-icon class="placeholder-icon">assessment</mat-icon>
+          <p>Academic performance</p>
+          <p class="placeholder-subtext">Track grades and progress</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <h3 class="card-title">
+          <mat-icon>event</mat-icon>
+          Events
+        </h3>
+        <div class="placeholder-content">
+          <mat-icon class="placeholder-icon">calendar_today</mat-icon>
+          <p>School events</p>
+          <p class="placeholder-subtext">Stay updated with activities</p>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

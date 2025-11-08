@@ -1,0 +1,93 @@
+<div class="student-list-container">
+  <mat-card>
+    <div class="header">
+      <h2>Students</h2>
+      <div class="header-actions">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search students</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            placeholder="Name, email, or student ID"
+          />
+          <mat-icon matPrefix>search</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            *ngIf="searchQuery"
+            (click)="searchQuery = ''; onSearch()"
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon>
+          Add Student
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="students" class="student-table">
+        <ng-container matColumnDef="studentId">
+          <th mat-header-cell *matHeaderCellDef>Student ID</th>
+          <td mat-cell *matCellDef="let student">{{ student.studentId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let student">{{ getStudentName(student) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let student">{{ student.user.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="class">
+          <th mat-header-cell *matHeaderCellDef>Class</th>
+          <td mat-cell *matCellDef="let student">{{ getClassName(student) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="enrollmentDate">
+          <th mat-header-cell *matHeaderCellDef>Enrollment Date</th>
+          <td mat-cell *matCellDef="let student">{{ student.enrollmentDate | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let student">
+            <button mat-icon-button (click)="viewStudent(student)" matTooltip="View Details">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button (click)="openEditDialog(student)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteStudent(student)" matTooltip="Delete" color="warn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="student-row"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    ></mat-paginator>
+
+    <div *ngIf="students.length === 0 && !isLoading" class="no-data">
+      <mat-icon>school</mat-icon>
+      <p>No students found</p>
+      <p class="hint">Click "Add Student" to create a new student record</p>
+    </div>
+  </mat-card>
+</div>

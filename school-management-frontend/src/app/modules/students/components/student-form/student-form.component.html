@@ -1,0 +1,191 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Add' }} Student</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="studentForm" class="student-form">
+    <h3 class="section-title">Personal Information</h3>
+    
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" placeholder="Enter first name" />
+        <mat-error *ngIf="studentForm.get('firstName')?.hasError('required')">
+          First name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" placeholder="Enter last name" />
+        <mat-error *ngIf="studentForm.get('lastName')?.hasError('required')">
+          Last name is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="Enter email" />
+      <mat-error *ngIf="studentForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="studentForm.get('email')?.hasError('email')">
+        Please enter a valid email
+      </mat-error>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phone" placeholder="Enter phone number" />
+        <mat-error *ngIf="studentForm.get('phone')?.hasError('pattern')">
+          Please enter a valid phone number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender">
+          <mat-option *ngFor="let option of genderOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="studentForm.get('gender')?.hasError('required')">
+          Gender is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Address</mat-label>
+      <textarea matInput formControlName="address" rows="2" placeholder="Enter address"></textarea>
+    </mat-form-field>
+
+    <h3 class="section-title">Student Information</h3>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Student ID</mat-label>
+        <input matInput formControlName="studentId" placeholder="Enter student ID" />
+        <mat-error *ngIf="studentForm.get('studentId')?.hasError('required')">
+          Student ID is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Date of Birth</mat-label>
+        <input
+          matInput
+          [matDatepicker]="dobPicker"
+          formControlName="dateOfBirth"
+          [max]="maxDate"
+        />
+        <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+        <mat-datepicker #dobPicker></mat-datepicker>
+        <mat-error *ngIf="studentForm.get('dateOfBirth')?.hasError('required')">
+          Date of birth is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Enrollment Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="enrollPicker"
+          formControlName="enrollmentDate"
+        />
+        <mat-datepicker-toggle matSuffix [for]="enrollPicker"></mat-datepicker-toggle>
+        <mat-datepicker #enrollPicker></mat-datepicker>
+        <mat-error *ngIf="studentForm.get('enrollmentDate')?.hasError('required')">
+          Enrollment date is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Class</mat-label>
+        <mat-select formControlName="classId">
+          <mat-option value="">Not Assigned</mat-option>
+          <mat-option *ngFor="let class of classes" [value]="class.id">
+            {{ class.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <h3 class="section-title">Guardian Information</h3>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Guardian Name</mat-label>
+        <input matInput formControlName="guardianName" placeholder="Enter guardian name" />
+        <mat-error *ngIf="studentForm.get('guardianName')?.hasError('required')">
+          Guardian name is required
+        </mat-error>
+        <mat-error *ngIf="studentForm.get('guardianName')?.hasError('minlength')">
+          Guardian name must be at least 2 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Guardian Phone</mat-label>
+        <input matInput formControlName="guardianPhone" placeholder="Enter guardian phone" />
+        <mat-error *ngIf="studentForm.get('guardianPhone')?.hasError('required')">
+          Guardian phone is required
+        </mat-error>
+        <mat-error *ngIf="studentForm.get('guardianPhone')?.hasError('minlength')">
+          Guardian phone must be at least 10 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Emergency Contact</mat-label>
+        <input matInput formControlName="emergencyContact" placeholder="Enter emergency contact" />
+        <mat-error *ngIf="studentForm.get('emergencyContact')?.hasError('required')">
+          Emergency contact is required
+        </mat-error>
+        <mat-error *ngIf="studentForm.get('emergencyContact')?.hasError('minlength')">
+          Emergency contact must be at least 10 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width" *ngIf="!isEditMode">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Enter password" />
+        <mat-error *ngIf="studentForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="studentForm.get('password')?.hasError('minlength')">
+          Password must be at least 8 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Medical Information</mat-label>
+      <textarea
+        matInput
+        formControlName="medicalInfo"
+        rows="3"
+        placeholder="Enter any medical conditions or allergies"
+      ></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isLoading">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="isLoading"
+  >
+    <span *ngIf="!isLoading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+    <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+  </button>
+</mat-dialog-actions>

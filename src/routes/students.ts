@@ -26,10 +26,10 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
-// Create student (admin only)
+// Create student (admin and staff)
 router.post(
   '/',
-  authorize('admin'),
+  authorize('admin', 'staff'),
   validateBody(CreateStudentSchema),
   invalidateCache(['students:*', 'classes:*', 'stats:*']),
   createStudent
@@ -100,20 +100,20 @@ router.patch(
   bulkUpdateStudents
 );
 
-// Update student (admin only)
+// Update student (admin and staff)
 router.put(
   '/:id',
-  authorize('admin'),
+  authorize('admin', 'staff'),
   validateParams(z.object({ id: IdSchema })),
   validateBody(UpdateStudentSchema),
   invalidateCache(['students:*', 'classes:*']),
   updateStudent
 );
 
-// Delete student (admin only)
+// Delete student (admin and staff)
 router.delete(
   '/:id',
-  authorize('admin'),
+  authorize('admin', 'staff'),
   validateParams(z.object({ id: IdSchema })),
   invalidateCache(['students:*', 'classes:*', 'stats:*']),
   deleteStudent

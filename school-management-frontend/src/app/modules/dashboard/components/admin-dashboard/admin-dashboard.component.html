@@ -1,0 +1,123 @@
+<div class="admin-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h1 class="dashboard-title">Welcome back, {{ getUserDisplayName() }}!</h1>
+      <p class="dashboard-subtitle">Administrator Dashboard</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <!-- Total Students Card -->
+      <mat-card class="stat-card students-card">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>school</mat-icon>
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Total Students</p>
+            <h2 class="stat-value">{{ stats.totalStudents }}</h2>
+            <p class="stat-subtext">Enrolled students</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Total Teachers Card -->
+      <mat-card class="stat-card teachers-card">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Total Teachers</p>
+            <h2 class="stat-value">{{ stats.totalTeachers }}</h2>
+            <p class="stat-subtext">Active teachers</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Today's Attendance Card -->
+      <mat-card class="stat-card attendance-card">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>how_to_reg</mat-icon>
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Today's Attendance</p>
+            <h2 class="stat-value">{{ stats.todayAttendance.percentage.toFixed(1) }}%</h2>
+            <p class="stat-subtext">
+              {{ stats.todayAttendance.present }} / {{ stats.todayAttendance.total }} present
+            </p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Fee Collection Card -->
+      <mat-card class="stat-card fees-card">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>payment</mat-icon>
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Fee Collection</p>
+            <h2 class="stat-value">{{ stats.feeCollection.percentage.toFixed(1) }}%</h2>
+            <p class="stat-subtext">
+              ${{ stats.feeCollection.collected.toLocaleString() }} collected
+            </p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <mat-card class="quick-actions-card">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions-grid">
+        <button
+          *ngFor="let action of quickActions"
+          mat-raised-button
+          color="primary"
+          class="quick-action-btn"
+          (click)="navigateTo(action.route)"
+        >
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <span>{{ action.label }}</span>
+        </button>
+      </div>
+    </mat-card>
+
+    <!-- Recent Activity Section -->
+    <div class="activity-section">
+      <mat-card class="activity-card">
+        <h3 class="section-title">
+          <mat-icon>history</mat-icon>
+          Recent Activity
+        </h3>
+        <div class="activity-placeholder">
+          <mat-icon class="placeholder-icon">info</mat-icon>
+          <p>Recent activity tracking coming soon</p>
+          <p class="placeholder-subtext">View recent actions and changes in the system</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="announcements-card">
+        <h3 class="section-title">
+          <mat-icon>campaign</mat-icon>
+          Announcements
+        </h3>
+        <div class="activity-placeholder">
+          <mat-icon class="placeholder-icon">notifications</mat-icon>
+          <p>Announcements feature coming soon</p>
+          <p class="placeholder-subtext">Post and manage school-wide announcements</p>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

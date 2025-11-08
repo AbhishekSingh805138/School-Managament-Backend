@@ -37,9 +37,16 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = !!user;
     });
 
-    // Subscribe to loading state
+    // Subscribe to loading state and update UI
     this.loadingService.loading$.subscribe(loading => {
       this.isLoading = loading;
+      
+      // Optional: Add a small delay to prevent flickering for fast requests
+      if (!loading) {
+        setTimeout(() => {
+          this.isLoading = loading;
+        }, 100);
+      }
     });
 
     // Check if current route is public and handle mobile navigation

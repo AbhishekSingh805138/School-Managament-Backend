@@ -1,0 +1,138 @@
+<div class="student-detail-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading student details...</p>
+  </div>
+
+  <!-- Student Details -->
+  <div *ngIf="!isLoading && student" class="student-content">
+    <!-- Header -->
+    <div class="detail-header">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>{{ getStudentName() }}</h1>
+        <p class="student-id">Student ID: {{ student.studentId }}</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button (click)="openEditDialog()">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteStudent()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group class="detail-tabs">
+      <!-- Personal Information Tab -->
+      <mat-tab label="Personal Information">
+        <div class="tab-content">
+          <mat-card>
+            <h3>Basic Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Full Name:</span>
+                <span class="value">{{ getStudentName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ student.user.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Phone:</span>
+                <span class="value">{{ student.user.phone || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Gender:</span>
+                <span class="value">{{ student.gender | titlecase }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date of Birth:</span>
+                <span class="value">{{ student.dateOfBirth | date:'longDate' }} ({{ getAge() }} years old)</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Address:</span>
+                <span class="value">{{ student.user.address || 'N/A' }}</span>
+              </div>
+            </div>
+          </mat-card>
+
+          <mat-card>
+            <h3>Academic Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Student ID:</span>
+                <span class="value">{{ student.studentId }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Class:</span>
+                <span class="value">{{ getClassName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Enrollment Date:</span>
+                <span class="value">{{ student.enrollmentDate | date:'longDate' }}</span>
+              </div>
+            </div>
+          </mat-card>
+
+          <mat-card>
+            <h3>Guardian Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Guardian Name:</span>
+                <span class="value">{{ student.guardianName || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Guardian Phone:</span>
+                <span class="value">{{ student.guardianPhone || 'N/A' }}</span>
+              </div>
+              <div class="info-item full-width">
+                <span class="label">Medical Information:</span>
+                <span class="value">{{ student.medicalInfo || 'None' }}</span>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Attendance Tab -->
+      <mat-tab label="Attendance">
+        <div class="tab-content">
+          <mat-card class="placeholder-card">
+            <mat-icon>how_to_reg</mat-icon>
+            <h3>Attendance Records</h3>
+            <p>Attendance tracking feature coming soon</p>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Grades Tab -->
+      <mat-tab label="Grades">
+        <div class="tab-content">
+          <mat-card class="placeholder-card">
+            <mat-icon>grade</mat-icon>
+            <h3>Grade Records</h3>
+            <p>Grade tracking feature coming soon</p>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Fees Tab -->
+      <mat-tab label="Fees">
+        <div class="tab-content">
+          <mat-card class="placeholder-card">
+            <mat-icon>payment</mat-icon>
+            <h3>Fee Records</h3>
+            <p>Fee management feature coming soon</p>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
