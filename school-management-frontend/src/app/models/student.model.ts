@@ -41,6 +41,7 @@ export interface CreateStudent {
 }
 
 export interface StudentStats {
+  total: number;
   totalStudents: number;
   activeStudents: number;
   newEnrollments: number;

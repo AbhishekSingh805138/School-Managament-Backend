@@ -1,4 +1,209 @@
 <div class="register-container">
-  <h2>Register</h2>
-  <p>Registration functionality will be implemented here.</p>
+  <mat-card class="register-card">
+    <!-- Logo and Title -->
+    <div class="register-header">
+      <div class="logo-container">
+        <mat-icon class="logo-icon">school</mat-icon>
+      </div>
+      <h1 class="register-title">Create Account</h1>
+      <p class="register-subtitle">Join our School Management System</p>
+    </div>
+
+    <!-- Register Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <!-- Name Fields Row -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>First Name</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="firstName"
+            placeholder="Enter first name"
+            autocomplete="given-name"
+          />
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-error *ngIf="firstName?.hasError('required')">
+            First name is required
+          </mat-error>
+          <mat-error *ngIf="firstName?.hasError('minlength')">
+            First name must be at least 2 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Last Name</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="lastName"
+            placeholder="Enter last name"
+            autocomplete="family-name"
+          />
+          <mat-error *ngIf="lastName?.hasError('required')">
+            Last name is required
+          </mat-error>
+          <mat-error *ngIf="lastName?.hasError('minlength')">
+            Last name must be at least 2 characters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Email Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+        />
+        <mat-icon matPrefix>email</mat-icon>
+        <mat-error *ngIf="email?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="email?.hasError('email')">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Role Selection -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option *ngFor="let role of roles" [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matPrefix>badge</mat-icon>
+        <mat-error *ngIf="role?.hasError('required')">
+          Role is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Password Fields -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Create a password"
+          autocomplete="new-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+        >
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="password?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="password?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+        <mat-error *ngIf="password?.hasError('passwordStrength')">
+          Password must contain uppercase, lowercase, and number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <input
+          matInput
+          [type]="hideConfirmPassword ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Confirm your password"
+          autocomplete="new-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="toggleConfirmPasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+        >
+          <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="confirmPassword?.hasError('required')">
+          Please confirm your password
+        </mat-error>
+        <mat-error *ngIf="registerForm.hasError('passwordMismatch') && confirmPassword?.touched">
+          Passwords do not match
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Optional Fields -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Phone Number</mat-label>
+          <input
+            matInput
+            type="tel"
+            formControlName="phone"
+            placeholder="Enter phone number"
+            autocomplete="tel"
+          />
+          <mat-icon matPrefix>phone</mat-icon>
+          <mat-error *ngIf="phone?.hasError('pattern')">
+            Please enter a valid phone number (10-15 digits)
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Date of Birth</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="dateOfBirth"
+            [max]="maxDate"
+            placeholder="Select date"
+          />
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Address Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <textarea
+          matInput
+          formControlName="address"
+          placeholder="Enter your address"
+          rows="2"
+          autocomplete="street-address"
+        ></textarea>
+        <mat-icon matPrefix>home</mat-icon>
+      </mat-form-field>
+
+      <!-- Submit Button -->
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="register-button full-width"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Create Account</span>
+        <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+      </button>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        <p>
+          Already have an account?
+          <a (click)="navigateToLogin()" class="login-link-text">Sign in</a>
+        </p>
+      </div>
+    </form>
+  </mat-card>
 </div>

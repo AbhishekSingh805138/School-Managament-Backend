@@ -55,6 +55,7 @@ export interface CreateTeacher {
 }
 
 export interface TeacherStats {
+  total: number;
   totalTeachers: number;
   activeTeachers: number;
   averageExperience: number;

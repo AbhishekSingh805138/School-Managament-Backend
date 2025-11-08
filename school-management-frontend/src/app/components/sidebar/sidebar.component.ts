@@ -1,5 +1,9 @@
 import { Component, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
@@ -15,6 +19,8 @@ interface MenuItem {
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatListModule, MatIconModule, MatDividerModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })

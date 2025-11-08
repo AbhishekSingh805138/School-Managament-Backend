@@ -60,6 +60,10 @@ export interface CreatePayment {
 }
 
 export interface FeeStats {
+  collected: number;
+  pending: number;
+  total: number;
+  collectionPercentage: number;
   totalFees: number;
   collectedAmount: number;
   pendingAmount: number;

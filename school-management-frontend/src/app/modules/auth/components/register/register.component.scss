@@ -1,11 +1,142 @@
 .register-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: #333;
-  
-  h2 {
-    margin-bottom: 1rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+
+  .register-card {
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+    @media (max-width: 600px) {
+      padding: 30px 20px;
+      max-width: 100%;
+    }
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 32px;
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      margin-bottom: 16px;
+
+      .logo-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: white;
+      }
+    }
+
+    .register-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 8px 0;
+
+      @media (max-width: 600px) {
+        font-size: 24px;
+      }
+    }
+
+    .register-subtitle {
+      font-size: 16px;
+      color: #64748b;
+      margin: 0;
+    }
+  }
+
+  .register-form {
+    .full-width {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+
+      @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .half-width {
+        flex: 1;
+        margin-bottom: 0;
+
+        @media (max-width: 600px) {
+          width: 100%;
+          margin-bottom: 16px;
+        }
+      }
+    }
+
+    .register-button {
+      height: 48px;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: none;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      position: relative;
+
+      .button-spinner {
+        margin: 0 auto;
+      }
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 24px;
+
+      p {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0;
+      }
+
+      .login-link-text {
+        color: #667eea;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #764ba2;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Material form field customization
+::ng-deep {
+  .register-form {
+    .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background-color: #f8fafc;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        background-color: transparent;
+      }
+    }
   }
 }

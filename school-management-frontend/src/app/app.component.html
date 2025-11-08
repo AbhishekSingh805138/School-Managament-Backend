@@ -1,3 +1,33 @@
 <div class="app-container">
-  <router-outlet></router-outlet>
+  <!-- Loading Spinner Overlay -->
+  <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+  <!-- Public Routes (Login, Register, etc.) -->
+  <div *ngIf="isPublicRoute()" class="public-route-container">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Authenticated Routes with Layout -->
+  <mat-sidenav-container *ngIf="!isPublicRoute() && isAuthenticated" class="main-container">
+    <!-- Sidebar -->
+    <mat-sidenav
+      #sidenav
+      [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="sidenavOpened"
+      class="app-sidenav"
+    >
+      <app-sidebar (closeSidenav)="closeSidenav()"></app-sidebar>
+    </mat-sidenav>
+
+    <!-- Main Content -->
+    <mat-sidenav-content class="main-content">
+      <!-- Header -->
+      <app-header (toggleSidenav)="toggleSidenav()"></app-header>
+
+      <!-- Content Area -->
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>

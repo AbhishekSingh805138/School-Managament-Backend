@@ -32,9 +32,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 // Components
-import { HeaderComponent } from '../components/header/header.component';
-import { SidebarComponent } from '../components/sidebar/sidebar.component';
-import { LoadingSpinnerComponent } from '../components/loading-spinner/loading-spinner.component';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { FormSelectComponent } from './components/form-select/form-select.component';
 import { FormDatepickerComponent } from './components/form-datepicker/form-datepicker.component';
@@ -49,9 +46,6 @@ import { AutofocusDirective } from './directives/autofocus.directive';
 
 @NgModule({
   declarations: [
-    HeaderComponent,
-    SidebarComponent,
-    LoadingSpinnerComponent,
     FormFieldComponent,
     FormSelectComponent,
     FormDatepickerComponent,
@@ -93,9 +87,6 @@ import { AutofocusDirective } from './directives/autofocus.directive';
   ],
   exports: [
     // Components
-    HeaderComponent,
-    SidebarComponent,
-    LoadingSpinnerComponent,
     FormFieldComponent,
     FormSelectComponent,
     FormDatepickerComponent,

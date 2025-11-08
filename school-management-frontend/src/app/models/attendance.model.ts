@@ -50,6 +50,10 @@ export interface AttendanceReport {
 }
 
 export interface AttendanceStats {
+  present: number;
+  absent: number;
+  total: number;
+  percentage: number;
   totalClasses: number;
   averageAttendance: number;
   presentToday: number;
