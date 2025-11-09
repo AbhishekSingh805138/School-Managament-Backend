@@ -1,14 +1,4 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { AcademicRoutingModule } from './academic-routing.module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    AcademicRoutingModule
-  ]
-})
+// This file is no longer needed with standalone components
+// Routes are now defined in academic-routing.module.ts
+// Updated: Using standalone components approach
 export class AcademicModule { }

@@ -1,11 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { ApiResponse, PaginatedResponse } from '../models/common.model';
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean;
+  data: {
+    items: T[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+}
 
 export interface Class {
   id: string;
   name: string;
+  grade?: string;
   section: string;
   academicYearId: string;
   academicYear?: {
@@ -17,13 +36,20 @@ export interface Class {
   teacherId?: string;
   teacher?: {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
+    user?: {
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+    firstName?: string;
+    lastName?: string;
+    email?: string;
   };
   capacity: number;
-  currentStrength: number;
+  currentStrength?: number;
+  studentCount?: number;
   subjects?: string[];
+  room?: string;
   description?: string;
   isActive: boolean;
   createdAt: string;
@@ -32,10 +58,12 @@ export interface Class {
 
 export interface ClassFormData {
   name: string;
+  grade: string;
   section: string;
   academicYearId: string;
   teacherId?: string;
   capacity: number;
+  room?: string;
   subjects?: string[];
   description?: string;
   isActive: boolean;
@@ -58,42 +86,42 @@ export class ClassService {
 
   constructor(private apiService: ApiService) {}
 
-  getClasses(filters?: ClassFilters): Observable<PaginatedResponse<Class>> {
+  getClasses(filters?: ClassFilters): Observable<any> {
     const params = this.buildQueryParams(filters);
-    return this.apiService.get<PaginatedResponse<Class>>(`${this.endpoint}?${params}`);
+    return this.apiService.get<any>(`${this.endpoint}?${params}`);
   }
 
-  getClass(id: string): Observable<ApiResponse<Class>> {
-    return this.apiService.get<ApiResponse<Class>>(`${this.endpoint}/${id}`);
+  getClass(id: string): Observable<any> {
+    return this.apiService.get<any>(`${this.endpoint}/${id}`);
   }
 
-  createClass(classData: ClassFormData): Observable<ApiResponse<Class>> {
-    return this.apiService.post<ApiResponse<Class>>(this.endpoint, classData);
+  createClass(classData: ClassFormData): Observable<any> {
+    return this.apiService.post<any>(this.endpoint, classData);
   }
 
-  updateClass(id: string, classData: Partial<ClassFormData>): Observable<ApiResponse<Class>> {
-    return this.apiService.put<ApiResponse<Class>>(`${this.endpoint}/${id}`, classData);
+  updateClass(id: string, classData: Partial<ClassFormData>): Observable<any> {
+    return this.apiService.put<any>(`${this.endpoint}/${id}`, classData);
   }
 
-  deleteClass(id: string): Observable<ApiResponse<void>> {
-    return this.apiService.delete<ApiResponse<void>>(`${this.endpoint}/${id}`);
+  deleteClass(id: string): Observable<any> {
+    return this.apiService.delete<any>(`${this.endpoint}/${id}`);
   }
 
-  getClassStats(): Observable<ApiResponse<any>> {
-    return this.apiService.get<ApiResponse<any>>(`${this.endpoint}/stats`);
+  getClassStats(): Observable<any> {
+    return this.apiService.get<any>(`${this.endpoint}/stats`);
   }
 
-  getClassStudents(classId: string, filters?: { page?: number; limit?: number }): Observable<PaginatedResponse<any>> {
+  getClassStudents(classId: string, filters?: { page?: number; limit?: number }): Observable<any> {
     const params = this.buildQueryParams(filters);
-    return this.apiService.get<PaginatedResponse<any>>(`${this.endpoint}/${classId}/students?${params}`);
+    return this.apiService.get<any>(`${this.endpoint}/${classId}/students?${params}`);
   }
 
-  assignStudentToClass(classId: string, studentId: string): Observable<ApiResponse<void>> {
-    return this.apiService.post<ApiResponse<void>>(`${this.endpoint}/${classId}/students`, { studentId });
+  assignStudentToClass(classId: string, studentId: string): Observable<any> {
+    return this.apiService.post<any>(`${this.endpoint}/${classId}/students`, { studentId });
   }
 
-  removeStudentFromClass(classId: string, studentId: string): Observable<ApiResponse<void>> {
-    return this.apiService.delete<ApiResponse<void>>(`${this.endpoint}/${classId}/students/${studentId}`);
+  removeStudentFromClass(classId: string, studentId: string): Observable<any> {
+    return this.apiService.delete<any>(`${this.endpoint}/${classId}/students/${studentId}`);
   }
 
   private buildQueryParams(filters?: any): string {

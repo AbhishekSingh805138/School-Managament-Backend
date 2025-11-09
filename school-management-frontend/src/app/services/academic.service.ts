@@ -12,8 +12,8 @@ export class AcademicService {
   constructor(private apiService: ApiService) {}
 
   // Academic Years
-  getAcademicYears(params?: PaginationParams): Observable<PaginatedResponse<AcademicYear>> {
-    return this.apiService.getPaginated<AcademicYear>('academic-years', params);
+  getAcademicYears(params?: PaginationParams): Observable<any> {
+    return this.apiService.get<any>('academic-years', params);
   }
 
   getAcademicYear(id: string): Observable<ApiResponse<AcademicYear>> {

@@ -18,7 +18,7 @@ export const routes: Routes = [
   },
   {
     path: 'academic',
-    loadChildren: () => import('./modules/academic/academic.module').then(m => m.AcademicModule),
+    loadChildren: () => import('./modules/academic/academic-routing.module').then(m => m.routes),
     canActivate: [AuthGuard]
   },
   {
@@ -31,12 +31,11 @@ export const routes: Routes = [
     loadChildren: () => import('./modules/teachers/teachers.module').then(m => m.TeachersModule),
     canActivate: [AuthGuard]
   },
-  // Temporarily disabled until components are fully implemented
-  // {
-  //   path: 'classes',
-  //   loadChildren: () => import('./modules/classes/classes.module').then(m => m.ClassesModule),
-  //   canActivate: [AuthGuard]
-  // },
+  {
+    path: 'classes',
+    loadChildren: () => import('./modules/classes/classes.module').then(m => m.ClassesModule),
+    canActivate: [AuthGuard]
+  },
   {
     path: 'unauthorized',
     loadComponent: () => import('./components/unauthorized/unauthorized.component').then(c => c.UnauthorizedComponent)

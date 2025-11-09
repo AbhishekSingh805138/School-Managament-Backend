@@ -38,7 +38,8 @@ export class AcademicYearListComponent implements OnInit {
     this.academicService.getAcademicYears().subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.academicYears = response.data.items;
+          // Backend returns 'academicYears' not 'items'
+          this.academicYears = response.data.academicYears || response.data.items || [];
         }
         this.isLoading = false;
       },

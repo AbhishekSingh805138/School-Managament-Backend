@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule } from '@angular/material/list';
 
-import { GradeService } from '../../../../services/grade.service';
+import { ClassService } from '../../../../services/class.service';
 import { NotificationService } from '../../../../services/notification.service';
 import { ErrorService } from '../../../../services/error.service';
 
@@ -35,7 +35,7 @@ export class ClassDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private gradeService: GradeService,
+    private classService: ClassService,
     private notificationService: NotificationService,
     private errorService: ErrorService
   ) {}
@@ -53,11 +53,11 @@ export class ClassDetailComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.gradeService.getGrade(this.classId).subscribe({
+    this.classService.getClass(this.classId).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (response.success && response.data) {
-          this.classData = response.data;
+          this.classData = response.data.class || response.data;
           this.loadStudents();
         }
       },
@@ -74,10 +74,10 @@ export class ClassDetailComponent implements OnInit {
   loadStudents() {
     if (!this.classId) return;
 
-    this.gradeService.getGradeStudents(this.classId).subscribe({
+    this.classService.getClassStudents(this.classId).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.students = response.data;
+          this.students = response.data.items || response.data;
         }
       },
       error: (error) => {
@@ -96,7 +96,7 @@ export class ClassDetailComponent implements OnInit {
 
   deleteClass() {
     if (confirm(`Are you sure you want to delete this class?`)) {
-      this.gradeService.deleteGrade(this.classId).subscribe({
+      this.classService.deleteClass(this.classId).subscribe({
         next: () => {
           this.notificationService.success('Class deleted successfully');
           this.router.navigate(['/classes']);

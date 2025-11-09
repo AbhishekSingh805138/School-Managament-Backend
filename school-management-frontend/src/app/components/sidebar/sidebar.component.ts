@@ -105,7 +105,7 @@ export class SidebarComponent implements OnInit {
         {
           title: 'Academic Years',
           icon: 'calendar_today',
-          route: '/academic-years',
+          route: '/academic/academic-years',
           roles: ['admin', 'staff']
         }
       ]

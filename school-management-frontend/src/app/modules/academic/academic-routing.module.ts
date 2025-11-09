@@ -1,9 +1,6 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AcademicYearListComponent } from './components/academic-year-list/academic-year-list.component';
-import { SemesterListComponent } from './components/semester-list/semester-list.component';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     redirectTo: 'academic-years',
@@ -11,16 +8,10 @@ const routes: Routes = [
   },
   {
     path: 'academic-years',
-    component: AcademicYearListComponent
+    loadComponent: () => import('./components/academic-year-list/academic-year-list.component').then(m => m.AcademicYearListComponent)
   },
   {
     path: 'semesters',
-    component: SemesterListComponent
+    loadComponent: () => import('./components/semester-list/semester-list.component').then(m => m.SemesterListComponent)
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class AcademicRoutingModule { }

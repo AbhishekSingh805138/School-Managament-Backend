@@ -139,6 +139,7 @@ export class StudentFormComponent implements OnInit {
       phone: formValue.phone,
       address: formValue.address,
       studentId: formValue.studentId,
+      gender: formValue.gender,
       dateOfBirth: new Date(formValue.dateOfBirth).toISOString().split('T')[0],
       enrollmentDate: new Date(formValue.enrollmentDate).toISOString().split('T')[0],
       classId: formValue.classId,

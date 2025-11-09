@@ -7,23 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import { GradeService } from '../../../../services/grade.service';
+import { ClassService, Class } from '../../../../services/class.service';
 import { NotificationService } from '../../../../services/notification.service';
 import { ErrorService } from '../../../../services/error.service';
-
-interface Class {
-  id: string;
-  name: string;
-  grade: string;
-  section: string;
-  capacity: number;
-  studentCount?: number;
-  classTeacher?: {
-    firstName: string;
-    lastName: string;
-  };
-}
+import { ClassFormComponent } from '../class-form/class-form.component';
 
 @Component({
   selector: 'app-class-list',
@@ -35,7 +24,8 @@ interface Class {
     MatIconModule,
     MatCardModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDialogModule
   ],
   templateUrl: './class-list.component.html',
   styleUrl: './class-list.component.scss'
@@ -47,10 +37,11 @@ export class ClassListComponent implements OnInit {
   error: string | null = null;
 
   constructor(
-    private gradeService: GradeService,
+    private classService: ClassService,
     private notificationService: NotificationService,
     private errorService: ErrorService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -61,19 +52,39 @@ export class ClassListComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.gradeService.getGrades().subscribe({
+    console.log('Loading classes...');
+    this.classService.getClasses().subscribe({
       next: (response) => {
         this.isLoading = false;
+        console.log('Classes response:', response);
         if (response.success && response.data) {
-          this.classes = response.data.items || response.data;
+          this.classes = response.data.items || [];
+          console.log('Classes loaded:', this.classes.length);
         }
       },
       error: (error) => {
         this.isLoading = false;
+        console.error('Error loading classes:', error);
         const errorMessage = this.errorService.processError(error);
         this.error = errorMessage.message;
         this.notificationService.error('Failed to load classes. Please try again.', 'Error');
         this.errorService.logError(error, 'ClassList.loadClasses');
+      }
+    });
+  }
+
+  createClass() {
+    const dialogRef = this.dialog.open(ClassFormComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Create dialog closed with result:', result);
+      if (result) {
+        console.log('Reloading classes after creation...');
+        this.loadClasses();
       }
     });
   }
@@ -83,12 +94,22 @@ export class ClassListComponent implements OnInit {
   }
 
   editClass(classItem: Class) {
-    this.notificationService.info('Edit functionality coming soon!');
+    const dialogRef = this.dialog.open(ClassFormComponent, {
+      width: '600px',
+      disableClose: true,
+      data: { class: classItem }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadClasses();
+      }
+    });
   }
 
   deleteClass(classItem: Class) {
     if (confirm(`Are you sure you want to delete ${classItem.name}?`)) {
-      this.gradeService.deleteGrade(classItem.id).subscribe({
+      this.classService.deleteClass(classItem.id).subscribe({
         next: () => {
           this.notificationService.success('Class deleted successfully');
           this.loadClasses();
@@ -103,8 +124,13 @@ export class ClassListComponent implements OnInit {
   }
 
   getTeacherName(classItem: Class): string {
-    if (classItem.classTeacher) {
-      return `${classItem.classTeacher.firstName} ${classItem.classTeacher.lastName}`;
+    if (classItem.teacher) {
+      if (classItem.teacher.user) {
+        return `${classItem.teacher.user.firstName} ${classItem.teacher.user.lastName}`;
+      }
+      if (classItem.teacher.firstName && classItem.teacher.lastName) {
+        return `${classItem.teacher.firstName} ${classItem.teacher.lastName}`;
+      }
     }
     return 'Not Assigned';
   }
