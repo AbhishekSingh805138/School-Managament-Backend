@@ -10,7 +10,7 @@ const common_1 = require("../types/common");
 const zod_1 = require("zod");
 const router = (0, express_1.Router)();
 router.use(auth_1.authenticate);
-router.post('/', (0, auth_1.authorize)('admin'), (0, validation_1.validateBody)(student_1.CreateStudentSchema), (0, caching_1.invalidateCache)(['students:*', 'classes:*', 'stats:*']), studentController_1.createStudent);
+router.post('/', (0, auth_1.authorize)('admin', 'staff'), (0, validation_1.validateBody)(student_1.CreateStudentSchema), (0, caching_1.invalidateCache)(['students:*', 'classes:*', 'stats:*']), studentController_1.createStudent);
 router.get('/', (0, auth_1.authorize)('admin', 'teacher'), (0, validation_1.validateQuery)(student_1.StudentQuerySchema), (0, caching_1.cacheResponse)(300), studentController_1.getStudents);
 router.get('/:id', (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, caching_1.cacheResponse)(600), studentController_1.getStudentById);
 router.get('/:id/summary', (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), studentController_1.getStudentSummary);
@@ -32,7 +32,7 @@ router.patch('/bulk-update', (0, auth_1.authorize)('admin'), (0, validation_1.va
         message: 'At least one field to update is required',
     }),
 })), studentController_1.bulkUpdateStudents);
-router.put('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, validation_1.validateBody)(student_1.UpdateStudentSchema), (0, caching_1.invalidateCache)(['students:*', 'classes:*']), studentController_1.updateStudent);
-router.delete('/:id', (0, auth_1.authorize)('admin'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, caching_1.invalidateCache)(['students:*', 'classes:*', 'stats:*']), studentController_1.deleteStudent);
+router.put('/:id', (0, auth_1.authorize)('admin', 'staff'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, validation_1.validateBody)(student_1.UpdateStudentSchema), (0, caching_1.invalidateCache)(['students:*', 'classes:*']), studentController_1.updateStudent);
+router.delete('/:id', (0, auth_1.authorize)('admin', 'staff'), (0, validation_1.validateParams)(zod_1.z.object({ id: common_1.IdSchema })), (0, caching_1.invalidateCache)(['students:*', 'classes:*', 'stats:*']), studentController_1.deleteStudent);
 exports.default = router;
 //# sourceMappingURL=students.js.map

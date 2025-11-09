@@ -11,7 +11,7 @@ router.get('/:id', (0, caching_1.cacheResponse)(600), classController_1.getClass
 router.get('/:id/statistics', (0, auth_1.authorize)('admin', 'teacher'), (0, caching_1.cacheResponse)(300), classController_1.getClassStatistics);
 router.get('/:id/students', (0, auth_1.authorize)('admin', 'teacher'), (0, caching_1.cacheResponse)(300), classController_1.getClassStudents);
 router.get('/:id/subjects', (0, auth_1.authorize)('admin', 'teacher'), (0, caching_1.cacheResponse)(600), classController_1.getClassSubjects);
-router.post('/', (0, auth_1.authorize)('admin'), (0, caching_1.invalidateCache)(['class*', 'classes:*']), classController_1.createClass);
+router.post('/', (0, auth_1.authorize)('admin', 'staff'), (0, caching_1.invalidateCache)(['class*', 'classes:*']), classController_1.createClass);
 router.post('/:id/subjects', (0, auth_1.authorize)('admin'), (0, caching_1.invalidateCache)(['class*', 'classes:*']), classController_1.assignSubjectToClass);
 router.post('/:id/enroll', (0, auth_1.authorize)('admin'), (0, caching_1.invalidateCache)(['class*', 'students:*']), classController_1.enrollStudentToClass);
 router.post('/:id/enroll/bulk', (0, auth_1.authorize)('admin'), (0, caching_1.invalidateCache)(['class*', 'students:*']), classController_1.bulkEnrollStudentsToClass);

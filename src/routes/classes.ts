@@ -37,8 +37,8 @@ router.get('/:id/students', authorize('admin', 'teacher'), cacheResponse(300), g
 // Get class subjects (admin and teachers only)
 router.get('/:id/subjects', authorize('admin', 'teacher'), cacheResponse(600), getClassSubjects); // Cache for 10 minutes
 
-// Create class (admin only)
-router.post('/', authorize('admin'), invalidateCache(['class*', 'classes:*']), createClass);
+// Create class (admin and staff)
+router.post('/', authorize('admin', 'staff'), invalidateCache(['class*', 'classes:*']), createClass);
 
 // Assign subject to class (admin only)
 router.post('/:id/subjects', authorize('admin'), invalidateCache(['class*', 'classes:*']), assignSubjectToClass);
