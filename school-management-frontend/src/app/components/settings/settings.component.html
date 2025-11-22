@@ -1,0 +1,157 @@
+<div class="settings-container">
+  <h1 class="page-title">Settings</h1>
+
+  <div class="settings-grid">
+    <!-- Notification Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>notifications</mat-icon>
+        <mat-card-title>Notifications</mat-card-title>
+        <mat-card-subtitle>Manage your notification preferences</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>email</mat-icon>
+            <div>
+              <h4>Email Notifications</h4>
+              <p>Receive notifications via email</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="emailNotifications"></mat-slide-toggle>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>notifications_active</mat-icon>
+            <div>
+              <h4>Push Notifications</h4>
+              <p>Receive push notifications in browser</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="pushNotifications"></mat-slide-toggle>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>sms</mat-icon>
+            <div>
+              <h4>SMS Notifications</h4>
+              <p>Receive notifications via SMS</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="smsNotifications"></mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Display Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>display_settings</mat-icon>
+        <mat-card-title>Display</mat-card-title>
+        <mat-card-subtitle>Customize your display preferences</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>dark_mode</mat-icon>
+            <div>
+              <h4>Dark Mode</h4>
+              <p>Enable dark theme</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="darkMode"></mat-slide-toggle>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>view_compact</mat-icon>
+            <div>
+              <h4>Compact View</h4>
+              <p>Show more content in less space</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="compactView"></mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Privacy Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>privacy_tip</mat-icon>
+        <mat-card-title>Privacy</mat-card-title>
+        <mat-card-subtitle>Control your privacy settings</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>visibility</mat-icon>
+            <div>
+              <h4>Profile Visibility</h4>
+              <p>Make your profile visible to others</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="profileVisibility"></mat-slide-toggle>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>online_prediction</mat-icon>
+            <div>
+              <h4>Activity Status</h4>
+              <p>Show when you're online</p>
+            </div>
+          </div>
+          <mat-slide-toggle [(ngModel)]="activityStatus"></mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Account Actions -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>manage_accounts</mat-icon>
+        <mat-card-title>Account</mat-card-title>
+        <mat-card-subtitle>Manage your account</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <div class="action-buttons">
+          <button mat-raised-button color="primary">
+            <mat-icon>lock</mat-icon>
+            Change Password
+          </button>
+          <button mat-raised-button>
+            <mat-icon>download</mat-icon>
+            Download Data
+          </button>
+          <button mat-raised-button color="warn">
+            <mat-icon>delete</mat-icon>
+            Delete Account
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Save Button -->
+  <div class="save-section">
+    <button mat-raised-button color="primary" (click)="saveSettings()" class="save-button">
+      <mat-icon>save</mat-icon>
+      Save Settings
+    </button>
+  </div>
+</div>

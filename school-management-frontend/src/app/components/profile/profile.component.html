@@ -1,0 +1,96 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <div class="avatar-circle">
+            <span class="avatar-initials">{{ getInitials() }}</span>
+          </div>
+        </div>
+        <div class="profile-title">
+          <h2>{{ getUserDisplayName() }}</h2>
+          <p class="role-badge">{{ getUserRole() }}</p>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content *ngIf="!isLoading && currentUser">
+      <div class="profile-section">
+        <h3>Personal Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon>person</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Full Name</span>
+              <span class="info-value">{{ getUserDisplayName() }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ currentUser.email }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>badge</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Role</span>
+              <span class="info-value">{{ getUserRole() }}</span>
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="currentUser.phone">
+            <mat-icon>phone</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ currentUser.phone }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="profile-section">
+        <h3>Account Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon>fingerprint</mat-icon>
+            <div class="info-content">
+              <span class="info-label">User ID</span>
+              <span class="info-value">{{ currentUser.id }}</span>
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="currentUser.createdAt">
+            <mat-icon>calendar_today</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Member Since</span>
+              <span class="info-value">{{ currentUser.createdAt | date: 'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary">
+        <mat-icon>edit</mat-icon>
+        Edit Profile
+      </button>
+      <button mat-raised-button>
+        <mat-icon>lock</mat-icon>
+        Change Password
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

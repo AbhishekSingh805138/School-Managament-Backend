@@ -37,6 +37,16 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'profile',
+    loadComponent: () => import('./components/profile/profile.component').then(c => c.ProfileComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./components/settings/settings.component').then(c => c.SettingsComponent),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'unauthorized',
     loadComponent: () => import('./components/unauthorized/unauthorized.component').then(c => c.UnauthorizedComponent)
   },

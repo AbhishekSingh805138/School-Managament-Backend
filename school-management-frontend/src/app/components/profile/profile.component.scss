@@ -1,0 +1,166 @@
+.profile-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.profile-avatar {
+  .avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+    .avatar-initials {
+      font-size: 36px;
+      font-weight: 600;
+      color: white;
+    }
+  }
+}
+
+.profile-title {
+  flex: 1;
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: #667eea;
+    color: white;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+mat-card-content {
+  padding: 24px 16px;
+}
+
+.profile-section {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px 0;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+
+  mat-icon {
+    color: #667eea;
+    margin-top: 2px;
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+
+    .info-label {
+      font-size: 12px;
+      color: #6c757d;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #333;
+      font-weight: 500;
+      word-break: break-word;
+    }
+  }
+}
+
+mat-card-actions {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 16px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  mat-card-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
